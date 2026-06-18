@@ -3,14 +3,8 @@ import React from 'react';
 import { Menu, Search, ChevronRight, Mail, Bell } from 'lucide-react';
 
 const NAV_ITEMS = [
-    { label: "Dashboard", path: "dashboard" },
-    { label: "Cloud Services", path: "cloud" },
-    { label: "Servers", path: "servers" },
-    { label: "Databases", path: "databases" },
-    { label: "Security", path: "security" },
-    { label: "Users", path: "users" },
-    { label: "Monitoring", path: "monitoring" },
-    { label: "Settings", path: "settings" },
+    { label: "Dashboard", path: "/admin/dashboard" },
+    { label: "Settings", path: "/admin/settings" },
 ];
 
 export const Navbar = ({ setOpen, activePage }) => {
@@ -33,18 +27,16 @@ export const Navbar = ({ setOpen, activePage }) => {
 
             <div className="flex-1" />
 
-            <div className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 w-56 focus-within:ring-2 ring-violet-200 transition-all">
+            {/* <div className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 w-56 focus-within:ring-2 ring-violet-200 transition-all">
                 <Search size={14} className="text-slate-400 shrink-0" />
                 <input
                     className="bg-transparent text-sm text-slate-600 placeholder:text-slate-400 outline-none w-full"
                     placeholder="Search anything…"
                 />
-            </div>
+            </div> */}
 
             <div className="flex items-center gap-1">
-                <button className="relative p-2 rounded-xl hover:bg-slate-50 text-slate-500 hover:text-slate-700 transition-colors">
-                    <Mail size={17} />
-                </button>
+
                 <button className="relative p-2 rounded-xl hover:bg-slate-50 text-slate-500 hover:text-slate-700 transition-colors">
                     <Bell size={17} />
                     <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-rose-500" />

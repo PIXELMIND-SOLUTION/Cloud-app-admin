@@ -20,34 +20,26 @@ export const AdminLogin = ({ onLogin }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
-    const [copied, setCopied] = useState(false);
 
     const navigate = useNavigate();
 
-    // Copy URL function
-    const handleCopyUrl = async () => {
-        try {
-            await navigator.clipboard.writeText('http://localhost:3000/staff-login');
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
-            console.error('Failed to copy:', err);
-        }
-    };
-
-    // Submit handler with navigation
     const handleSubmit = (e) => {
         e.preventDefault();
-        setError('');
+        setError("");
+
         if (!email || !password) {
-            setError('Please fill in all fields.');
+            setError("Please fill in all fields.");
             return;
         }
+
         setLoading(true);
+
         setTimeout(() => {
-            setLoading(false);            
+            sessionStorage.setItem("adminAuth", "true");
+
+            setLoading(false);
+            navigate("/admin/dashboard");
         }, 1200);
-        navigate('/admin/dashboard')
     };
 
     return (
@@ -71,10 +63,10 @@ export const AdminLogin = ({ onLogin }) => {
                         <div className="absolute inset-0 flex flex-col justify-center px-8 sm:px-12 lg:px-16 text-white">
                             <div className="max-w-sm">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                                        <Cloud size={22} className="text-white" />
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center">
+                                        <img src='/logo.png' className='w-10 h-10 object-cover' />
                                     </div>
-                                    <span className="text-xl font-bold">CloudApp</span>
+                                    <span className="text-xl font-bold">RV Admin</span>
                                 </div>
 
                                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
@@ -85,14 +77,7 @@ export const AdminLogin = ({ onLogin }) => {
                                     Sign in to manage your cloud infrastructure.
                                 </p>
 
-                                <div className="hidden sm:flex flex-wrap gap-3 mt-6">
-                                    {FEATURE_PILLS.map((pill, idx) => (
-                                        <div key={idx} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/10">
-                                            <pill.icon size={16} className="text-white/80" />
-                                            <span className="text-sm text-white/90">{pill.label}</span>
-                                        </div>
-                                    ))}
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -163,12 +148,6 @@ export const AdminLogin = ({ onLogin }) => {
                                     </div>
                                 )}
 
-                                <div className="text-right">
-                                    <button type="button" className="text-sm text-rose-500 hover:text-rose-600 font-medium transition-colors">
-                                        Forgot password?
-                                    </button>
-                                </div>
-
                                 <button
                                     type="submit"
                                     disabled={loading}
@@ -189,42 +168,7 @@ export const AdminLogin = ({ onLogin }) => {
                                         </>
                                     )}
                                 </button>
-
-
                             </form>
-
-                            {/* Demo Credentials */}
-                            {/* <div className="text-xs text-center text-slate-400 mt-4 space-y-2">
-
-
-                                <p className="text-center text-sm mt-3 text-gray-500">
-                                    Staff member?{" "}
-                                    <a
-                                        href="/staff-login"
-                                        className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
-                                    >
-                                        Login as Staff →
-                                    </a>
-                                </p>
-
-                              
-                                <button
-                                    onClick={handleCopyUrl}
-                                    className="inline-flex items-center gap-1.5 text-emerald-500 hover:text-emerald-600 transition-colors text-xs font-medium"
-                                >
-                                    {copied ? (
-                                        <>
-                                            <Check size={14} />
-                                            <span>Copied!</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Copy size={14} />
-                                            <span>Copy URL</span>
-                                        </>
-                                    )}
-                                </button>
-                            </div> */}
                         </div>
                     </div>
                 </div>

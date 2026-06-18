@@ -1,21 +1,28 @@
-import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { AdminLayout } from './components/AdminLayout';
 import { Dashboard } from './pages/Dashboard';
 import { AdminLogin } from './Login/AdminLogin';
+import { Settings } from './pages/Settings';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<AdminLogin />} />
+    <Routes>
+      <Route path="/" element={<AdminLogin />} />
 
-        <Route path='/admin' element={<AdminLayout />}>
-          <Route path="dashboard" element={<Dashboard />} />
-        </Route>
-      </Routes>
-    </>
+      <Route
+        path="/admin"
+        element={
+          <PrivateRoute>
+            <AdminLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="settings" element={<Settings />} />
+      </Route>
+    </Routes>
   );
 }
 

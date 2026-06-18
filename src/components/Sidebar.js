@@ -12,7 +12,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 const NAV_ITEMS = [
-    { label: "Dashboard", icon: LayoutDashboard, path: "dashboard" },
+    { label: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
     // {
     //     label: "Devices", icon: Smartphone, path: "devices",
     //     children: ["All Devices", "Enrolled", "Pending"],
@@ -30,7 +30,7 @@ const NAV_ITEMS = [
     //     label: "Monitoring", icon: Activity, path: "monitoring",
     //     children: ["Metrics", "Alerts", "Logs"],
     // },
-    { label: "Settings", icon: Settings, path: "settings" },
+    { label: "Settings", icon: Settings, path: "/admin/settings" },
 ];
 
 export const Sidebar = ({ active, setActive, open, setOpen }) => {
@@ -41,8 +41,10 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        navigate('/');
-    }
+        sessionStorage.removeItem("adminAuth");
+
+        navigate("/", { replace: true });
+    };
 
     return (
         <>
@@ -99,6 +101,7 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                                             toggle(item.path);
                                         } else {
                                             setActive(item.path);
+                                            navigate(item.path);
                                             setOpen(false);
                                         }
                                     }}
@@ -125,14 +128,19 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                                         {item.children.map(child => (
                                             <button
                                                 key={child}
-                                                onClick={() => { setActive(`${item.path}-${child}`); setOpen(false); }}
+                                                onClick={() => {
+                                                    setActive(`${item.path}-${child}`);
+                                                    setOpen(false);
+                                                    navigate(item.path);
+                                                }
+                                                }
                                                 className={`
-                          w-full text-left text-xs px-2 py-2 rounded-lg transition-colors
-                          ${active === `${item.path}-${child}`
+                                                            w-full text-left text-xs px-2 py-2 rounded-lg transition-colors
+                                                            ${active === `${item.path}-${child}`
                                                         ? "text-violet-600 font-semibold bg-violet-50"
                                                         : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
                                                     }
-                        `}
+                                                `}
                                             >
                                                 <ChevronRight size={10} className="inline mr-1 opacity-50" />
                                                 {child}
