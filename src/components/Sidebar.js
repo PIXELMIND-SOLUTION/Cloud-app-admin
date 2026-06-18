@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 const NAV_ITEMS = [
     { label: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
+    { label: "Registered Users", icon: Users, path: "/admin/users" },
     // {
     //     label: "Devices", icon: Smartphone, path: "devices",
     //     children: ["All Devices", "Enrolled", "Pending"],

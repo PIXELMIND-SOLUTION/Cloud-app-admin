@@ -5,6 +5,7 @@ import { Dashboard } from './pages/Dashboard';
 import { AdminLogin } from './Login/AdminLogin';
 import { Settings } from './pages/Settings';
 import PrivateRoute from './components/PrivateRoute';
+import { RegisteredUsers } from './pages/Users/RegisteredUsers';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         }
       >
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="users" element={<RegisteredUsers />} />
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>

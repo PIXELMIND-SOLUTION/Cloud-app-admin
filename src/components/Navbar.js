@@ -4,6 +4,7 @@ import { Menu, Search, ChevronRight, Mail, Bell } from 'lucide-react';
 
 const NAV_ITEMS = [
     { label: "Dashboard", path: "/admin/dashboard" },
+    { label: "Registered Users", path: "/admin/users" },
     { label: "Settings", path: "/admin/settings" },
 ];
 
