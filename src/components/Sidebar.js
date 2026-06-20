@@ -7,30 +7,28 @@ import {
     Activity, LogOut, ChevronRight, BarChart2, Lock,
     Zap, Mail, AlertCircle,
     Grid,
-    Smartphone
+    Smartphone,
+    MailWarning,
+    LineChart
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const NAV_ITEMS = [
     { label: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
     { label: "Registered Users", icon: Users, path: "/admin/users" },
-    // {
-    //     label: "Devices", icon: Smartphone, path: "devices",
-    //     children: ["All Devices", "Enrolled", "Pending"],
-    // },
-    // { label: "Users", icon: Users, path: "users" },
-    // {
-    //     label: "Compliance", icon: Shield, path: "compliance",
-    //     children: ["Policies", "Violations"],
-    // },
-    // {
-    //     label: "App Management", icon: Grid, path: "apps",
-    //     children: ["Deployed", "Catalog"],
-    // },
-    // {
-    //     label: "Monitoring", icon: Activity, path: "monitoring",
-    //     children: ["Metrics", "Alerts", "Logs"],
-    // },
+    {
+        label: "Plans",
+        icon: BarChart2,
+        path: "/admin/plans",
+        children: [
+            {
+                label: "All Plans",
+                path: "/admin/plans"
+            }
+        ]
+    },
+    { label: "Analytics", icon: LineChart, path: "/admin/analytics" },
+    { label: "Reports", icon: MailWarning, path: "/admin/reports" },
     { label: "Settings", icon: Settings, path: "/admin/settings" },
 ];
 
@@ -107,12 +105,12 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                                         }
                                     }}
                                     className={`
-                    w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
-                    ${isActive
+                                        w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                                        ${isActive
                                             ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-sm"
                                             : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
                                         }
-                  `}
+                                    `}
                                 >
                                     <item.icon size={16} className={isActive ? "text-white" : "text-slate-400"} />
                                     <span className="flex-1 text-left">{item.label}</span>
@@ -126,25 +124,24 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
 
                                 {hasChildren && isExpanded && (
                                     <div className="ml-5 mt-0.5 space-y-0.5 border-l border-slate-100 pl-3">
-                                        {item.children.map(child => (
+                                        {item.children.map((child) => (
                                             <button
-                                                key={child}
+                                                key={child.path}
                                                 onClick={() => {
-                                                    setActive(`${item.path}-${child}`);
+                                                    setActive(child.path);
+                                                    navigate(child.path);
                                                     setOpen(false);
-                                                    navigate(item.path);
-                                                }
-                                                }
+                                                }}
                                                 className={`
-                                                            w-full text-left text-xs px-2 py-2 rounded-lg transition-colors
-                                                            ${active === `${item.path}-${child}`
+                                                    w-full text-left text-xs px-2 py-2 rounded-lg transition-colors
+                                                    ${active === child.path
                                                         ? "text-violet-600 font-semibold bg-violet-50"
                                                         : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
                                                     }
                                                 `}
                                             >
                                                 <ChevronRight size={10} className="inline mr-1 opacity-50" />
-                                                {child}
+                                                {child.label}
                                             </button>
                                         ))}
                                     </div>

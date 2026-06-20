@@ -6,6 +6,9 @@ import { AdminLogin } from './Login/AdminLogin';
 import { Settings } from './pages/Settings';
 import PrivateRoute from './components/PrivateRoute';
 import { RegisteredUsers } from './pages/Users/RegisteredUsers';
+import AdminPlanManagement from './pages/plans/AdminPlanManagement';
+import AdminReports from './pages/AdminReports';
+import AdminAnalytics from './pages/AdminAnalytics';
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
       >
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<RegisteredUsers />} />
+        <Route path="plans" element={<AdminPlanManagement />} />
+        <Route path="analytics" element={<AdminAnalytics />}/>
+        <Route path="reports" element={<AdminReports/>}/>
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
