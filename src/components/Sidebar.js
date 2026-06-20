@@ -1,17 +1,11 @@
 // components/Sidebar.js
 import React, { useState } from 'react';
 import {
-    LayoutDashboard, Cloud, Server, Database, Shield,
-    Users, Settings, Bell, Search, Menu, X, ChevronDown,
-    TrendingUp, TrendingDown, Globe, Cpu, HardDrive,
-    Activity, LogOut, ChevronRight, BarChart2, Lock,
-    Zap, Mail, AlertCircle,
-    Grid,
-    Smartphone,
-    MailWarning,
-    LineChart
+    LayoutDashboard, Users, Settings, X, ChevronDown,
+    LogOut, ChevronRight, BarChart2, MailWarning, LineChart, Cloud
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.png'
 
 const NAV_ITEMS = [
     { label: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
@@ -20,12 +14,7 @@ const NAV_ITEMS = [
         label: "Plans",
         icon: BarChart2,
         path: "/admin/plans",
-        children: [
-            {
-                label: "All Plans",
-                path: "/admin/plans"
-            }
-        ]
+        children: [{ label: "All Plans", path: "/admin/plans" }]
     },
     { label: "Analytics", icon: LineChart, path: "/admin/analytics" },
     { label: "Reports", icon: MailWarning, path: "/admin/reports" },
@@ -34,58 +23,94 @@ const NAV_ITEMS = [
 
 export const Sidebar = ({ active, setActive, open, setOpen }) => {
     const [expanded, setExpanded] = useState({});
+    const navigate = useNavigate();
 
     const toggle = (key) => setExpanded(p => ({ ...p, [key]: !p[key] }));
 
-    const navigate = useNavigate();
-
     const handleLogout = () => {
         sessionStorage.removeItem("adminAuth");
-
         navigate("/", { replace: true });
     };
 
     return (
         <>
+            {/* Mobile overlay */}
             {open && (
                 <div
-                    className="fixed inset-0 bg-black/20 z-20 lg:hidden"
+                    className="fixed inset-0 z-10 lg:hidden"
+                    style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
                     onClick={() => setOpen(false)}
                 />
             )}
 
             <aside
                 className={`
-          fixed top-0 left-0 h-full z-30 w-64 bg-white border-r border-slate-100 shadow-sm
-          flex flex-col transition-transform duration-300
-          ${open ? "translate-x-0" : "-translate-x-full"}
-          lg:translate-x-0 lg:static lg:flex lg:h-screen lg:shrink-0
-        `}
+                    fixed top-0 left-0 h-full z-30 w-64 flex flex-col
+                    transition-transform duration-300
+                    ${open ? "translate-x-0" : "-translate-x-full"}
+                    lg:translate-x-0 lg:static lg:flex lg:h-screen lg:shrink-0
+                `}
+                style={{
+                    background: 'rgba(10, 8, 20, 0.95)',
+                    borderRight: '1px solid rgba(139,92,246,0.18)',
+                    backdropFilter: 'blur(20px)',
+                }}
             >
-                <div className="flex items-center justify-between px-5 h-16 border-b border-slate-100 shrink-0">
+                {/* Ambient orb inside sidebar */}
+                <div
+                    className="absolute pointer-events-none"
+                    style={{
+                        width: 200, height: 200,
+                        background: 'radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%)',
+                        top: -40, left: -40, borderRadius: '50%',
+                    }}
+                />
+
+                {/* Logo */}
+                <div
+                    className="flex items-center justify-between px-5 shrink-0"
+                    style={{ height: 64, borderBottom: '1px solid rgba(139,92,246,0.15)' }}
+                >
                     <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8  flex items-center justify-center shadow">
-                            <img src='/logo.png' className='w-8 h-8 object-cover' />
+                        <div
+                            className="w-8 h-8 flex items-center justify-center rounded-xl"
+                        >
+                            <img src={logo} className='h-8 w-8 object-cover' />
                         </div>
-                        <span className="font-bold text-slate-800 text-lg tracking-tight">CloudApp</span>
+                        <span className="font-bold text-lg tracking-tight" style={{ color: '#e2d9f3' }}>CloudApp</span>
                     </div>
-                    <button className="lg:hidden text-slate-400 hover:text-slate-600" onClick={() => setOpen(false)}>
+                    <button
+                        className="lg:hidden transition-colors"
+                        style={{ color: '#7c6fa0' }}
+                        onClick={() => setOpen(false)}
+                    >
                         <X size={18} />
                     </button>
                 </div>
 
-                <div className="px-4 py-4 border-b border-slate-50">
-                    <div className="flex items-center gap-3 bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-3">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                            <img src='/admin.png' className='w-9 h-9 object-cover' />
+                {/* Profile */}
+                <div className="px-4 py-3" style={{ borderBottom: '1px solid rgba(139,92,246,0.08)' }}>
+                    <div
+                        className="flex items-center gap-3 rounded-xl p-3"
+                        style={{
+                            background: 'rgba(139,92,246,0.1)',
+                            border: '1px solid rgba(139,92,246,0.2)',
+                        }}
+                    >
+                        <div
+                            className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden"
+                            style={{ background: 'linear-gradient(135deg, #6d28d9, #9333ea)' }}
+                        >
+                            <img src='/admin.png' className='w-9 h-9 object-cover' alt="admin" />
                         </div>
                         <div className="min-w-0">
-                            <p className="text-sm font-semibold text-slate-800 truncate">Vijay N</p>
-                            <p className="text-xs text-slate-400">Super Admin</p>
+                            <p className="text-sm font-semibold truncate" style={{ color: '#e2d9f3' }}>Vijay N</p>
+                            <p className="text-xs" style={{ color: '#7c6fa0' }}>Super Admin</p>
                         </div>
                     </div>
                 </div>
 
+                {/* Nav */}
                 <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5">
                     {NAV_ITEMS.map(item => {
                         const isActive = active === item.path;
@@ -104,26 +129,59 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                                             setOpen(false);
                                         }
                                     }}
-                                    className={`
-                                        w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
-                                        ${isActive
-                                            ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-sm"
-                                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all relative"
+                                    style={
+                                        isActive
+                                            ? {
+                                                background: 'linear-gradient(135deg, rgba(124,58,237,0.3), rgba(168,85,247,0.2))',
+                                                color: '#e2d9f3',
+                                                border: '1px solid rgba(139,92,246,0.35)',
+                                            }
+                                            : { color: '#7c6fa0', border: '1px solid transparent' }
+                                    }
+                                    onMouseEnter={e => {
+                                        if (!isActive) {
+                                            e.currentTarget.style.background = 'rgba(139,92,246,0.1)';
+                                            e.currentTarget.style.color = '#c4b5fd';
                                         }
-                                    `}
+                                    }}
+                                    onMouseLeave={e => {
+                                        if (!isActive) {
+                                            e.currentTarget.style.background = 'transparent';
+                                            e.currentTarget.style.color = '#7c6fa0';
+                                        }
+                                    }}
                                 >
-                                    <item.icon size={16} className={isActive ? "text-white" : "text-slate-400"} />
+                                    {/* Active glow bar */}
+                                    {isActive && (
+                                        <span
+                                            className="absolute left-0 top-1/2 -translate-y-1/2 rounded-r"
+                                            style={{
+                                                width: 3, height: 20,
+                                                background: 'linear-gradient(180deg, #7c3aed, #a855f7)',
+                                                boxShadow: '0 0 10px rgba(139,92,246,0.8)',
+                                            }}
+                                        />
+                                    )}
+                                    <item.icon
+                                        size={16}
+                                        style={{ color: isActive ? '#c4b5fd' : '#5a4f72', flexShrink: 0 }}
+                                    />
                                     <span className="flex-1 text-left">{item.label}</span>
                                     {hasChildren && (
                                         <ChevronDown
-                                            size={14}
-                                            className={`transition-transform ${isExpanded ? "rotate-180" : ""} ${isActive ? "text-white/70" : "text-slate-300"}`}
+                                            size={13}
+                                            className={`transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                                            style={{ color: isActive ? '#c4b5fd' : '#3d3358' }}
                                         />
                                     )}
                                 </button>
 
                                 {hasChildren && isExpanded && (
-                                    <div className="ml-5 mt-0.5 space-y-0.5 border-l border-slate-100 pl-3">
+                                    <div
+                                        className="ml-5 mt-0.5 space-y-0.5 pl-3"
+                                        style={{ borderLeft: '1px solid rgba(139,92,246,0.15)' }}
+                                    >
                                         {item.children.map((child) => (
                                             <button
                                                 key={child.path}
@@ -132,13 +190,24 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                                                     navigate(child.path);
                                                     setOpen(false);
                                                 }}
-                                                className={`
-                                                    w-full text-left text-xs px-2 py-2 rounded-lg transition-colors
-                                                    ${active === child.path
-                                                        ? "text-violet-600 font-semibold bg-violet-50"
-                                                        : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                                                className="w-full text-left text-xs px-2 py-2 rounded-lg transition-colors"
+                                                style={
+                                                    active === child.path
+                                                        ? { color: '#a78bfa', fontWeight: 600, background: 'rgba(139,92,246,0.12)' }
+                                                        : { color: '#5a4f72' }
+                                                }
+                                                onMouseEnter={e => {
+                                                    if (active !== child.path) {
+                                                        e.currentTarget.style.color = '#c4b5fd';
+                                                        e.currentTarget.style.background = 'rgba(139,92,246,0.08)';
                                                     }
-                                                `}
+                                                }}
+                                                onMouseLeave={e => {
+                                                    if (active !== child.path) {
+                                                        e.currentTarget.style.color = '#5a4f72';
+                                                        e.currentTarget.style.background = 'transparent';
+                                                    }
+                                                }}
                                             >
                                                 <ChevronRight size={10} className="inline mr-1 opacity-50" />
                                                 {child.label}
@@ -151,8 +220,21 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                     })}
                 </nav>
 
-                <div className="px-3 pb-4 shrink-0 space-y-0.5">
-                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:bg-rose-50 hover:text-rose-500 transition-colors">
+                {/* Footer */}
+                <div className="px-3 pb-4 shrink-0" style={{ borderTop: '1px solid rgba(139,92,246,0.1)' }}>
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors mt-2"
+                        style={{ color: '#5a4f72' }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.background = 'rgba(239,68,68,0.1)';
+                            e.currentTarget.style.color = '#f87171';
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.color = '#5a4f72';
+                        }}
+                    >
                         <LogOut size={16} />
                         Sign Out
                     </button>

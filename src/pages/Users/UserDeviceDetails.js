@@ -2,33 +2,38 @@
 import React, { useState } from 'react';
 import {
     ArrowLeft, Smartphone, Tablet, Monitor, Watch,
-    ShieldCheck, ShieldAlert, WifiOff, Battery,
-    HardDrive, RefreshCw, Lock, Key, CheckCircle,
-    XCircle, Clock, Package, Cpu, AlertCircle,
-    ChevronDown, ChevronUp, Settings, MoreVertical,
-    BarChart3, Globe
+    Battery, HardDrive, RefreshCw, Lock,
+    CheckCircle, XCircle, Package, AlertCircle,
+    ChevronDown, ChevronUp
 } from 'lucide-react';
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+/* ── Helpers ─────────────────────────────────────────────────────────────── */
 function DeviceIcon({ type, size = 18 }) {
-    const cls = "text-white";
-    if (type === 'tablet')   return <Tablet size={size} className={cls} />;
-    if (type === 'laptop')   return <Monitor size={size} className={cls} />;
-    if (type === 'wearable') return <Watch size={size} className={cls} />;
-    return <Smartphone size={size} className={cls} />;
+    if (type === 'tablet')   return <Tablet size={size} className="text-white" />;
+    if (type === 'laptop')   return <Monitor size={size} className="text-white" />;
+    if (type === 'wearable') return <Watch size={size} className="text-white" />;
+    return <Smartphone size={size} className="text-white" />;
 }
 
 function statusMeta(status) {
-    if (status === 'compliant') return { bg: "bg-emerald-50", border: "border-emerald-200", dot: "bg-emerald-500", text: "text-emerald-700", label: "Compliant" };
-    if (status === 'warning')   return { bg: "bg-amber-50",   border: "border-amber-200",   dot: "bg-amber-500",   text: "text-amber-700",   label: "Warning" };
-    return                             { bg: "bg-slate-50",   border: "border-slate-200",   dot: "bg-slate-400",   text: "text-slate-500",   label: "Offline" };
+    const map = {
+        active:    { bg: 'rgba(52,211,153,0.08)',  border: 'rgba(52,211,153,0.2)',  dot: '#34d399', text: '#6ee7b7',  label: 'Active' },
+        compliant: { bg: 'rgba(52,211,153,0.08)',  border: 'rgba(52,211,153,0.2)',  dot: '#34d399', text: '#6ee7b7',  label: 'Compliant' },
+        warning:   { bg: 'rgba(251,191,36,0.08)',  border: 'rgba(251,191,36,0.2)',  dot: '#fbbf24', text: '#fcd34d',  label: 'Warning' },
+        offline:   { bg: 'rgba(100,116,139,0.1)',  border: 'rgba(100,116,139,0.2)', dot: '#64748b', text: '#94a3b8',  label: 'Offline' },
+    };
+    return map[status] || map.offline;
 }
 
 function MiniBar({ value, warn = 70 }) {
-    const color = value >= warn ? "from-rose-400 to-rose-500" : value >= 40 ? "from-violet-400 to-purple-500" : "from-amber-400 to-orange-400";
+    const color = value >= warn
+        ? 'linear-gradient(90deg, #f87171, #ef4444)'
+        : value >= 40
+            ? 'linear-gradient(90deg, #8b5cf6, #a855f7)'
+            : 'linear-gradient(90deg, #f59e0b, #f97316)';
     return (
-        <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-            <div className={`h-full rounded-full bg-gradient-to-r ${color} transition-all`} style={{ width: `${value}%` }} />
+        <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(139,92,246,0.12)' }}>
+            <div className="h-full rounded-full transition-all" style={{ width: `${value}%`, background: color }} />
         </div>
     );
 }
@@ -37,112 +42,129 @@ function ConfigCheck({ ok, label }) {
     return (
         <div className="flex items-center gap-2">
             {ok
-                ? <CheckCircle size={14} className="text-emerald-500 shrink-0" />
-                : <XCircle    size={14} className="text-rose-400 shrink-0" />
-            }
-            <span className={`text-xs ${ok ? "text-slate-600" : "text-rose-500 font-medium"}`}>{label}</span>
+                ? <CheckCircle size={14} style={{ color: '#34d399', flexShrink: 0 }} />
+                : <XCircle size={14} style={{ color: '#f87171', flexShrink: 0 }} />}
+            <span className="text-xs" style={{ color: ok ? '#9c8fc0' : '#f87171', fontWeight: ok ? 400 : 500 }}>
+                {label}
+            </span>
         </div>
     );
 }
 
+/* ── Device card ─────────────────────────────────────────────────────────── */
 function DeviceCard({ device }) {
     const [open, setOpen] = useState(false);
     const meta = statusMeta(device.status);
 
     const typeGrad = {
-        mobile:   "from-violet-500 to-purple-600",
-        tablet:   "from-sky-500 to-blue-600",
-        laptop:   "from-indigo-500 to-blue-700",
-        wearable: "from-emerald-500 to-teal-600",
-    }[device.type] || "from-slate-400 to-slate-500";
+        mobile:   'linear-gradient(135deg, #7c3aed, #9333ea)',
+        tablet:   'linear-gradient(135deg, #0ea5e9, #0284c7)',
+        laptop:   'linear-gradient(135deg, #4f46e5, #1d4ed8)',
+        wearable: 'linear-gradient(135deg, #059669, #0d9488)',
+    }[device.type] || 'linear-gradient(135deg, #64748b, #475569)';
 
     return (
-        <div className={`rounded-2xl border ${meta.border} ${meta.bg} overflow-hidden transition-all`}>
+        <div className="rounded-2xl overflow-hidden transition-all"
+            style={{
+                background: meta.bg,
+                border: `1px solid ${meta.border}`,
+                backdropFilter: 'blur(12px)',
+            }}>
             {/* Card header */}
             <div className="p-4">
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${typeGrad} flex items-center justify-center shadow-sm shrink-0`}>
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm shrink-0"
+                            style={{ background: typeGrad, boxShadow: '0 0 12px rgba(124,58,237,0.3)' }}>
                             <DeviceIcon type={device.type} size={17} />
                         </div>
                         <div>
-                            <p className="text-sm font-semibold text-slate-800">{device.name}</p>
-                            <p className="text-xs text-slate-500">{device.model} · {device.os}</p>
+                            <p className="text-sm font-semibold" style={{ color: '#e2d9f3' }}>{device.name}</p>
+                            <p className="text-xs" style={{ color: '#7c6fa0' }}>{device.model} · {device.os}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${meta.text} bg-white border ${meta.border}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
+                        <span className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
+                            style={{
+                                color: meta.text,
+                                background: 'rgba(15,12,25,0.6)',
+                                border: `1px solid ${meta.border}`,
+                            }}>
+                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: meta.dot }} />
                             {meta.label}
                         </span>
-                        <button
-                            onClick={() => setOpen(!open)}
-                            className="w-7 h-7 flex items-center justify-center rounded-xl bg-white border border-slate-200 hover:bg-slate-50 transition-colors"
-                        >
-                            {open ? <ChevronUp size={13} className="text-slate-500" /> : <ChevronDown size={13} className="text-slate-500" />}
+                        <button onClick={() => setOpen(!open)}
+                            className="w-7 h-7 flex items-center justify-center rounded-xl transition-colors"
+                            style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)' }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,0.2)'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'rgba(139,92,246,0.1)'}>
+                            {open
+                                ? <ChevronUp size={13} style={{ color: '#a78bfa' }} />
+                                : <ChevronDown size={13} style={{ color: '#a78bfa' }} />}
                         </button>
                     </div>
                 </div>
 
-                {/* Battery + Storage bars */}
+                {/* Battery + Storage */}
                 <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div>
-                        <div className="flex justify-between text-xs text-slate-500 mb-1.5">
-                            <span className="flex items-center gap-1"><Battery size={11} /> Battery</span>
-                            <span className="font-semibold text-slate-700">{device.battery}%</span>
+                    {[
+                        { label: 'Battery', value: device.battery, icon: Battery },
+                        { label: 'Storage', value: device.storage, icon: HardDrive },
+                    ].map(bar => (
+                        <div key={bar.label}>
+                            <div className="flex justify-between text-xs mb-1.5" style={{ color: '#7c6fa0' }}>
+                                <span className="flex items-center gap-1">
+                                    <bar.icon size={11} /> {bar.label}
+                                </span>
+                                <span className="font-semibold" style={{ color: '#c4b5fd' }}>{bar.value}%</span>
+                            </div>
+                            <MiniBar value={bar.value} warn={80} />
                         </div>
-                        <MiniBar value={device.battery} warn={80} />
-                    </div>
-                    <div>
-                        <div className="flex justify-between text-xs text-slate-500 mb-1.5">
-                            <span className="flex items-center gap-1"><HardDrive size={11} /> Storage</span>
-                            <span className="font-semibold text-slate-700">{device.storage}%</span>
-                        </div>
-                        <MiniBar value={device.storage} warn={80} />
-                    </div>
+                    ))}
                 </div>
             </div>
 
-            {/* Expandable config detail */}
+            {/* Expandable detail */}
             {open && (
-                <div className="border-t border-slate-200 bg-white p-4 space-y-4">
-                    {/* Meta row */}
+                <div className="p-4 space-y-4" style={{ borderTop: `1px solid ${meta.border}`, background: 'rgba(10,8,20,0.6)' }}>
+                    {/* Meta */}
                     <div className="grid grid-cols-3 gap-3">
-                        <div className="bg-slate-50 rounded-xl p-3">
-                            <p className="text-[10px] text-slate-400 mb-0.5">Device ID</p>
-                            <p className="text-xs font-semibold text-slate-700 font-mono">{device.id}</p>
-                        </div>
-                        <div className="bg-slate-50 rounded-xl p-3">
-                            <p className="text-[10px] text-slate-400 mb-0.5">Enrolled</p>
-                            <p className="text-xs font-semibold text-slate-700">{device.enrolled}</p>
-                        </div>
-                        <div className="bg-slate-50 rounded-xl p-3">
-                            <p className="text-[10px] text-slate-400 mb-0.5">Last Sync</p>
-                            <p className="text-xs font-semibold text-slate-700">{device.lastSync}</p>
-                        </div>
+                        {[
+                            { label: 'Device ID', value: device.id, mono: true },
+                            { label: 'Enrolled', value: device.enrolled },
+                            { label: 'Last Sync', value: device.lastSync },
+                        ].map(item => (
+                            <div key={item.label} className="rounded-xl p-3"
+                                style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.12)' }}>
+                                <p className="text-[10px] mb-0.5" style={{ color: '#5a4f72' }}>{item.label}</p>
+                                <p className="text-xs font-semibold" style={{ color: '#c4b5fd', fontFamily: item.mono ? 'monospace' : undefined }}>{item.value}</p>
+                            </div>
+                        ))}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                        {/* MDM Configuration */}
+                        {/* MDM config */}
                         <div>
-                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2.5">MDM Configuration</p>
+                            <p className="text-[10px] font-semibold uppercase tracking-wider mb-2.5" style={{ color: '#5a4f72' }}>MDM Configuration</p>
                             <div className="space-y-2">
-                                <ConfigCheck ok={device.mdmProfile}  label="MDM Profile Installed" />
-                                <ConfigCheck ok={device.encryption}  label="Disk Encryption" />
-                                <ConfigCheck ok={device.passcode}    label="Passcode Enforced" />
+                                <ConfigCheck ok={device.mdmProfile} label="MDM Profile Installed" />
+                                <ConfigCheck ok={device.encryption} label="Disk Encryption" />
+                                <ConfigCheck ok={device.passcode} label="Passcode Enforced" />
                             </div>
                         </div>
 
-                        {/* Apps */}
+                        {/* App management */}
                         <div>
-                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2.5">App Management</p>
-                            <div className="bg-slate-50 rounded-xl p-3 flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center">
+                            <p className="text-[10px] font-semibold uppercase tracking-wider mb-2.5" style={{ color: '#5a4f72' }}>App Management</p>
+                            <div className="rounded-xl p-3 flex items-center gap-3"
+                                style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.12)' }}>
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+                                    style={{ background: 'linear-gradient(135deg,#7c3aed,#a855f7)', boxShadow: '0 0 10px rgba(124,58,237,0.3)' }}>
                                     <Package size={14} className="text-white" />
                                 </div>
                                 <div>
-                                    <p className="text-lg font-bold text-slate-800">{device.appCount}</p>
-                                    <p className="text-[10px] text-slate-400">Managed apps</p>
+                                    <p className="text-lg font-bold" style={{ color: '#e2d9f3' }}>{device.appCount}</p>
+                                    <p className="text-[10px]" style={{ color: '#5a4f72' }}>Managed apps</p>
                                 </div>
                             </div>
                         </div>
@@ -150,15 +172,19 @@ function DeviceCard({ device }) {
 
                     {/* Actions */}
                     <div className="flex gap-2 pt-1">
-                        <button className="flex-1 py-2 text-xs font-medium text-violet-600 bg-violet-50 hover:bg-violet-100 rounded-xl transition-colors flex items-center justify-center gap-1.5">
-                            <RefreshCw size={12} /> Force Sync
-                        </button>
-                        <button className="flex-1 py-2 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors flex items-center justify-center gap-1.5">
-                            <Lock size={12} /> Lock Device
-                        </button>
-                        <button className="flex-1 py-2 text-xs font-medium text-rose-500 bg-rose-50 hover:bg-rose-100 rounded-xl transition-colors flex items-center justify-center gap-1.5">
-                            <AlertCircle size={12} /> Wipe
-                        </button>
+                        {[
+                            { icon: RefreshCw, label: 'Force Sync', bg: 'rgba(124,58,237,0.15)', hov: 'rgba(124,58,237,0.25)', color: '#c4b5fd', border: 'rgba(139,92,246,0.25)' },
+                            { icon: Lock, label: 'Lock Device', bg: 'rgba(100,116,139,0.12)', hov: 'rgba(100,116,139,0.2)', color: '#94a3b8', border: 'rgba(100,116,139,0.2)' },
+                            { icon: AlertCircle, label: 'Wipe', bg: 'rgba(239,68,68,0.1)', hov: 'rgba(239,68,68,0.18)', color: '#f87171', border: 'rgba(239,68,68,0.2)' },
+                        ].map(btn => (
+                            <button key={btn.label}
+                                className="flex-1 py-2 text-xs font-medium rounded-xl flex items-center justify-center gap-1.5 transition-all"
+                                style={{ background: btn.bg, color: btn.color, border: `1px solid ${btn.border}` }}
+                                onMouseEnter={e => e.currentTarget.style.background = btn.hov}
+                                onMouseLeave={e => e.currentTarget.style.background = btn.bg}>
+                                <btn.icon size={12} /> {btn.label}
+                            </button>
+                        ))}
                     </div>
                 </div>
             )}
@@ -166,74 +192,75 @@ function DeviceCard({ device }) {
     );
 }
 
-// ── Main export ───────────────────────────────────────────────────────────────
+/* ── Main export ─────────────────────────────────────────────────────────── */
 export const UserDeviceDetail = ({ user, onBack }) => {
-    const active   = user.devices.filter(d => d.status === 'active').length;
-    const warn      = user.devices.filter(d => d.status === 'warning').length;
-    const offline   = user.devices.filter(d => d.status === 'offline').length;
+    const active  = user.devices.filter(d => d.status === 'active').length;
+    const warn    = user.devices.filter(d => d.status === 'warning').length;
+    const offline = user.devices.filter(d => d.status === 'offline').length;
+
+    const summaryCards = [
+        { val: active, label: 'Active', bg: 'rgba(52,211,153,0.08)', border: 'rgba(52,211,153,0.2)', color: '#6ee7b7' },
+        ...(warn > 0 ? [{ val: warn, label: 'Warning', bg: 'rgba(251,191,36,0.08)', border: 'rgba(251,191,36,0.2)', color: '#fcd34d' }] : []),
+        ...(offline > 0 ? [{ val: offline, label: 'Offline', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)', color: '#94a3b8' }] : []),
+        { val: user.totalDevices, label: 'Total', bg: 'rgba(124,58,237,0.1)', border: 'rgba(139,92,246,0.25)', color: '#c4b5fd' },
+    ];
+
+    const roleStyle = user.role === 'Sub Admin'
+        ? { background: 'rgba(99,102,241,0.15)', color: '#a5b4fc' }
+        : { background: 'rgba(100,116,139,0.12)', color: '#94a3b8' };
 
     return (
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center gap-4">
-                <button
-                    onClick={onBack}
-                    className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800 bg-white border border-slate-200 px-3.5 py-2 rounded-xl hover:bg-slate-50 transition-colors"
-                >
+                <button onClick={onBack}
+                    className="flex items-center gap-2 text-sm font-medium px-3.5 py-2 rounded-xl transition-all"
+                    style={{ color: '#9c8fc0', background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.2)' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = '#c4b5fd'; e.currentTarget.style.borderColor = 'rgba(139,92,246,0.4)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = '#9c8fc0'; e.currentTarget.style.borderColor = 'rgba(139,92,246,0.2)'; }}>
                     <ArrowLeft size={15} /> Back
                 </button>
                 <div className="flex-1">
-                    <h1 className="text-xl font-bold text-slate-800">Device Overview</h1>
-                    <p className="text-sm text-slate-400 mt-0.5">All devices registered under this user</p>
+                    <h1 className="text-xl font-bold" style={{ color: '#e2d9f3' }}>Device Overview</h1>
+                    <p className="text-sm mt-0.5" style={{ color: '#5a4f72' }}>All devices registered under this user</p>
                 </div>
             </div>
 
             {/* User profile banner */}
-            <div className={`bg-white rounded-2xl border border-slate-100 shadow-sm p-5`}>
-                <div className="flex items-center gap-4">
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${user.avatarGrad} flex items-center justify-center text-white text-lg font-bold shadow-sm shrink-0`}>
+            <div className="rounded-2xl p-5"
+                style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.15)', backdropFilter: 'blur(12px)' }}>
+                <div className="flex items-center gap-4 flex-wrap">
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${user.avatarGrad} flex items-center justify-center text-white text-lg font-bold shrink-0`}
+                        style={{ boxShadow: '0 0 20px rgba(124,58,237,0.3)' }}>
                         {user.avatar}
                     </div>
                     <div className="flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                            <h2 className="text-lg font-bold text-slate-800">{user.name}</h2>
-                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${user.role === 'Sub Admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'}`}>
+                            <h2 className="text-lg font-bold" style={{ color: '#e2d9f3' }}>{user.name}</h2>
+                            <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={roleStyle}>
                                 {user.role}
                             </span>
                         </div>
-                        <p className="text-sm text-slate-400 mt-0.5">{user.email} · {user.region}</p>
-                        <p className="text-xs text-slate-400 mt-1">Last seen: {user.lastSeen}</p>
+                        <p className="text-sm mt-0.5" style={{ color: '#7c6fa0' }}>{user.email} · {user.region}</p>
+                        <p className="text-xs mt-1" style={{ color: '#5a4f72' }}>Last seen: {user.lastSeen}</p>
                     </div>
 
                     {/* Device health summary */}
                     <div className="hidden sm:flex items-center gap-3">
-                        <div className="text-center px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-2xl">
-                            <p className="text-xl font-bold text-emerald-700">{active}</p>
-                            <p className="text-[10px] text-emerald-600">Active</p>
-                        </div>
-                        {warn > 0 && (
-                            <div className="text-center px-4 py-2 bg-amber-50 border border-amber-100 rounded-2xl">
-                                <p className="text-xl font-bold text-amber-700">{warn}</p>
-                                <p className="text-[10px] text-amber-600">Warning</p>
+                        {summaryCards.map(card => (
+                            <div key={card.label} className="text-center px-4 py-2 rounded-2xl"
+                                style={{ background: card.bg, border: `1px solid ${card.border}` }}>
+                                <p className="text-xl font-bold" style={{ color: card.color }}>{card.val}</p>
+                                <p className="text-[10px]" style={{ color: card.color, opacity: 0.7 }}>{card.label}</p>
                             </div>
-                        )}
-                        {offline > 0 && (
-                            <div className="text-center px-4 py-2 bg-slate-50 border border-slate-200 rounded-2xl">
-                                <p className="text-xl font-bold text-slate-600">{offline}</p>
-                                <p className="text-[10px] text-slate-400">Offline</p>
-                            </div>
-                        )}
-                        <div className="text-center px-4 py-2 bg-violet-50 border border-violet-100 rounded-2xl">
-                            <p className="text-xl font-bold text-violet-700">{user.totalDevices}</p>
-                            <p className="text-[10px] text-violet-600">Total</p>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>
 
-            {/* Device cards grid */}
+            {/* Device cards */}
             <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-1">
+                <p className="text-xs font-semibold uppercase tracking-wider mb-3 px-1" style={{ color: '#5a4f72' }}>
                     {user.totalDevices} Registered Device{user.totalDevices !== 1 ? 's' : ''}
                 </p>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

@@ -1,10 +1,8 @@
 // pages/RegisteredUsers.js
 import React, { useState } from 'react';
 import {
-    Users, Smartphone, Search, Eye,
-    ShieldCheck, ShieldAlert, WifiOff,
-    Cpu, Download, CheckCircle,
-    UserPlus, ChevronLeft, ChevronRight
+    Users, Smartphone, Search, Eye, ShieldCheck, ShieldAlert,
+    WifiOff, Cpu, Download, CheckCircle, ChevronLeft, ChevronRight, Filter
 } from 'lucide-react';
 import { UserDeviceDetail } from './UserDeviceDetails';
 
@@ -125,25 +123,31 @@ const REGISTERED_USERS = [
 const PAGE_SIZE = 5;
 
 const SUMMARY = [
-    { label: "Total Users", value: REGISTERED_USERS.length, icon: Users, gradient: "from-violet-400 to-purple-500", bg: "from-violet-50 to-purple-50", border: "border-violet-100" },
-    { label: "Total Devices", value: REGISTERED_USERS.reduce((a, u) => a + u.totalDevices, 0), icon: Smartphone, gradient: "from-sky-400 to-blue-500", bg: "from-sky-50 to-blue-50", border: "border-sky-100" },
-    { label: "Compliant", value: REGISTERED_USERS.flatMap(u => u.devices).filter(d => d.status === "compliant").length, icon: ShieldCheck, gradient: "from-emerald-400 to-teal-500", bg: "from-emerald-50 to-teal-50", border: "border-emerald-100" },
-    { label: "Needs Attention", value: REGISTERED_USERS.flatMap(u => u.devices).filter(d => d.status !== "compliant").length, icon: ShieldAlert, gradient: "from-rose-400 to-pink-500", bg: "from-rose-50 to-pink-50", border: "border-rose-100" },
+    { label: "Total Users", value: REGISTERED_USERS.length, icon: Users, grad: "from-violet-500 to-purple-600" },
+    { label: "Total Devices", value: REGISTERED_USERS.reduce((a, u) => a + u.totalDevices, 0), icon: Smartphone, grad: "from-sky-500 to-blue-500" },
+    { label: "Compliant", value: REGISTERED_USERS.flatMap(u => u.devices).filter(d => d.status === "compliant").length, icon: ShieldCheck, grad: "from-emerald-500 to-teal-500" },
+    { label: "Needs Attention", value: REGISTERED_USERS.flatMap(u => u.devices).filter(d => d.status !== "compliant").length, icon: ShieldAlert, grad: "from-rose-500 to-pink-500" },
 ];
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+/* ── Helpers ─────────────────────────────────────────────────────────────── */
 function RoleBadge({ role }) {
+    const style = role === "Sub Admin"
+        ? { background: 'rgba(99,102,241,0.15)', color: '#a5b4fc' }
+        : { background: 'rgba(100,116,139,0.12)', color: '#94a3b8' };
     return (
-        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${role === "Sub Admin" ? "bg-indigo-100 text-indigo-700" : "bg-slate-100 text-slate-600"}`}>
+        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={style}>
             {role}
         </span>
     );
 }
 
 function UserStatusDot({ status }) {
+    const active = status === 'active';
     return (
-        <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${status === 'active' ? 'text-emerald-600' : 'text-slate-400'}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${status === 'active' ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium"
+            style={{ color: active ? '#34d399' : '#64748b' }}>
+            <span className="w-1.5 h-1.5 rounded-full"
+                style={{ background: active ? '#34d399' : '#475569' }} />
             {status}
         </span>
     );
@@ -156,17 +160,20 @@ function HealthPills({ devices }) {
     return (
         <div className="flex items-center gap-1.5 flex-wrap">
             {compliant > 0 && (
-                <span className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                <span className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(52,211,153,0.12)', color: '#6ee7b7' }}>
                     <CheckCircle size={9} /> {compliant}
                 </span>
             )}
             {warn > 0 && (
-                <span className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                <span className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(251,191,36,0.12)', color: '#fcd34d' }}>
                     ⚠ {warn}
                 </span>
             )}
             {offline > 0 && (
-                <span className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                <span className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(100,116,139,0.15)', color: '#94a3b8' }}>
                     <WifiOff size={9} /> {offline}
                 </span>
             )}
@@ -174,121 +181,118 @@ function HealthPills({ devices }) {
     );
 }
 
-// ── Ellipsis Pagination ───────────────────────────────────────────────────────
+/* ── Pagination ──────────────────────────────────────────────────────────── */
 function Pagination({ current, total, onChange }) {
     if (total <= 1) return null;
-
     const pages = [];
-    const delta = 1; // pages around current
-
+    const delta = 1;
     for (let i = 1; i <= total; i++) {
-        if (
-            i === 1 ||
-            i === total ||
-            (i >= current - delta && i <= current + delta)
-        ) {
+        if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
             pages.push(i);
-        } else if (
-            i === current - delta - 1 ||
-            i === current + delta + 1
-        ) {
+        } else if (i === current - delta - 1 || i === current + delta + 1) {
             pages.push('...');
         }
     }
-
-    // dedupe consecutive ellipsis
     const deduped = pages.filter((p, i) => !(p === '...' && pages[i - 1] === '...'));
 
     return (
         <div className="flex items-center gap-1">
-            <button
-                onClick={() => onChange(current - 1)}
-                disabled={current === 1}
-                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
+            <button onClick={() => onChange(current - 1)} disabled={current === 1}
+                className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                style={{ color: '#7c6fa0' }}
+                onMouseEnter={e => { if (current > 1) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                 <ChevronLeft size={15} />
             </button>
-
             {deduped.map((p, i) =>
                 p === '...' ? (
-                    <span key={`ellipsis-${i}`} className="w-8 h-8 flex items-center justify-center text-xs text-slate-400">
-                        …
-                    </span>
+                    <span key={`e${i}`} className="w-8 h-8 flex items-center justify-center text-xs" style={{ color: '#5a4f72' }}>…</span>
                 ) : (
-                    <button
-                        key={p}
-                        onClick={() => onChange(p)}
-                        className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${p === current
-                                ? "bg-violet-600 text-white shadow-sm"
-                                : "text-slate-600 hover:bg-slate-100"
-                            }`}
-                    >
+                    <button key={p} onClick={() => onChange(p)}
+                        className="w-8 h-8 rounded-lg text-xs font-medium transition-all"
+                        style={p === current
+                            ? { background: 'linear-gradient(135deg,#7c3aed,#9333ea)', color: '#fff', boxShadow: '0 0 10px rgba(124,58,237,0.4)' }
+                            : { color: '#7c6fa0' }}
+                        onMouseEnter={e => { if (p !== current) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
+                        onMouseLeave={e => { if (p !== current) e.currentTarget.style.background = 'transparent'; }}>
                         {p}
                     </button>
                 )
             )}
-
-            <button
-                onClick={() => onChange(current + 1)}
-                disabled={current === total}
-                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
+            <button onClick={() => onChange(current + 1)} disabled={current === total}
+                className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                style={{ color: '#7c6fa0' }}
+                onMouseEnter={e => { if (current < total) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                 <ChevronRight size={15} />
             </button>
         </div>
     );
 }
 
-// ── Mobile Card ───────────────────────────────────────────────────────────────
+/* ── Panel shell ─────────────────────────────────────────────────────────── */
+const Panel = ({ children, className = "" }) => (
+    <div className={`rounded-2xl ${className}`}
+        style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.15)', backdropFilter: 'blur(12px)' }}>
+        {children}
+    </div>
+);
+
+/* ── Mobile card ─────────────────────────────────────────────────────────── */
 function UserCard({ user, onView }) {
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 space-y-3">
-            {/* Top row */}
+        <Panel className="p-4 space-y-3">
             <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${user.avatarGrad} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
                     {user.avatar}
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-semibold text-slate-800 truncate">{user.name}</p>
+                        <p className="text-sm font-semibold truncate" style={{ color: '#e2d9f3' }}>{user.name}</p>
                         <RoleBadge role={user.role} />
                     </div>
-                    <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                    <p className="text-xs truncate" style={{ color: '#5a4f72' }}>{user.email}</p>
                 </div>
                 <UserStatusDot status={user.status} />
             </div>
 
-            {/* Meta row */}
             <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="bg-slate-50 rounded-xl py-2">
-                    <p className="text-xs font-bold text-slate-800">{user.totalDevices}</p>
-                    <p className="text-[10px] text-slate-400">Devices</p>
-                </div>
-                <div className="bg-slate-50 rounded-xl py-2">
-                    <p className="text-xs font-bold text-slate-800">{user.region}</p>
-                    <p className="text-[10px] text-slate-400">Region</p>
-                </div>
-                <div className="bg-slate-50 rounded-xl py-2">
-                    <p className="text-xs font-bold text-slate-800">{user.lastSeen}</p>
-                    <p className="text-[10px] text-slate-400">Last seen</p>
-                </div>
+                {[
+                    { val: user.totalDevices, label: 'Devices' },
+                    { val: user.region, label: 'Region' },
+                    { val: user.lastSeen, label: 'Last seen' },
+                ].map(item => (
+                    <div key={item.label} className="rounded-xl py-2"
+                        style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.1)' }}>
+                        <p className="text-xs font-bold" style={{ color: '#c4b5fd' }}>{item.val}</p>
+                        <p className="text-[10px]" style={{ color: '#5a4f72' }}>{item.label}</p>
+                    </div>
+                ))}
             </div>
 
-            {/* Health + action */}
-            <div className="flex items-center justify-between pt-1 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-1" style={{ borderTop: '1px solid rgba(139,92,246,0.1)' }}>
                 <HealthPills devices={user.devices} />
-                <button
-                    onClick={() => onView(user)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-violet-600 bg-violet-50 hover:bg-violet-100 rounded-xl transition-colors"
-                >
+                <button onClick={() => onView(user)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl transition-all"
+                    style={{ background: 'rgba(124,58,237,0.15)', color: '#c4b5fd', border: '1px solid rgba(139,92,246,0.25)' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,58,237,0.25)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(124,58,237,0.15)'}>
                     <Eye size={13} /> View
                 </button>
             </div>
-        </div>
+        </Panel>
     );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
+/* ── Input / select shared dark style ───────────────────────────────────── */
+const darkFieldStyle = {
+    background: 'rgba(15,12,25,0.8)',
+    border: '1px solid rgba(139,92,246,0.2)',
+    color: '#c4b5fd',
+    outline: 'none',
+};
+
+/* ── Main component ──────────────────────────────────────────────────────── */
 export const RegisteredUsers = () => {
     const [search, setSearch] = useState('');
     const [filterRole, setFilterRole] = useState('All');
@@ -308,15 +312,8 @@ export const RegisteredUsers = () => {
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
     const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-    const handleFilterChange = (setter) => (e) => {
-        setter(e.target.value);
-        setPage(1);
-    };
-
-    const handleSearch = (e) => {
-        setSearch(e.target.value);
-        setPage(1);
-    };
+    const handleFilterChange = setter => e => { setter(e.target.value); setPage(1); };
+    const handleSearch = e => { setSearch(e.target.value); setPage(1); };
 
     if (selectedUser) {
         return <UserDeviceDetail user={selectedUser} onBack={() => setSelectedUser(null)} />;
@@ -327,130 +324,137 @@ export const RegisteredUsers = () => {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-xl font-bold text-slate-800">Registered Users</h1>
-                    <p className="text-sm text-slate-400 mt-0.5">All enrolled users and their assigned devices</p>
+                    <h1 className="text-xl font-bold" style={{ color: '#e2d9f3' }}>Registered Users</h1>
+                    <p className="text-sm mt-0.5" style={{ color: '#5a4f72' }}>All enrolled users and their assigned devices</p>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-400 bg-white border border-slate-100 px-3 py-2 rounded-xl">
-                    <Cpu size={12} className="text-violet-400" />
+                <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl"
+                    style={{ color: '#7c6fa0', background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.15)' }}>
+                    <Cpu size={12} style={{ color: '#a78bfa' }} />
                     <span className="hidden sm:inline">All systems operational</span>
                     <span className="sm:hidden">Live</span>
                 </div>
             </div>
 
-            {/* Summary stats */}
+            {/* Summary cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 {SUMMARY.map(s => (
-                    <div key={s.label} className={`rounded-2xl border ${s.border} bg-gradient-to-br ${s.bg} p-4 flex items-center gap-3`}>
-                        <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-sm shrink-0`}>
+                    <div key={s.label} className="rounded-2xl p-4 flex items-center gap-3 transition-all"
+                        style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.15)', backdropFilter: 'blur(12px)' }}
+                        onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.35)'}
+                        onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}>
+                        <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${s.grad} flex items-center justify-center shrink-0`}
+                            style={{ boxShadow: '0 0 10px rgba(124,58,237,0.25)' }}>
                             <s.icon size={15} className="text-white" />
                         </div>
                         <div>
-                            <p className="text-[10px] font-medium text-slate-500">{s.label}</p>
-                            <p className="text-xl font-bold text-slate-800">{s.value}</p>
+                            <p className="text-[10px] font-medium" style={{ color: '#5a4f72' }}>{s.label}</p>
+                            <p className="text-xl font-bold" style={{ color: '#e2d9f3' }}>{s.value}</p>
                         </div>
                     </div>
                 ))}
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+            <Panel className="p-4">
                 <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative flex-1">
-                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                        <input
-                            type="text"
-                            placeholder="Search by name, email, or region…"
-                            value={search}
-                            onChange={handleSearch}
-                            className="w-full pl-9 pr-3.5 py-2.5 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400 transition-all"
-                        />
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
+                        <input type="text" placeholder="Search by name, email, or region…"
+                            value={search} onChange={handleSearch}
+                            className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
+                            style={{ ...darkFieldStyle, '::placeholder': { color: '#5a4f72' } }}
+                            onFocus={e => e.target.style.borderColor = 'rgba(139,92,246,0.5)'}
+                            onBlur={e => e.target.style.borderColor = 'rgba(139,92,246,0.2)'} />
                     </div>
-                    <select
-                        value={filterRole}
-                        onChange={handleFilterChange(setFilterRole)}
-                        className="px-3.5 py-2.5 text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300"
-                    >
-                        {['All', 'Sub Admin', 'User'].map(r => <option key={r}>{r}</option>)}
-                    </select>
-                    <select
-                        value={filterStatus}
-                        onChange={handleFilterChange(setFilterStatus)}
-                        className="px-3.5 py-2.5 text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300"
-                    >
-                        {['All', 'active', 'inactive'].map(s => <option key={s}>{s}</option>)}
-                    </select>
-                    <button className="flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm text-slate-500 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors">
+                    {[
+                        { value: filterRole, setter: setFilterRole, opts: ['All', 'Sub Admin', 'User'] },
+                        { value: filterStatus, setter: setFilterStatus, opts: ['All', 'active', 'inactive'] },
+                    ].map((sel, i) => (
+                        <select key={i} value={sel.value} onChange={handleFilterChange(sel.setter)}
+                            className="px-3.5 py-2.5 text-sm rounded-xl"
+                            style={darkFieldStyle}>
+                            {sel.opts.map(o => <option key={o} value={o} style={{ background: '#0f0c19' }}>{o}</option>)}
+                        </select>
+                    ))}
+                    <button className="flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm rounded-xl transition-colors"
+                        style={{ color: '#7c6fa0', background: 'rgba(15,12,25,0.8)', border: '1px solid rgba(139,92,246,0.2)' }}
+                        onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.4)'}
+                        onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.2)'}>
                         <Download size={14} /> <span className="hidden sm:inline">Export</span>
                     </button>
                 </div>
-            </div>
+            </Panel>
 
-            {/* ── Mobile cards (< md) ── */}
+            {/* Mobile cards */}
             <div className="md:hidden space-y-3">
                 {paginated.length === 0 ? (
-                    <div className="text-center py-16 text-slate-400 bg-white rounded-2xl border border-slate-100">
+                    <div className="text-center py-16 rounded-2xl"
+                        style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.15)', color: '#5a4f72' }}>
                         <Users size={32} className="mx-auto mb-3 opacity-30" />
                         <p className="text-sm">No users match your filters</p>
                     </div>
-                ) : (
-                    paginated.map(user => (
-                        <UserCard key={user.id} user={user} onView={setSelectedUser} />
-                    ))
-                )}
+                ) : paginated.map(user => (
+                    <UserCard key={user.id} user={user} onView={setSelectedUser} />
+                ))}
             </div>
 
-            {/* ── Desktop table (≥ md) ── */}
-            <div className="hidden md:block bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            {/* Desktop table */}
+            <Panel className="hidden md:block overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-slate-100 bg-slate-50">
-                                <th className="text-left text-xs font-semibold text-slate-500 px-5 py-3.5">User</th>
-                                <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3.5">Devices</th>
-                                <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3.5">Region</th>
-                                <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3.5">Status</th>
-                                <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3.5">Last Seen</th>
-                                <th className="text-xs font-semibold text-slate-500 px-4 py-3.5">Actions</th>
+                            <tr style={{ borderBottom: '1px solid rgba(139,92,246,0.12)', background: 'rgba(139,92,246,0.05)' }}>
+                                {['User', 'Devices', 'Region', 'Status', 'Last Seen', 'Actions'].map(h => (
+                                    <th key={h} className="text-left text-xs font-semibold px-5 py-3.5"
+                                        style={{ color: '#7c6fa0' }}>{h}</th>
+                                ))}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50">
+                        <tbody>
                             {paginated.length === 0 ? (
                                 <tr>
-                                    <td colSpan={8} className="text-center py-16 text-slate-400">
+                                    <td colSpan={6} className="text-center py-16" style={{ color: '#5a4f72' }}>
                                         <div className="flex flex-col items-center gap-2">
                                             <Users size={32} className="opacity-30" />
                                             <p className="text-sm">No users match your filters</p>
                                         </div>
                                     </td>
                                 </tr>
-                            ) : paginated.map(user => (
-                                <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+                            ) : paginated.map((user, idx) => (
+                                <tr key={user.id}
+                                    style={{ borderBottom: idx < paginated.length - 1 ? '1px solid rgba(139,92,246,0.08)' : 'none' }}
+                                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,0.06)'}
+                                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                                     <td className="px-5 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${user.avatarGrad} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
                                                 {user.avatar}
                                             </div>
                                             <div>
-                                                <p className="text-sm font-semibold text-slate-800">{user.name}</p>
-                                                <p className="text-xs text-slate-400">{user.email}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-sm font-semibold" style={{ color: '#e2d9f3' }}>{user.name}</p>
+                                                    <RoleBadge role={user.role} />
+                                                </div>
+                                                <p className="text-xs" style={{ color: '#5a4f72' }}>{user.email}</p>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-4 py-4">
                                         <div className="flex items-center gap-1.5">
-                                            <Smartphone size={13} className="text-slate-400" />
-                                            <span className="text-sm font-semibold text-slate-800">{user.totalDevices}</span>
-                                            <span className="text-xs text-slate-400">devices</span>
+                                            <Smartphone size={13} style={{ color: '#5a4f72' }} />
+                                            <span className="text-sm font-semibold" style={{ color: '#e2d9f3' }}>{user.totalDevices}</span>
+                                            <span className="text-xs" style={{ color: '#5a4f72' }}>devices</span>
                                         </div>
                                     </td>
-                                    <td className="px-4 py-4 text-sm text-slate-600">{user.region}</td>
+                                    <td className="px-4 py-4 text-sm" style={{ color: '#9c8fc0' }}>{user.region}</td>
                                     <td className="px-4 py-4"><UserStatusDot status={user.status} /></td>
-                                    <td className="px-4 py-4 text-xs text-slate-500">{user.lastSeen}</td>
+                                    <td className="px-4 py-4 text-xs" style={{ color: '#5a4f72' }}>{user.lastSeen}</td>
                                     <td className="px-4 py-4">
-                                        <button
-                                            onClick={() => setSelectedUser(user)}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-violet-600 bg-violet-50 hover:bg-violet-100 rounded-xl transition-colors"
-                                        >
+                                        <button onClick={() => setSelectedUser(user)}
+                                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl transition-all"
+                                            style={{ background: 'rgba(124,58,237,0.15)', color: '#c4b5fd', border: '1px solid rgba(139,92,246,0.25)' }}
+                                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,58,237,0.25)'}
+                                            onMouseLeave={e => e.currentTarget.style.background = 'rgba(124,58,237,0.15)'}>
                                             <Eye size={13} /> View
                                         </button>
                                     </td>
@@ -460,22 +464,23 @@ export const RegisteredUsers = () => {
                     </table>
                 </div>
 
-                {/* Pagination footer */}
-                <div className="px-5 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50">
-                    <p className="text-xs text-slate-400">
+                {/* Pagination */}
+                <div className="px-5 py-3 flex items-center justify-between"
+                    style={{ borderTop: '1px solid rgba(139,92,246,0.1)', background: 'rgba(139,92,246,0.03)' }}>
+                    <p className="text-xs" style={{ color: '#5a4f72' }}>
                         Showing {Math.min((page - 1) * PAGE_SIZE + 1, filtered.length)}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} users
                     </p>
                     <Pagination current={page} total={totalPages} onChange={setPage} />
                 </div>
-            </div>
+            </Panel>
 
-            {/* Mobile pagination footer */}
-            <div className="md:hidden bg-white rounded-2xl border border-slate-100 shadow-sm px-4 py-3 flex items-center justify-between">
-                <p className="text-xs text-slate-400">
+            {/* Mobile pagination */}
+            <Panel className="md:hidden px-4 py-3 flex items-center justify-between">
+                <p className="text-xs" style={{ color: '#5a4f72' }}>
                     {Math.min((page - 1) * PAGE_SIZE + 1, filtered.length)}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}
                 </p>
                 <Pagination current={page} total={totalPages} onChange={setPage} />
-            </div>
+            </Panel>
         </div>
     );
 };

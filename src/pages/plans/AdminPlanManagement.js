@@ -1,4 +1,4 @@
-// pages/AdminPlanManagement.js
+// pages/AdminPlanManagement.js - Dark Theme
 import React, { useState, useEffect } from 'react';
 import {
     Plus, Edit, Trash2, Eye, X, Check, AlertCircle,
@@ -9,6 +9,19 @@ import {
 } from 'lucide-react';
 import ActivePlanUsers from './ActivePlanUsers';
 import InactivePlanUsers from './InactivePlanUsers';
+
+const Panel = ({ children, className = "" }) => (
+    <div
+        className={`rounded-2xl p-5 ${className}`}
+        style={{
+            background: 'rgba(20, 16, 36, 0.8)',
+            border: '1px solid rgba(139,92,246,0.15)',
+            backdropFilter: 'blur(12px)',
+        }}
+    >
+        {children}
+    </div>
+);
 
 // ── Mock API Service ──────────────────────────────────────────────────────────
 const PlanService = {
@@ -164,7 +177,6 @@ const PlanService = {
         return filtered;
     },
     getActiveUsers: (planId) => {
-        // Simulate fetching active users for a plan
         const users = JSON.parse(localStorage.getItem('planUsers') || '[]');
         return users.filter(u => u.planId === planId && u.status === 'active');
     },
@@ -300,54 +312,77 @@ const PlanFormModal = ({ isOpen, onClose, plan, onSave }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-                    <h2 className="text-lg font-bold text-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
+            <div 
+                className="rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
+                style={{
+                    background: 'rgba(20, 16, 36, 0.95)',
+                    border: '1px solid rgba(139,92,246,0.2)',
+                }}
+            >
+                <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'rgba(139,92,246,0.15)' }}>
+                    <h2 className="text-lg font-bold" style={{ color: '#e2d9f3' }}>
                         {plan ? 'Edit Plan' : 'Create New Plan'}
                     </h2>
                     <button
                         onClick={onClose}
-                        className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors"
+                        className="p-1.5 rounded-lg transition-colors"
+                        style={{ color: '#5a4f72' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = '#c4b5fd'; e.currentTarget.style.background = 'rgba(139,92,246,0.1)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#5a4f72'; e.currentTarget.style.background = 'transparent'; }}
                     >
-                        <X size={20} className="text-slate-400" />
+                        <X size={20} />
                     </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6">
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                                Plan Name <span className="text-red-500">*</span>
+                            <label className="block text-sm font-medium mb-1.5" style={{ color: '#9c8fc0' }}>
+                                Plan Name <span style={{ color: '#f87171' }}>*</span>
                             </label>
                             <input
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className={`w-full px-4 py-2.5 rounded-xl border ${errors.name ? 'border-red-300 focus:ring-red-300' : 'border-slate-200 focus:ring-violet-300'} focus:outline-none focus:ring-2 focus:border-transparent transition-all`}
+                                className="w-full px-4 py-2.5 rounded-xl transition-all"
+                                style={{
+                                    background: 'rgba(139,92,246,0.08)',
+                                    border: errors.name ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(139,92,246,0.15)',
+                                    color: '#e2d9f3'
+                                }}
                                 placeholder="e.g., Professional Plan"
+                                onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
+                                onBlur={e => e.currentTarget.style.borderColor = errors.name ? 'rgba(239,68,68,0.3)' : 'rgba(139,92,246,0.15)'}
                             />
-                            {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
+                            {errors.name && <p className="mt-1 text-xs" style={{ color: '#f87171' }}>{errors.name}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                                Description <span className="text-red-500">*</span>
+                            <label className="block text-sm font-medium mb-1.5" style={{ color: '#9c8fc0' }}>
+                                Description <span style={{ color: '#f87171' }}>*</span>
                             </label>
                             <textarea
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 rows={3}
-                                className={`w-full px-4 py-2.5 rounded-xl border ${errors.description ? 'border-red-300 focus:ring-red-300' : 'border-slate-200 focus:ring-violet-300'} focus:outline-none focus:ring-2 focus:border-transparent transition-all resize-none`}
+                                className="w-full px-4 py-2.5 rounded-xl transition-all resize-none"
+                                style={{
+                                    background: 'rgba(139,92,246,0.08)',
+                                    border: errors.description ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(139,92,246,0.15)',
+                                    color: '#e2d9f3'
+                                }}
                                 placeholder="Describe what this plan offers..."
+                                onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
+                                onBlur={e => e.currentTarget.style.borderColor = errors.description ? 'rgba(239,68,68,0.3)' : 'rgba(139,92,246,0.15)'}
                             />
-                            {errors.description && <p className="mt-1 text-xs text-red-500">{errors.description}</p>}
+                            {errors.description && <p className="mt-1 text-xs" style={{ color: '#f87171' }}>{errors.description}</p>}
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                                    Price ($) <span className="text-red-500">*</span>
+                                <label className="block text-sm font-medium mb-1.5" style={{ color: '#9c8fc0' }}>
+                                    Price ($) <span style={{ color: '#f87171' }}>*</span>
                                 </label>
                                 <input
                                     type="number"
@@ -355,27 +390,41 @@ const PlanFormModal = ({ isOpen, onClose, plan, onSave }) => {
                                     step="0.01"
                                     value={formData.price}
                                     onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                                    className={`w-full px-4 py-2.5 rounded-xl border ${errors.price ? 'border-red-300 focus:ring-red-300' : 'border-slate-200 focus:ring-violet-300'} focus:outline-none focus:ring-2 focus:border-transparent transition-all`}
+                                    className="w-full px-4 py-2.5 rounded-xl transition-all"
+                                    style={{
+                                        background: 'rgba(139,92,246,0.08)',
+                                        border: errors.price ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(139,92,246,0.15)',
+                                        color: '#e2d9f3'
+                                    }}
+                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
+                                    onBlur={e => e.currentTarget.style.borderColor = errors.price ? 'rgba(239,68,68,0.3)' : 'rgba(139,92,246,0.15)'}
                                 />
-                                {errors.price && <p className="mt-1 text-xs text-red-500">{errors.price}</p>}
+                                {errors.price && <p className="mt-1 text-xs" style={{ color: '#f87171' }}>{errors.price}</p>}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                                <label className="block text-sm font-medium mb-1.5" style={{ color: '#9c8fc0' }}>
                                     Discount Type
                                 </label>
                                 <select
                                     value={formData.discountType}
                                     onChange={(e) => setFormData({ ...formData, discountType: e.target.value })}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-transparent transition-all bg-white"
+                                    className="w-full px-4 py-2.5 rounded-xl transition-all"
+                                    style={{
+                                        background: 'rgba(139,92,246,0.08)',
+                                        border: '1px solid rgba(139,92,246,0.15)',
+                                        color: '#e2d9f3'
+                                    }}
+                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
+                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
                                 >
-                                    <option value="percentage">Percentage (%)</option>
-                                    <option value="fixed">Fixed ($)</option>
+                                    <option value="percentage" style={{ background: '#1a1430', color: '#e2d9f3' }}>Percentage (%)</option>
+                                    <option value="fixed" style={{ background: '#1a1430', color: '#e2d9f3' }}>Fixed ($)</option>
                                 </select>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                                <label className="block text-sm font-medium mb-1.5" style={{ color: '#9c8fc0' }}>
                                     Discount Amount
                                 </label>
                                 <input
@@ -384,15 +433,22 @@ const PlanFormModal = ({ isOpen, onClose, plan, onSave }) => {
                                     step={formData.discountType === 'percentage' ? 1 : 0.01}
                                     value={formData.discountAmount}
                                     onChange={(e) => setFormData({ ...formData, discountAmount: parseFloat(e.target.value) || 0 })}
-                                    className={`w-full px-4 py-2.5 rounded-xl border ${errors.discountAmount ? 'border-red-300 focus:ring-red-300' : 'border-slate-200 focus:ring-violet-300'} focus:outline-none focus:ring-2 focus:border-transparent transition-all`}
+                                    className="w-full px-4 py-2.5 rounded-xl transition-all"
+                                    style={{
+                                        background: 'rgba(139,92,246,0.08)',
+                                        border: errors.discountAmount ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(139,92,246,0.15)',
+                                        color: '#e2d9f3'
+                                    }}
+                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
+                                    onBlur={e => e.currentTarget.style.borderColor = errors.discountAmount ? 'rgba(239,68,68,0.3)' : 'rgba(139,92,246,0.15)'}
                                 />
-                                {errors.discountAmount && <p className="mt-1 text-xs text-red-500">{errors.discountAmount}</p>}
+                                {errors.discountAmount && <p className="mt-1 text-xs" style={{ color: '#f87171' }}>{errors.discountAmount}</p>}
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                                Features <span className="text-red-500">*</span>
+                            <label className="block text-sm font-medium mb-1.5" style={{ color: '#9c8fc0' }}>
+                                Features <span style={{ color: '#f87171' }}>*</span>
                             </label>
                             <div className="space-y-2">
                                 {formData.features.map((feature, index) => (
@@ -401,24 +457,37 @@ const PlanFormModal = ({ isOpen, onClose, plan, onSave }) => {
                                             type="text"
                                             value={feature}
                                             onChange={(e) => updateFeature(index, e.target.value)}
-                                            className={`flex-1 px-4 py-2.5 rounded-xl border ${errors.features ? 'border-red-300 focus:ring-red-300' : 'border-slate-200 focus:ring-violet-300'} focus:outline-none focus:ring-2 focus:border-transparent transition-all`}
+                                            className="flex-1 px-4 py-2.5 rounded-xl transition-all"
+                                            style={{
+                                                background: 'rgba(139,92,246,0.08)',
+                                                border: errors.features ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(139,92,246,0.15)',
+                                                color: '#e2d9f3'
+                                            }}
                                             placeholder={`Feature ${index + 1}`}
+                                            onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
+                                            onBlur={e => e.currentTarget.style.borderColor = errors.features ? 'rgba(239,68,68,0.3)' : 'rgba(139,92,246,0.15)'}
                                         />
                                         <button
                                             type="button"
                                             onClick={() => removeFeature(index)}
-                                            className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors"
+                                            className="p-2 rounded-lg transition-colors"
+                                            style={{ color: '#f87171' }}
                                             disabled={formData.features.length === 1}
+                                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; }}
+                                            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                                         >
                                             <X size={18} />
                                         </button>
                                     </div>
                                 ))}
-                                {errors.features && <p className="mt-1 text-xs text-red-500">{errors.features}</p>}
+                                {errors.features && <p className="mt-1 text-xs" style={{ color: '#f87171' }}>{errors.features}</p>}
                                 <button
                                     type="button"
                                     onClick={addFeature}
-                                    className="flex items-center gap-1.5 text-sm text-violet-600 hover:text-violet-700 font-medium transition-colors"
+                                    className="flex items-center gap-1.5 text-sm font-medium transition-colors"
+                                    style={{ color: '#a78bfa' }}
+                                    onMouseEnter={e => { e.currentTarget.style.color = '#c4b5fd'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.color = '#a78bfa'; }}
                                 >
                                     <Plus size={16} /> Add Feature
                                 </button>
@@ -427,16 +496,22 @@ const PlanFormModal = ({ isOpen, onClose, plan, onSave }) => {
                     </form>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 bg-slate-50 rounded-b-2xl">
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t rounded-b-2xl" style={{ borderColor: 'rgba(139,92,246,0.15)' }}>
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-xl transition-colors"
+                        className="px-4 py-2 text-sm font-medium rounded-xl transition-colors"
+                        style={{ color: '#9c8fc0' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleSubmit}
-                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 rounded-xl transition-colors shadow-sm"
+                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white rounded-xl transition-all shadow-sm"
+                        style={{ background: 'linear-gradient(135deg, #7c3aed, #9333ea)' }}
+                        onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 20px rgba(124,58,237,0.4)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 0 10px rgba(124,58,237,0.2)'; }}
                     >
                         <Save size={16} />
                         {plan ? 'Update Plan' : 'Create Plan'}
@@ -466,117 +541,132 @@ const ViewPlanModal = ({ isOpen, onClose, plan, onViewActiveUsers, onViewInactiv
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
+            <div 
+                className="rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
+                style={{
+                    background: 'rgba(20, 16, 36, 0.95)',
+                    border: '1px solid rgba(139,92,246,0.2)',
+                }}
+            >
+                <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'rgba(139,92,246,0.15)' }}>
                     <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plan.status === 'active' ? 'from-emerald-400 to-teal-500' : 'from-slate-400 to-slate-500'} flex items-center justify-center`}>
                             <Package size={20} className="text-white" />
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-slate-800">{plan.name}</h2>
-                            <p className="text-xs text-slate-400">
+                            <h2 className="text-lg font-bold" style={{ color: '#e2d9f3' }}>{plan.name}</h2>
+                            <p className="text-xs" style={{ color: '#5a4f72' }}>
                                 Created {new Date(plan.createdAt).toLocaleDateString()}
                             </p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors"
+                        className="p-1.5 rounded-lg transition-colors"
+                        style={{ color: '#5a4f72' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = '#c4b5fd'; e.currentTarget.style.background = 'rgba(139,92,246,0.1)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#5a4f72'; e.currentTarget.style.background = 'transparent'; }}
                     >
-                        <X size={20} className="text-slate-400" />
+                        <X size={20} />
                     </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="bg-slate-50 rounded-xl p-4">
-                            <p className="text-xs text-slate-400 font-medium">Status</p>
+                        <div className="rounded-xl p-4" style={{ background: 'rgba(139,92,246,0.08)' }}>
+                            <p className="text-xs font-medium" style={{ color: '#5a4f72' }}>Status</p>
                             <div className="flex items-center gap-2 mt-1">
                                 <span className={`w-2 h-2 rounded-full ${plan.status === 'active' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                                <span className="text-sm font-semibold text-slate-800 capitalize">{plan.status}</span>
+                                <span className="text-sm font-semibold capitalize" style={{ color: '#e2d9f3' }}>{plan.status}</span>
                             </div>
                         </div>
-                        <div className="bg-slate-50 rounded-xl p-4">
-                            <p className="text-xs text-slate-400 font-medium">Pricing</p>
+                        <div className="rounded-xl p-4" style={{ background: 'rgba(139,92,246,0.08)' }}>
+                            <p className="text-xs font-medium" style={{ color: '#5a4f72' }}>Pricing</p>
                             <div className="flex items-baseline gap-2 mt-1">
-                                <span className="text-2xl font-bold text-slate-800">${getFinalPrice().toFixed(2)}</span>
+                                <span className="text-2xl font-bold" style={{ color: '#e2d9f3' }}>${getFinalPrice().toFixed(2)}</span>
                                 {plan.discountAmount > 0 && (
-                                    <span className="text-sm text-slate-400 line-through">${plan.price}</span>
+                                    <span className="text-sm line-through" style={{ color: '#5a4f72' }}>${plan.price}</span>
                                 )}
-                                <span className="text-xs text-emerald-600 font-medium ml-auto">{getDiscountDisplay()}</span>
+                                <span className="text-xs font-medium ml-auto" style={{ color: '#34d399' }}>{getDiscountDisplay()}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-slate-50 rounded-xl p-4">
-                        <p className="text-xs text-slate-400 font-medium mb-1">Description</p>
-                        <p className="text-sm text-slate-700">{plan.description}</p>
+                    <div className="rounded-xl p-4" style={{ background: 'rgba(139,92,246,0.08)' }}>
+                        <p className="text-xs font-medium mb-1" style={{ color: '#5a4f72' }}>Description</p>
+                        <p className="text-sm" style={{ color: '#c4b5fd' }}>{plan.description}</p>
                     </div>
 
                     <div>
-                        <p className="text-xs text-slate-400 font-medium mb-3">Features</p>
+                        <p className="text-xs font-medium mb-3" style={{ color: '#5a4f72' }}>Features</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {plan.features.map((feature, index) => (
-                                <div key={index} className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2">
-                                    <Check size={14} className="text-emerald-500" />
-                                    <span className="text-sm text-slate-700">{feature}</span>
+                                <div key={index} className="flex items-center gap-2 rounded-lg px-3 py-2" style={{ background: 'rgba(139,92,246,0.06)' }}>
+                                    <Check size={14} style={{ color: '#34d399' }} />
+                                    <span className="text-sm" style={{ color: '#c4b5fd' }}>{feature}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    {/* User Statistics */}
-                    <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-xl p-4 border border-violet-100">
-                        <p className="text-xs text-slate-400 font-medium mb-3">Subscriber Statistics</p>
+                    <div className="rounded-xl p-4" style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.1)' }}>
+                        <p className="text-xs font-medium mb-3" style={{ color: '#5a4f72' }}>Subscriber Statistics</p>
                         <div className="grid grid-cols-3 gap-3">
                             <div className="text-center">
-                                <p className="text-2xl font-bold text-slate-800">{plan.subscriberCount || 0}</p>
-                                <p className="text-[10px] text-slate-400">Total</p>
+                                <p className="text-2xl font-bold" style={{ color: '#e2d9f3' }}>{plan.subscriberCount || 0}</p>
+                                <p className="text-[10px]" style={{ color: '#5a4f72' }}>Total</p>
                             </div>
                             <div 
-                                className="text-center cursor-pointer hover:bg-white/50 rounded-lg p-2 transition-colors"
+                                className="text-center cursor-pointer rounded-lg p-2 transition-colors"
                                 onClick={() => plan.activeUsers > 0 && onViewActiveUsers()}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(52,211,153,0.08)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                             >
-                                <p className={`text-2xl font-bold ${plan.activeUsers > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>
+                                <p className={`text-2xl font-bold ${plan.activeUsers > 0 ? 'text-emerald-400' : ''}`} style={{ color: plan.activeUsers > 0 ? '#34d399' : '#5a4f72' }}>
                                     {plan.activeUsers || 0}
                                 </p>
-                                <p className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
+                                <p className="text-[10px] flex items-center justify-center gap-1" style={{ color: '#5a4f72' }}>
                                     <UserCheck size={12} /> Active
-                                    {plan.activeUsers > 0 && <span className="text-[8px] text-emerald-500">↗</span>}
+                                    {plan.activeUsers > 0 && <span className="text-[8px]" style={{ color: '#34d399' }}>↗</span>}
                                 </p>
                             </div>
                             <div 
-                                className="text-center cursor-pointer hover:bg-white/50 rounded-lg p-2 transition-colors"
+                                className="text-center cursor-pointer rounded-lg p-2 transition-colors"
                                 onClick={() => plan.inactiveUsers > 0 && onViewInactiveUsers()}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(100,116,139,0.08)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                             >
-                                <p className={`text-2xl font-bold ${plan.inactiveUsers > 0 ? 'text-slate-500' : 'text-slate-400'}`}>
+                                <p className={`text-2xl font-bold ${plan.inactiveUsers > 0 ? '' : ''}`} style={{ color: plan.inactiveUsers > 0 ? '#94a3b8' : '#5a4f72' }}>
                                     {plan.inactiveUsers || 0}
                                 </p>
-                                <p className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
+                                <p className="text-[10px] flex items-center justify-center gap-1" style={{ color: '#5a4f72' }}>
                                     <UserX size={12} /> Inactive
-                                    {plan.inactiveUsers > 0 && <span className="text-[8px] text-slate-500">↗</span>}
+                                    {plan.inactiveUsers > 0 && <span className="text-[8px]" style={{ color: '#94a3b8' }}>↗</span>}
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 text-xs text-slate-400 bg-slate-50 rounded-xl p-4">
+                    <div className="grid grid-cols-2 gap-4 text-xs rounded-xl p-4" style={{ background: 'rgba(139,92,246,0.06)' }}>
                         <div>
-                            <span className="font-medium">Created</span>
-                            <p>{new Date(plan.createdAt).toLocaleString()}</p>
+                            <span className="font-medium" style={{ color: '#5a4f72' }}>Created</span>
+                            <p style={{ color: '#9c8fc0' }}>{new Date(plan.createdAt).toLocaleString()}</p>
                         </div>
                         <div>
-                            <span className="font-medium">Last Updated</span>
-                            <p>{new Date(plan.updatedAt).toLocaleString()}</p>
+                            <span className="font-medium" style={{ color: '#5a4f72' }}>Last Updated</span>
+                            <p style={{ color: '#9c8fc0' }}>{new Date(plan.updatedAt).toLocaleString()}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 bg-slate-50 rounded-b-2xl">
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t rounded-b-2xl" style={{ borderColor: 'rgba(139,92,246,0.15)' }}>
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-200 rounded-xl transition-colors"
+                        className="px-4 py-2 text-sm font-medium rounded-xl transition-colors"
+                        style={{ color: '#9c8fc0' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                     >
                         Close
                     </button>
@@ -605,7 +695,6 @@ const AdminPlanManagement = () => {
         setTimeout(() => {
             generateMockUsers();
             const data = PlanService.getAll();
-            // Update user counts
             const allUsers = JSON.parse(localStorage.getItem('planUsers') || '[]');
             const updatedData = data.map(plan => ({
                 ...plan,
@@ -697,15 +786,18 @@ const AdminPlanManagement = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-xl font-bold text-slate-800">Plan Management</h1>
-                    <p className="text-sm text-slate-400 mt-0.5">Create, manage, and customize subscription plans</p>
+                    <h1 className="text-xl font-bold" style={{ color: '#e2d9f3' }}>Plan Management</h1>
+                    <p className="text-sm mt-0.5" style={{ color: '#5a4f72' }}>Create, manage, and customize subscription plans</p>
                 </div>
                 <button
                     onClick={() => {
                         setSelectedPlan(null);
                         setIsFormOpen(true);
                     }}
-                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 rounded-xl transition-colors shadow-sm shrink-0"
+                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white rounded-xl transition-colors shadow-sm shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #7c3aed, #9333ea)' }}
+                    onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 20px rgba(124,58,237,0.4)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 0 10px rgba(124,58,237,0.2)'; }}
                 >
                     <Plus size={16} /> New Plan
                 </button>
@@ -714,90 +806,120 @@ const AdminPlanManagement = () => {
             {/* Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 {[
-                    { label: 'Total Plans', value: plans.length, icon: Package, color: 'from-violet-400 to-purple-500', bg: 'from-violet-50 to-purple-50' },
-                    { label: 'Active Plans', value: plans.filter(p => p.status === 'active').length, icon: Check, color: 'from-emerald-400 to-teal-500', bg: 'from-emerald-50 to-teal-50' },
-                    { label: 'Inactive Plans', value: plans.filter(p => p.status === 'inactive').length, icon: Archive, color: 'from-slate-400 to-slate-500', bg: 'from-slate-50 to-slate-100' },
-                    { label: 'Total Subscribers', value: plans.reduce((acc, p) => acc + (p.subscriberCount || 0), 0), icon: Users, color: 'from-amber-400 to-orange-500', bg: 'from-amber-50 to-orange-50' },
+                    { label: 'Total Plans', value: plans.length, icon: Package, grad: 'from-violet-500 to-purple-600' },
+                    { label: 'Active Plans', value: plans.filter(p => p.status === 'active').length, icon: Check, grad: 'from-emerald-500 to-teal-500' },
+                    { label: 'Inactive Plans', value: plans.filter(p => p.status === 'inactive').length, icon: Archive, grad: 'from-slate-400 to-slate-500' },
+                    { label: 'Total Subscribers', value: plans.reduce((acc, p) => acc + (p.subscriberCount || 0), 0), icon: Users, grad: 'from-amber-400 to-orange-500' },
                 ].map(s => (
-                    <div key={s.label} className={`rounded-2xl border border-slate-100 bg-gradient-to-br ${s.bg} p-4 flex items-center gap-3`}>
-                        <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center shadow-sm shrink-0`}>
+                    <div key={s.label} className="rounded-2xl p-4 flex items-center gap-3 transition-all"
+                        style={{
+                            background: 'rgba(20, 16, 36, 0.8)',
+                            border: '1px solid rgba(139,92,246,0.15)',
+                            backdropFilter: 'blur(12px)',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.35)'}
+                        onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
+                    >
+                        <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${s.grad} flex items-center justify-center shrink-0`}
+                            style={{ boxShadow: '0 0 10px rgba(124,58,237,0.3)' }}>
                             <s.icon size={15} className="text-white" />
                         </div>
                         <div>
-                            <p className="text-[10px] font-medium text-slate-500">{s.label}</p>
-                            <p className="text-xl font-bold text-slate-800">{s.value}</p>
+                            <p className="text-[10px] font-medium" style={{ color: '#5a4f72' }}>{s.label}</p>
+                            <p className="text-xl font-bold" style={{ color: '#e2d9f3' }}>{s.value}</p>
                         </div>
                     </div>
                 ))}
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+            <Panel>
                 <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative flex-1">
-                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
                         <input
                             type="text"
                             placeholder="Search plans by name or description…"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full pl-9 pr-3.5 py-2.5 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400 transition-all"
+                            className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
+                            style={{
+                                background: 'rgba(139,92,246,0.08)',
+                                border: '1px solid rgba(139,92,246,0.15)',
+                                color: '#e2d9f3'
+                            }}
+                            onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
+                            onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
+                            placeholder="Search plans..."
                         />
                     </div>
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="px-3.5 py-2.5 text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300"
+                        className="px-3.5 py-2.5 text-sm rounded-xl transition-all"
+                        style={{
+                            background: 'rgba(139,92,246,0.08)',
+                            border: '1px solid rgba(139,92,246,0.15)',
+                            color: '#e2d9f3'
+                        }}
+                        onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
+                        onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
                     >
-                        {['All', 'active', 'inactive'].map(s => <option key={s}>{s}</option>)}
+                        {['All', 'active', 'inactive'].map(s => <option key={s} value={s} style={{ background: '#1a1430', color: '#e2d9f3' }}>{s}</option>)}
                     </select>
                     <button
                         onClick={loadPlans}
-                        className="flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm text-slate-500 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors"
+                        className="flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm rounded-xl transition-colors"
+                        style={{ color: '#9c8fc0', border: '1px solid rgba(139,92,246,0.15)' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; e.currentTarget.style.color = '#c4b5fd'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9c8fc0'; }}
                     >
                         <RefreshCw size={14} /> <span className="hidden sm:inline">Refresh</span>
                     </button>
                 </div>
-            </div>
+            </Panel>
 
             {/* Table */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <Panel className="overflow-hidden p-0">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-slate-100 bg-slate-50">
-                                <th className="text-left text-xs font-semibold text-slate-500 px-5 py-3.5">Plan</th>
-                                <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3.5">Price</th>
-                                <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3.5">Discount</th>
-                                <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3.5">Features</th>
-                                <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3.5">Users</th>
-                                <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3.5">Status</th>
-                                <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3.5">Updated</th>
-                                <th className="text-xs font-semibold text-slate-500 px-4 py-3.5">Actions</th>
+                            <tr className="border-b" style={{ borderColor: 'rgba(139,92,246,0.1)' }}>
+                                <th className="text-left text-xs font-semibold px-5 py-3.5" style={{ color: '#5a4f72' }}>Plan</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Price</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Discount</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Features</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Users</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Status</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Updated</th>
+                                <th className="text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50">
+                        <tbody className="divide-y" style={{ borderColor: 'rgba(139,92,246,0.06)' }}>
                             {loading ? (
                                 <tr>
                                     <td colSpan={8} className="text-center py-16">
                                         <div className="flex flex-col items-center gap-2">
                                             <div className="animate-spin rounded-full h-8 w-8 border-2 border-violet-400 border-t-transparent" />
-                                            <p className="text-sm text-slate-400">Loading plans...</p>
+                                            <p className="text-sm" style={{ color: '#5a4f72' }}>Loading plans...</p>
                                         </div>
                                     </td>
                                 </tr>
                             ) : filtered.length === 0 ? (
                                 <tr>
-                                    <td colSpan={8} className="text-center py-16 text-slate-400">
+                                    <td colSpan={8} className="text-center py-16">
                                         <div className="flex flex-col items-center gap-2">
-                                            <Package size={32} className="opacity-30" />
-                                            <p className="text-sm">No plans match your filters</p>
+                                            <Package size={32} className="opacity-30" style={{ color: '#5a4f72' }} />
+                                            <p className="text-sm" style={{ color: '#5a4f72' }}>No plans match your filters</p>
                                             <button
                                                 onClick={() => {
                                                     setSearch('');
                                                     setFilterStatus('All');
                                                 }}
-                                                className="text-xs text-violet-600 hover:text-violet-700 font-medium"
+                                                className="text-xs font-medium transition-colors"
+                                                style={{ color: '#a78bfa' }}
+                                                onMouseEnter={e => { e.currentTarget.style.color = '#c4b5fd'; }}
+                                                onMouseLeave={e => { e.currentTarget.style.color = '#a78bfa'; }}
                                             >
                                                 Clear filters
                                             </button>
@@ -805,45 +927,54 @@ const AdminPlanManagement = () => {
                                     </td>
                                 </tr>
                             ) : filtered.map(plan => (
-                                <tr key={plan.id} className="hover:bg-slate-50 transition-colors">
+                                <tr key={plan.id} className="transition-colors" style={{ borderColor: 'rgba(139,92,246,0.06)' }}
+                                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.04)'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                                >
                                     <td className="px-5 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${plan.status === 'active' ? 'from-emerald-400 to-teal-500' : 'from-slate-400 to-slate-500'} flex items-center justify-center`}>
                                                 <Package size={14} className="text-white" />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-semibold text-slate-800">{plan.name}</p>
-                                                <p className="text-xs text-slate-400 truncate max-w-[180px]">{plan.description}</p>
+                                                <p className="text-sm font-semibold" style={{ color: '#e2d9f3' }}>{plan.name}</p>
+                                                <p className="text-xs truncate max-w-[180px]" style={{ color: '#5a4f72' }}>{plan.description}</p>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-4 py-4">
-                                        <p className="text-sm font-bold text-slate-800">${plan.price}</p>
+                                        <p className="text-sm font-bold" style={{ color: '#e2d9f3' }}>${plan.price}</p>
                                     </td>
                                     <td className="px-4 py-4">
                                         {plan.discountAmount > 0 ? (
-                                            <span className="text-xs font-medium px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
+                                            <span className="text-xs font-medium px-2 py-1 rounded-full" style={{ background: 'rgba(52,211,153,0.12)', color: '#34d399' }}>
                                                 {plan.discountType === 'percentage' ? `${plan.discountAmount}%` : `$${plan.discountAmount}`}
                                             </span>
                                         ) : (
-                                            <span className="text-xs text-slate-400">—</span>
+                                            <span className="text-xs" style={{ color: '#5a4f72' }}>—</span>
                                         )}
                                     </td>
                                     <td className="px-4 py-4">
-                                        <span className="text-sm text-slate-600">{plan.features.length}</span>
+                                        <span className="text-sm" style={{ color: '#9c8fc0' }}>{plan.features.length}</span>
                                     </td>
                                     <td className="px-4 py-4">
                                         <div className="flex items-center gap-1.5">
                                             <button
                                                 onClick={() => handleViewActiveUsers(plan)}
-                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.activeUsers > 0 ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 cursor-pointer' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
+                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.activeUsers > 0 ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                                                style={plan.activeUsers > 0 ? { background: 'rgba(52,211,153,0.12)', color: '#34d399' } : { background: 'rgba(100,116,139,0.08)', color: '#5a4f72' }}
+                                                onMouseEnter={e => { if (plan.activeUsers > 0) { e.currentTarget.style.background = 'rgba(52,211,153,0.2)'; } }}
+                                                onMouseLeave={e => { if (plan.activeUsers > 0) { e.currentTarget.style.background = 'rgba(52,211,153,0.12)'; } }}
                                             >
                                                 <UserCheck size={12} />
                                                 {plan.activeUsers || 0}
                                             </button>
                                             <button
                                                 onClick={() => handleViewInactiveUsers(plan)}
-                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.inactiveUsers > 0 ? 'bg-slate-100 text-slate-600 hover:bg-slate-200 cursor-pointer' : 'bg-slate-50 text-slate-300 cursor-not-allowed'}`}
+                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.inactiveUsers > 0 ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                                                style={plan.inactiveUsers > 0 ? { background: 'rgba(100,116,139,0.12)', color: '#94a3b8' } : { background: 'rgba(100,116,139,0.08)', color: '#5a4f72' }}
+                                                onMouseEnter={e => { if (plan.inactiveUsers > 0) { e.currentTarget.style.background = 'rgba(100,116,139,0.2)'; } }}
+                                                onMouseLeave={e => { if (plan.inactiveUsers > 0) { e.currentTarget.style.background = 'rgba(100,116,139,0.12)'; } }}
                                             >
                                                 <UserX size={12} />
                                                 {plan.inactiveUsers || 0}
@@ -853,37 +984,49 @@ const AdminPlanManagement = () => {
                                     <td className="px-4 py-4">
                                         <button
                                             onClick={() => handleToggleStatus(plan.id)}
-                                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${plan.status === 'active'
-                                                    ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
-                                                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                                                }`}
+                                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors`}
+                                            style={plan.status === 'active'
+                                                ? { background: 'rgba(52,211,153,0.12)', color: '#34d399' }
+                                                : { background: 'rgba(100,116,139,0.08)', color: '#94a3b8' }
+                                            }
+                                            onMouseEnter={e => { e.currentTarget.style.background = plan.status === 'active' ? 'rgba(52,211,153,0.2)' : 'rgba(100,116,139,0.15)'; }}
+                                            onMouseLeave={e => { e.currentTarget.style.background = plan.status === 'active' ? 'rgba(52,211,153,0.12)' : 'rgba(100,116,139,0.08)'; }}
                                         >
                                             <span className={`w-1.5 h-1.5 rounded-full ${plan.status === 'active' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                                             {plan.status}
                                         </button>
                                     </td>
-                                    <td className="px-4 py-4 text-xs text-slate-400">
+                                    <td className="px-4 py-4 text-xs" style={{ color: '#5a4f72' }}>
                                         {new Date(plan.updatedAt).toLocaleDateString()}
                                     </td>
                                     <td className="px-4 py-4">
                                         <div className="flex items-center gap-1.5">
                                             <button
                                                 onClick={() => handleView(plan)}
-                                                className="p-1.5 text-slate-400 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                                                className="p-1.5 rounded-lg transition-colors"
+                                                style={{ color: '#5a4f72' }}
+                                                onMouseEnter={e => { e.currentTarget.style.color = '#a78bfa'; e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; }}
+                                                onMouseLeave={e => { e.currentTarget.style.color = '#5a4f72'; e.currentTarget.style.background = 'transparent'; }}
                                                 title="View"
                                             >
                                                 <Eye size={16} />
                                             </button>
                                             <button
                                                 onClick={() => handleEdit(plan)}
-                                                className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                className="p-1.5 rounded-lg transition-colors"
+                                                style={{ color: '#5a4f72' }}
+                                                onMouseEnter={e => { e.currentTarget.style.color = '#60a5fa'; e.currentTarget.style.background = 'rgba(96,165,250,0.08)'; }}
+                                                onMouseLeave={e => { e.currentTarget.style.color = '#5a4f72'; e.currentTarget.style.background = 'transparent'; }}
                                                 title="Edit"
                                             >
                                                 <Edit size={16} />
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(plan.id)}
-                                                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                className="p-1.5 rounded-lg transition-colors"
+                                                style={{ color: '#5a4f72' }}
+                                                onMouseEnter={e => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.background = 'rgba(248,113,113,0.08)'; }}
+                                                onMouseLeave={e => { e.currentTarget.style.color = '#5a4f72'; e.currentTarget.style.background = 'transparent'; }}
                                                 title="Delete"
                                             >
                                                 <Trash2 size={16} />
@@ -896,12 +1039,12 @@ const AdminPlanManagement = () => {
                     </table>
                 </div>
 
-                <div className="px-5 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50">
-                    <p className="text-xs text-slate-400">
+                <div className="px-5 py-3 border-t flex items-center justify-between" style={{ borderColor: 'rgba(139,92,246,0.1)' }}>
+                    <p className="text-xs" style={{ color: '#5a4f72' }}>
                         Showing {filtered.length} of {plans.length} plans
                     </p>
                 </div>
-            </div>
+            </Panel>
 
             {/* Modals */}
             <PlanFormModal
