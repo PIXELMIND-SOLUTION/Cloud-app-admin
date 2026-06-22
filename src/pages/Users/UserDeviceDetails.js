@@ -4,7 +4,11 @@ import {
     ArrowLeft, Smartphone, Tablet, Monitor, Watch,
     Battery, HardDrive, RefreshCw, Lock,
     CheckCircle, XCircle, Package, AlertCircle,
-    ChevronDown, ChevronUp
+    ChevronDown, ChevronUp,
+    Delete,
+    Trash,
+    StopCircle,
+    StopCircleIcon
 } from 'lucide-react';
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
@@ -173,9 +177,9 @@ function DeviceCard({ device }) {
                     {/* Actions */}
                     <div className="flex gap-2 pt-1">
                         {[
-                            { icon: RefreshCw, label: 'Force Sync', bg: 'rgba(124,58,237,0.15)', hov: 'rgba(124,58,237,0.25)', color: '#c4b5fd', border: 'rgba(139,92,246,0.25)' },
+                            { icon: StopCircleIcon, label: 'Force Stop', bg: 'rgba(124,58,237,0.15)', hov: 'rgba(124,58,237,0.25)', color: '#c4b5fd', border: 'rgba(139,92,246,0.25)' },
                             { icon: Lock, label: 'Lock Device', bg: 'rgba(100,116,139,0.12)', hov: 'rgba(100,116,139,0.2)', color: '#94a3b8', border: 'rgba(100,116,139,0.2)' },
-                            { icon: AlertCircle, label: 'Wipe', bg: 'rgba(239,68,68,0.1)', hov: 'rgba(239,68,68,0.18)', color: '#f87171', border: 'rgba(239,68,68,0.2)' },
+                            { icon: Trash, label: 'Remove', bg: 'rgba(239,68,68,0.1)', hov: 'rgba(239,68,68,0.18)', color: '#f87171', border: 'rgba(239,68,68,0.2)' },
                         ].map(btn => (
                             <button key={btn.label}
                                 className="flex-1 py-2 text-xs font-medium rounded-xl flex items-center justify-center gap-1.5 transition-all"

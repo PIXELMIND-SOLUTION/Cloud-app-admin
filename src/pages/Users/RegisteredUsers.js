@@ -9,17 +9,17 @@ import { UserDeviceDetail } from './UserDeviceDetails';
 // ── Data ─────────────────────────────────────────────────────────────────────
 const REGISTERED_USERS = [
     {
-        id: 1, name: "Raj Mehta", email: "raj.mehta@corp.io", role: "Sub Admin",
+        id: 1, name: "Raj Mehta", email: "raj.mehta@corp.io", role: "Sub Admin",mobile: "+91 9876543210",
         avatar: "RM", avatarGrad: "from-violet-500 to-purple-600", region: "Mumbai",
         totalDevices: 3, activeDevices: 3, status: "active", lastSeen: "2m ago",
         devices: [
             { id: "D001", name: "iPhone 14 Pro", os: "iOS 17.4", model: "Apple", type: "mobile", status: "active", battery: 82, storage: 61, enrolled: "12 Jan 2024", appCount: 24, mdmProfile: true, encryption: true, passcode: true, lastSync: "5m ago" },
             { id: "D002", name: "iPad Air 5", os: "iPadOS 17.2", model: "Apple", type: "tablet", status: "active", battery: 74, storage: 48, enrolled: "20 Feb 2024", appCount: 18, mdmProfile: true, encryption: true, passcode: true, lastSync: "1h ago" },
-            { id: "D003", name: "MacBook Pro 14", os: "macOS 14.3", model: "Apple", type: "laptop", status: "active", battery: 45, storage: 78, enrolled: "5 Mar 2024", appCount: 32, mdmProfile: true, encryption: false, passcode: true, lastSync: "3h ago" },
+            { id: "D003", name: "MacBook Pro 14", os: "macOS 14.3", model: "Apple", type: "laptop", status: "inactive", battery: 45, storage: 78, enrolled: "5 Mar 2024", appCount: 32, mdmProfile: true, encryption: false, passcode: true, lastSync: "3h ago" },
         ],
     },
     {
-        id: 2, name: "Priya Nair", email: "priya.nair@corp.io", role: "User",
+        id: 2, name: "Priya Nair", email: "priya.nair@corp.io", role: "User",mobile: "+91 9876543210",
         avatar: "PN", avatarGrad: "from-sky-500 to-blue-600", region: "Bangalore",
         totalDevices: 2, activeDevices: 1, status: "active", lastSeen: "18m ago",
         devices: [
