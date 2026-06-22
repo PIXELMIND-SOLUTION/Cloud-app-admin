@@ -75,20 +75,28 @@ const AnimatedBackground = () => (
             { top: '52%', left: '46%', delay: '1.8s', duration: '6.5s' },
             { top: '88%', left: '38%', delay: '2.8s', duration: '4s' },
             { top: '10%', left: '64%', delay: '4s', duration: '5s' },
+            { top: '28%', left: '15%', delay: '1s', duration: '5.8s' },
+            { top: '70%', left: '85%', delay: '3s', duration: '6.2s' },
         ].map((p, i) => (
             <div
                 key={i}
                 className="absolute rounded-full pointer-events-none"
                 style={{
-                    width: 3, height: 3,
-                    top: p.top, left: p.left,
-                    background: '#a78bfa',
+                    width: 4,
+                    height: 4,
+                    top: p.top,
+                    left: p.left,
+                    background: '#ffffff',               // fixed white
+                    boxShadow: `
+                0 0 8px #ffffff,
+                0 0 16px #d946ef,
+                0 0 24px #9333ea
+            `,                                   // purple neon glow
                     animation: `particleFloat ${p.duration} ease-in-out infinite`,
                     animationDelay: p.delay,
                 }}
             />
         ))}
-
         {/* Expanding rings */}
         {[
             { size: 240, top: '-80px', right: '120px', delay: '0s' },

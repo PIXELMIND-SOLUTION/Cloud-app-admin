@@ -51,7 +51,7 @@ const PlanService = {
             },
             {
                 id: 2,
-                name: "Pro",
+                name: "Professional",
                 description: "Advanced features for growing businesses",
                 price: 99,
                 discountType: "percentage",
@@ -73,7 +73,7 @@ const PlanService = {
             },
             {
                 id: 3,
-                name: "Enterprise",
+                name: "Bussiness",
                 description: "Full-featured solution for large organizations",
                 price: 299,
                 discountType: "fixed",
@@ -94,49 +94,6 @@ const PlanService = {
                 subscriberCount: 67,
                 activeUsers: 0,
                 inactiveUsers: 67
-            },
-            {
-                id: 4,
-                name: "Starter",
-                description: "Perfect for individuals and freelancers",
-                price: 9,
-                discountType: "percentage",
-                discountAmount: 0,
-                features: [
-                    "Up to 3 users",
-                    "2GB storage",
-                    "Email support",
-                    "Basic features"
-                ],
-                status: "active",
-                createdAt: "2024-02-01T09:00:00Z",
-                updatedAt: "2024-02-01T09:00:00Z",
-                subscriberCount: 234,
-                activeUsers: 198,
-                inactiveUsers: 36
-            },
-            {
-                id: 5,
-                name: "Business",
-                description: "Comprehensive solution for mid-sized companies",
-                price: 149,
-                discountType: "fixed",
-                discountAmount: 20,
-                features: [
-                    "Up to 100 users",
-                    "200GB storage",
-                    "Priority support",
-                    "Mobile app access",
-                    "Advanced analytics",
-                    "API access",
-                    "SSO integration"
-                ],
-                status: "inactive",
-                createdAt: "2024-01-25T11:00:00Z",
-                updatedAt: "2024-02-15T13:20:00Z",
-                subscriberCount: 89,
-                activeUsers: 0,
-                inactiveUsers: 89
             }
         ];
         localStorage.setItem('plans', JSON.stringify(defaultPlans));

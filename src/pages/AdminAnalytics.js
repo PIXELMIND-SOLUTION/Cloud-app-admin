@@ -105,10 +105,8 @@ const AnalyticsService = {
         },
         byPlan: {
             Basic: 234,
-            Pro: 456,
-            Enterprise: 189,
-            Starter: 234,
-            Business: 134
+            Professional: 456,
+            Bussiness: 189
         },
         retention: {
             '30 days': 92,

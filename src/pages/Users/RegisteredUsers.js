@@ -19,7 +19,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 2, name: "Priya Nair", email: "priya.nair@corp.io", role: "User",mobile: "+91 9876543210",
+        id: 2, name: "Priya Nair", email: "priya.nair@corp.io", role: "User", mobile: "+91 9876543210",
         avatar: "PN", avatarGrad: "from-sky-500 to-blue-600", region: "Bangalore",
         totalDevices: 2, activeDevices: 1, status: "active", lastSeen: "18m ago",
         devices: [
@@ -28,7 +28,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 3, name: "Arjun Das", email: "arjun.das@corp.io", role: "User",
+        id: 3, name: "Arjun Das", email: "arjun.das@corp.io", role: "User", mobile: "+91 9876543210",
         avatar: "AD", avatarGrad: "from-emerald-500 to-teal-600", region: "Delhi",
         totalDevices: 4, activeDevices: 4, status: "active", lastSeen: "Just now",
         devices: [
@@ -39,7 +39,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 4, name: "Meera Patel", email: "meera.patel@corp.io", role: "User",
+        id: 4, name: "Meera Patel", email: "meera.patel@corp.io", role: "User", mobile: "+91 9876543210",
         avatar: "MP", avatarGrad: "from-rose-500 to-pink-600", region: "Chennai",
         totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "1h ago",
         devices: [
@@ -47,7 +47,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 5, name: "Vikram Singh", email: "vikram.singh@corp.io", role: "Sub Admin",
+        id: 5, name: "Vikram Singh", email: "vikram.singh@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
         avatar: "VS", avatarGrad: "from-indigo-500 to-blue-600", region: "Hyderabad",
         totalDevices: 3, activeDevices: 2, status: "inactive", lastSeen: "2d ago",
         devices: [
@@ -57,7 +57,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 6, name: "Sneha Reddy", email: "sneha.reddy@corp.io", role: "User",
+        id: 6, name: "Sneha Reddy", email: "sneha.reddy@corp.io", role: "User", mobile: "+91 9876543210",
         avatar: "SR", avatarGrad: "from-amber-500 to-orange-600", region: "Pune",
         totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "45m ago",
         devices: [
@@ -66,7 +66,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 7, name: "Kiran Bose", email: "kiran.bose@corp.io", role: "User",
+        id: 7, name: "Kiran Bose", email: "kiran.bose@corp.io", role: "User", mobile: "+91 9876543210",
         avatar: "KB", avatarGrad: "from-teal-500 to-cyan-600", region: "Kolkata",
         totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "10m ago",
         devices: [
@@ -75,7 +75,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 8, name: "Anita Joshi", email: "anita.joshi@corp.io", role: "Sub Admin",
+        id: 8, name: "Anita Joshi", email: "anita.joshi@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
         avatar: "AJ", avatarGrad: "from-fuchsia-500 to-purple-600", region: "Ahmedabad",
         totalDevices: 2, activeDevices: 1, status: "inactive", lastSeen: "3d ago",
         devices: [
@@ -84,7 +84,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 9, name: "Rohan Verma", email: "rohan.verma@corp.io", role: "User",
+        id: 9, name: "Rohan Verma", email: "rohan.verma@corp.io", role: "User", mobile: "+91 9876543210",
         avatar: "RV", avatarGrad: "from-lime-500 to-green-600", region: "Jaipur",
         totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "5m ago",
         devices: [
@@ -92,7 +92,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 10, name: "Divya Menon", email: "divya.menon@corp.io", role: "User",
+        id: 10, name: "Divya Menon", email: "divya.menon@corp.io", role: "User", mobile: "+91 9876543210",
         avatar: "DM", avatarGrad: "from-orange-500 to-red-500", region: "Kochi",
         totalDevices: 3, activeDevices: 2, status: "active", lastSeen: "30m ago",
         devices: [
@@ -102,7 +102,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 11, name: "Suresh Iyer", email: "suresh.iyer@corp.io", role: "User",
+        id: 11, name: "Suresh Iyer", email: "suresh.iyer@corp.io", role: "User", mobile: "+91 9876543210",
         avatar: "SI", avatarGrad: "from-cyan-500 to-blue-500", region: "Coimbatore",
         totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "1h ago",
         devices: [
@@ -110,7 +110,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 12, name: "Pooja Sharma", email: "pooja.sharma@corp.io", role: "Sub Admin",
+        id: 12, name: "Pooja Sharma", email: "pooja.sharma@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
         avatar: "PS", avatarGrad: "from-pink-500 to-rose-600", region: "Lucknow",
         totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "8m ago",
         devices: [
@@ -129,17 +129,7 @@ const SUMMARY = [
     { label: "Needs Attention", value: REGISTERED_USERS.flatMap(u => u.devices).filter(d => d.status !== "compliant").length, icon: ShieldAlert, grad: "from-rose-500 to-pink-500" },
 ];
 
-/* ── Helpers ─────────────────────────────────────────────────────────────── */
-function RoleBadge({ role }) {
-    const style = role === "Sub Admin"
-        ? { background: 'rgba(99,102,241,0.15)', color: '#a5b4fc' }
-        : { background: 'rgba(100,116,139,0.12)', color: '#94a3b8' };
-    return (
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={style}>
-            {role}
-        </span>
-    );
-}
+
 
 function UserStatusDot({ status }) {
     const active = status === 'active';
@@ -249,7 +239,6 @@ function UserCard({ user, onView }) {
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-sm font-semibold truncate" style={{ color: '#e2d9f3' }}>{user.name}</p>
-                        <RoleBadge role={user.role} />
                     </div>
                     <p className="text-xs truncate" style={{ color: '#5a4f72' }}>{user.email}</p>
                 </div>
@@ -404,7 +393,7 @@ export const RegisteredUsers = () => {
                     <table className="w-full">
                         <thead>
                             <tr style={{ borderBottom: '1px solid rgba(139,92,246,0.12)', background: 'rgba(139,92,246,0.05)' }}>
-                                {['User', 'Devices', 'Region', 'Status', 'Last Seen', 'Actions'].map(h => (
+                                {['User', 'Mobile', 'Devices', 'Region', 'Status', 'Last Seen', 'Actions'].map(h => (
                                     <th key={h} className="text-left text-xs font-semibold px-5 py-3.5"
                                         style={{ color: '#7c6fa0' }}>{h}</th>
                                 ))}
@@ -433,12 +422,12 @@ export const RegisteredUsers = () => {
                                             <div>
                                                 <div className="flex items-center gap-2">
                                                     <p className="text-sm font-semibold" style={{ color: '#e2d9f3' }}>{user.name}</p>
-                                                    <RoleBadge role={user.role} />
                                                 </div>
                                                 <p className="text-xs" style={{ color: '#5a4f72' }}>{user.email}</p>
                                             </div>
                                         </div>
                                     </td>
+                                    <td className="px-4 py-4 text-sm" style={{ color: '#9c8fc0' }}>{user.mobile}</td>
                                     <td className="px-4 py-4">
                                         <div className="flex items-center gap-1.5">
                                             <Smartphone size={13} style={{ color: '#5a4f72' }} />
