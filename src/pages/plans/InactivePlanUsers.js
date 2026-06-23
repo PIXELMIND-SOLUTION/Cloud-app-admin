@@ -1,13 +1,14 @@
-// pages/InactivePlanUsers.js - Full Page Component
-import React, { useState } from 'react';
+// pages/InactivePlanUsers.js - With Pagination
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
     Search, UserX, Users, Calendar, Smartphone,
     Mail, Building, Clock, ArrowLeft, AlertCircle,
-    Filter, Grid, List, Download, RefreshCw,
-    Eye
+    Filter, Grid, List, Download, RefreshCw, Eye,
+    ChevronLeft, ChevronRight
 } from 'lucide-react';
 
+// ── Data ──────────────────────────────────────────────────────────────────────
 // Import the same users data
 const REGISTERED_USERS = [
     {
@@ -135,6 +136,93 @@ const Panel = ({ children, className = "" }) => (
     </div>
 );
 
+// ── Pagination Component ──────────────────────────────────────────────────────
+
+const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPerPage }) => {
+    const getPageNumbers = () => {
+        const delta = 2;
+        const range = [];
+        const rangeWithDots = [];
+        let l;
+
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+                range.push(i);
+            }
+        }
+
+        range.forEach((i) => {
+            if (l) {
+                if (i - l === 2) {
+                    rangeWithDots.push(l + 1);
+                } else if (i - l !== 1) {
+                    rangeWithDots.push('...');
+                }
+            }
+            rangeWithDots.push(i);
+            l = i;
+        });
+
+        return rangeWithDots;
+    };
+
+    if (totalPages <= 1) return null;
+
+    return (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t" style={{ borderColor: 'rgba(139,92,246,0.1)' }}>
+            <p className="text-xs" style={{ color: '#5a4f72' }}>
+                Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}–
+                {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} users
+            </p>
+            <div className="flex items-center gap-1">
+                <button
+                    onClick={() => onPageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    style={{ color: '#7c6fa0' }}
+                    onMouseEnter={e => { if (currentPage > 1) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                    <ChevronLeft size={15} />
+                </button>
+
+                {getPageNumbers().map((page, index) => (
+                    page === '...' ? (
+                        <span key={`dots-${index}`} className="w-8 h-8 flex items-center justify-center text-xs" style={{ color: '#5a4f72' }}>…</span>
+                    ) : (
+                        <button
+                            key={page}
+                            onClick={() => onPageChange(page)}
+                            className="w-8 h-8 rounded-lg text-xs font-medium transition-all"
+                            style={page === currentPage
+                                ? { background: 'linear-gradient(135deg,#7c3aed,#9333ea)', color: '#fff', boxShadow: '0 0 10px rgba(124,58,237,0.4)' }
+                                : { color: '#7c6fa0' }
+                            }
+                            onMouseEnter={e => { if (page !== currentPage) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
+                            onMouseLeave={e => { if (page !== currentPage) e.currentTarget.style.background = 'transparent'; }}
+                        >
+                            {page}
+                        </button>
+                    )
+                ))}
+
+                <button
+                    onClick={() => onPageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    style={{ color: '#7c6fa0' }}
+                    onMouseEnter={e => { if (currentPage < totalPages) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                    <ChevronRight size={15} />
+                </button>
+            </div>
+        </div>
+    );
+};
+
+// ── Inactive Users Component ──────────────────────────────────────────────────
+
 export const InactivePlanUsers = () => {
     const navigate = useNavigate();
     const { planId } = useParams();
@@ -142,63 +230,68 @@ export const InactivePlanUsers = () => {
     const [filterRole, setFilterRole] = useState('All');
     const [sortBy, setSortBy] = useState('lastSeen');
     const [viewMode, setViewMode] = useState('grid');
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 9;
 
-    const plan = {
-        id: parseInt(planId),
-        name: "Professional Plan"
-    };
+    const plan = { id: parseInt(planId), name: "Professional Plan" };
 
     // Get inactive users
     const inactiveUsers = REGISTERED_USERS.filter(user => user.status === 'inactive');
-
-    // Also get from localStorage if available
     const storedUsers = JSON.parse(localStorage.getItem('planUsers') || '[]');
     const storedInactiveUsers = storedUsers.filter(u => u.planId === parseInt(planId) && u.status === 'inactive');
-
     const allInactiveUsers = inactiveUsers.length > 0 ? inactiveUsers : storedInactiveUsers;
-
-    const getInactivityReason = (user) => {
-        const lastSeen = user.lastSeen || 'Unknown';
-        if (lastSeen.includes('d')) {
-            const days = parseInt(lastSeen);
-            if (days > 30) return 'Long-term inactive';
-            if (days > 14) return 'Recently inactive';
-        }
-        return 'Temporarily inactive';
-    };
 
     const getDaysInactive = (user) => {
         const lastSeen = user.lastSeen || '';
-        if (lastSeen.includes('d')) {
-            return parseInt(lastSeen);
-        }
+        if (lastSeen.includes('d')) return parseInt(lastSeen);
         return 0;
     };
 
-    const filtered = allInactiveUsers.filter(u => {
-        const matchSearch = u.name?.toLowerCase().includes(search.toLowerCase()) ||
-            u.email?.toLowerCase().includes(search.toLowerCase()) ||
-            u.region?.toLowerCase().includes(search.toLowerCase()) ||
-            u.company?.toLowerCase().includes(search.toLowerCase());
-        const matchRole = filterRole === 'All' || u.role === filterRole;
-        return matchSearch && matchRole;
-    });
+    // Filter and sort users
+    const filteredUsers = useMemo(() => {
+        return allInactiveUsers.filter(u => {
+            const matchSearch = u.name?.toLowerCase().includes(search.toLowerCase()) ||
+                u.email?.toLowerCase().includes(search.toLowerCase()) ||
+                u.region?.toLowerCase().includes(search.toLowerCase()) ||
+                u.company?.toLowerCase().includes(search.toLowerCase());
+            const matchRole = filterRole === 'All' || u.role === filterRole;
+            return matchSearch && matchRole;
+        });
+    }, [allInactiveUsers, search, filterRole]);
 
-    const sorted = [...filtered].sort((a, b) => {
-        if (sortBy === 'name') return a.name?.localeCompare(b.name);
-        if (sortBy === 'lastSeen') {
-            const daysA = getDaysInactive(a);
-            const daysB = getDaysInactive(b);
-            return daysB - daysA;
-        }
-        return 0;
-    });
+    const sortedUsers = useMemo(() => {
+        return [...filteredUsers].sort((a, b) => {
+            if (sortBy === 'name') return a.name?.localeCompare(b.name);
+            if (sortBy === 'lastSeen') {
+                const daysA = getDaysInactive(a);
+                const daysB = getDaysInactive(b);
+                return daysB - daysA;
+            }
+            return 0;
+        });
+    }, [filteredUsers, sortBy]);
+
+    // Pagination
+    const totalPages = Math.ceil(sortedUsers.length / ITEMS_PER_PAGE);
+    const paginatedUsers = sortedUsers.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const roles = ['All', ...new Set(allInactiveUsers.map(u => u.role).filter(Boolean))];
+    const handleUserClick = (user) => navigate(`/admin/user/${user.id}`);
 
-    const handleUserClick = (user) => {
-        navigate(`/admin/user/${user.id}`)
-    }
+    const getInactivityReason = (user) => {
+        const days = getDaysInactive(user);
+        if (days > 30) return 'Long-term inactive';
+        if (days > 14) return 'Recently inactive';
+        return 'Temporarily inactive';
+    };
 
     const UserCard = ({ user }) => {
         const reason = getInactivityReason(user);
@@ -206,7 +299,7 @@ export const InactivePlanUsers = () => {
 
         return (
             <div
-                className="rounded-xl p-4 transition-all duration-200 opacity-75 hover:opacity-100"
+                className="rounded-xl p-4 transition-all duration-200 opacity-75 hover:opacity-100 cursor-pointer"
                 style={{
                     background: 'rgba(139,92,246,0.04)',
                     border: '1px solid rgba(139,92,246,0.06)'
@@ -239,7 +332,6 @@ export const InactivePlanUsers = () => {
                                 Inactive
                             </span>
                         </div>
-
                         <div className="flex flex-wrap items-center gap-1.5 mt-2">
                             <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: 'rgba(96,165,250,0.12)', color: '#60a5fa' }}>
                                 {user.role || 'User'}
@@ -251,9 +343,8 @@ export const InactivePlanUsers = () => {
                                 <Smartphone size={10} /> {user.totalDevices || user.deviceCount || 0} devices
                             </span>
                         </div>
-
                         <div className="flex flex-col gap-1 mt-2">
-                            <div className="flex items-center gap-3 text-[10px]" style={{ color: '#5a4f72' }}>
+                            <div className="flex flex-wrap items-center gap-2 text-[10px]" style={{ color: '#5a4f72' }}>
                                 <span className="flex items-center gap-1">
                                     <Calendar size={10} />
                                     Joined {user.enrolled ? new Date(user.enrolled).toLocaleDateString() : 'N/A'}
@@ -277,11 +368,16 @@ export const InactivePlanUsers = () => {
         );
     };
 
+    // Reset page when search/filter/sort changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, filterRole, sortBy]);
+
     return (
         <div className="space-y-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 flex-wrap">
                     <button
                         onClick={() => navigate('/admin/plans')}
                         className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-sm"
@@ -296,13 +392,13 @@ export const InactivePlanUsers = () => {
                         <ArrowLeft size={16} /> Back to Plans
                     </button>
                     <div>
-                        <h1 className="text-xl font-bold" style={{ color: '#e2d9f3' }}>Inactive Users</h1>
-                        <p className="text-sm" style={{ color: '#5a4f72' }}>
+                        <h1 className="text-lg sm:text-xl font-bold" style={{ color: '#e2d9f3' }}>Inactive Users</h1>
+                        <p className="text-xs sm:text-sm" style={{ color: '#5a4f72' }}>
                             {plan.name} • {allInactiveUsers.length} inactive subscribers
                         </p>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                     <div className="flex rounded-lg overflow-hidden" style={{ border: '1px solid rgba(139,92,246,0.15)' }}>
                         <button
                             onClick={() => setViewMode('grid')}
@@ -319,31 +415,27 @@ export const InactivePlanUsers = () => {
                             <List size={16} />
                         </button>
                     </div>
-                    <button className="p-2 rounded-lg transition-colors" style={{ color: '#5a4f72' }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; e.currentTarget.style.color = '#a78bfa'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#5a4f72'; }}>
+                    <button className="p-2 rounded-lg transition-colors hover:bg-purple-500/10" style={{ color: '#5a4f72' }}>
                         <RefreshCw size={16} />
                     </button>
-                    <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors text-sm" style={{ color: '#5a4f72' }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; e.currentTarget.style.color = '#a78bfa'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#5a4f72'; }}>
+                    <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors text-sm hover:bg-purple-500/10" style={{ color: '#5a4f72' }}>
                         <Download size={14} /> Export
                     </button>
                 </div>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                 {[
                     { label: 'Total Inactive', value: allInactiveUsers.length, icon: UserX, color: '#94a3b8' },
                     { label: 'Long-term (>30d)', value: allInactiveUsers.filter(u => getDaysInactive(u) > 30).length, icon: AlertCircle, color: '#f87171' },
                     { label: 'Recent (14-30d)', value: allInactiveUsers.filter(u => getDaysInactive(u) > 14 && getDaysInactive(u) <= 30).length, icon: Clock, color: '#f59e0b' },
                     { label: 'With Devices', value: allInactiveUsers.filter(u => u.totalDevices > 0).length, icon: Smartphone, color: '#60a5fa' },
                 ].map(stat => (
-                    <div key={stat.label} className="rounded-2xl p-4 text-center" style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.12)' }}>
-                        <stat.icon size={18} className="mx-auto mb-1.5" style={{ color: stat.color }} />
-                        <p className="text-xl font-bold" style={{ color: '#e2d9f3' }}>{stat.value}</p>
-                        <p className="text-[10px]" style={{ color: '#5a4f72' }}>{stat.label}</p>
+                    <div key={stat.label} className="rounded-2xl p-3 sm:p-4 text-center" style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.12)' }}>
+                        <stat.icon size={16} className="mx-auto mb-1" style={{ color: stat.color }} />
+                        <p className="text-lg sm:text-xl font-bold" style={{ color: '#e2d9f3' }}>{stat.value}</p>
+                        <p className="text-[10px] sm:text-xs" style={{ color: '#5a4f72' }}>{stat.label}</p>
                     </div>
                 ))}
             </div>
@@ -355,7 +447,7 @@ export const InactivePlanUsers = () => {
                         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
                         <input
                             type="text"
-                            placeholder="Search inactive users by name, email, or company..."
+                            placeholder="Search inactive users..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
@@ -377,8 +469,6 @@ export const InactivePlanUsers = () => {
                             border: '1px solid rgba(139,92,246,0.15)',
                             color: '#e2d9f3'
                         }}
-                        onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
-                        onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
                     >
                         {roles.map(role => (
                             <option key={role} value={role} style={{ background: '#1a1430', color: '#e2d9f3' }}>{role}</option>
@@ -393,21 +483,19 @@ export const InactivePlanUsers = () => {
                             border: '1px solid rgba(139,92,246,0.15)',
                             color: '#e2d9f3'
                         }}
-                        onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
-                        onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
                     >
                         <option value="lastSeen" style={{ background: '#1a1430', color: '#e2d9f3' }}>Last Seen</option>
                         <option value="name" style={{ background: '#1a1430', color: '#e2d9f3' }}>Name</option>
                     </select>
                     <div className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl whitespace-nowrap" style={{ color: '#9c8fc0', background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.1)' }}>
                         <Users size={14} />
-                        <span>{sorted.length} users</span>
+                        <span>{sortedUsers.length} users</span>
                     </div>
                 </div>
             </Panel>
 
             {/* User Grid */}
-            {sorted.length === 0 ? (
+            {sortedUsers.length === 0 ? (
                 <div className="text-center py-16 rounded-2xl" style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.15)' }}>
                     <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(139,92,246,0.08)' }}>
                         <UserX size={32} style={{ color: '#5a4f72' }} />
@@ -417,7 +505,7 @@ export const InactivePlanUsers = () => {
                 </div>
             ) : viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    {sorted.map(user => <UserCard key={user.id} user={user} />)}
+                    {paginatedUsers.map(user => <UserCard key={user.id} user={user} />)}
                 </div>
             ) : (
                 <Panel className="overflow-hidden p-0">
@@ -430,16 +518,11 @@ export const InactivePlanUsers = () => {
                                     <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Devices</th>
                                     <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Status</th>
                                     <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Last Seen</th>
-                                    <th
-                                        className="text-left text-xs font-semibold px-4 py-3.5"
-                                        style={{ color: "#5a4f72" }}
-                                    >
-                                        Actions
-                                    </th>
+                                    <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {sorted.map(user => (
+                                {paginatedUsers.map(user => (
                                     <tr key={user.id} className="border-b transition-colors opacity-75" style={{ borderColor: 'rgba(139,92,246,0.06)' }}
                                         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.04)'; e.currentTarget.style.opacity = '1'; }}
                                         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.opacity = '0.75'; }}>
@@ -464,13 +547,8 @@ export const InactivePlanUsers = () => {
                                         </td>
                                         <td className="px-4 py-4 text-xs" style={{ color: '#5a4f72' }}>{user.lastSeen || 'Unknown'}</td>
                                         <td className="px-4 py-4">
-                                            <button
-                                                className="flex items-center gap-1 text-xs font-medium transition-colors hover:text-violet-400"
-                                                style={{ color: "#5a4f72" }}
-                                                onClick={() => handleUserClick(user)}
-                                            >
-                                                <Eye size={14} />
-                                                View
+                                            <button className="flex items-center gap-1 text-xs font-medium transition-colors hover:text-violet-400" style={{ color: "#5a4f72" }} onClick={() => handleUserClick(user)}>
+                                                <Eye size={14} /> View
                                             </button>
                                         </td>
                                     </tr>
@@ -479,6 +557,17 @@ export const InactivePlanUsers = () => {
                         </table>
                     </div>
                 </Panel>
+            )}
+
+            {/* Pagination */}
+            {sortedUsers.length > 0 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    totalItems={sortedUsers.length}
+                    itemsPerPage={ITEMS_PER_PAGE}
+                />
             )}
         </div>
     );

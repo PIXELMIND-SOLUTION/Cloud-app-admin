@@ -1,14 +1,14 @@
-// pages/ActivePlanUsers.js - Full Page Component
-import React, { useState, useEffect } from 'react';
+// pages/ActivePlanUsers.js - With Pagination
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
     Search, UserCheck, Users, Calendar, Smartphone,
     Mail, Building, Clock, ArrowLeft, Filter, ChevronDown,
-    Grid, List, Download, RefreshCw,
-    Eye
+    Grid, List, Download, RefreshCw, Eye,
+    ChevronLeft, ChevronRight
 } from 'lucide-react';
 
-// Import users data
+// Import the same users data
 const REGISTERED_USERS = [
     {
         id: 1, name: "Raj Mehta", email: "raj.mehta@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
@@ -135,48 +135,141 @@ const Panel = ({ children, className = "" }) => (
     </div>
 );
 
+// ── Pagination Component ──────────────────────────────────────────────────────
+
+const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPerPage }) => {
+    const getPageNumbers = () => {
+        const delta = 2;
+        const range = [];
+        const rangeWithDots = [];
+        let l;
+
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+                range.push(i);
+            }
+        }
+
+        range.forEach((i) => {
+            if (l) {
+                if (i - l === 2) {
+                    rangeWithDots.push(l + 1);
+                } else if (i - l !== 1) {
+                    rangeWithDots.push('...');
+                }
+            }
+            rangeWithDots.push(i);
+            l = i;
+        });
+
+        return rangeWithDots;
+    };
+
+    if (totalPages <= 1) return null;
+
+    return (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t" style={{ borderColor: 'rgba(139,92,246,0.1)' }}>
+            <p className="text-xs" style={{ color: '#5a4f72' }}>
+                Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}–
+                {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} users
+            </p>
+            <div className="flex items-center gap-1">
+                <button
+                    onClick={() => onPageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    style={{ color: '#7c6fa0' }}
+                    onMouseEnter={e => { if (currentPage > 1) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                    <ChevronLeft size={15} />
+                </button>
+
+                {getPageNumbers().map((page, index) => (
+                    page === '...' ? (
+                        <span key={`dots-${index}`} className="w-8 h-8 flex items-center justify-center text-xs" style={{ color: '#5a4f72' }}>…</span>
+                    ) : (
+                        <button
+                            key={page}
+                            onClick={() => onPageChange(page)}
+                            className="w-8 h-8 rounded-lg text-xs font-medium transition-all"
+                            style={page === currentPage
+                                ? { background: 'linear-gradient(135deg,#7c3aed,#9333ea)', color: '#fff', boxShadow: '0 0 10px rgba(124,58,237,0.4)' }
+                                : { color: '#7c6fa0' }
+                            }
+                            onMouseEnter={e => { if (page !== currentPage) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
+                            onMouseLeave={e => { if (page !== currentPage) e.currentTarget.style.background = 'transparent'; }}
+                        >
+                            {page}
+                        </button>
+                    )
+                ))}
+
+                <button
+                    onClick={() => onPageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    style={{ color: '#7c6fa0' }}
+                    onMouseEnter={e => { if (currentPage < totalPages) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                    <ChevronRight size={15} />
+                </button>
+            </div>
+        </div>
+    );
+};
+
 // ── Active Users Component ──────────────────────────────────────────────────
+
 export const ActivePlanUsers = () => {
     const navigate = useNavigate();
     const { planId } = useParams();
     const [search, setSearch] = useState('');
     const [filterRole, setFilterRole] = useState('All');
     const [viewMode, setViewMode] = useState('grid');
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 9;
 
-    // Get plan info (in real app, fetch from API)
-    const plan = {
-        id: parseInt(planId),
-        name: "Professional Plan" // This would come from your plan data
-    };
+    const plan = { id: parseInt(planId), name: "Professional Plan" };
 
-    // Get active users from REGISTERED_USERS who have devices
+    // Get active users
     const activeUsers = REGISTERED_USERS.filter(user => user.status === 'active');
-
-    // Also get users from localStorage if available (for compatibility with existing system)
     const storedUsers = JSON.parse(localStorage.getItem('planUsers') || '[]');
     const storedActiveUsers = storedUsers.filter(u => u.planId === parseInt(planId) && u.status === 'active');
-
-    // Combine both sources (in real app, use one source)
     const allActiveUsers = activeUsers.length > 0 ? activeUsers : storedActiveUsers;
 
-    const filtered = allActiveUsers.filter(u => {
-        const matchSearch = u.name?.toLowerCase().includes(search.toLowerCase()) ||
-            u.email?.toLowerCase().includes(search.toLowerCase()) ||
-            u.region?.toLowerCase().includes(search.toLowerCase()) ||
-            u.company?.toLowerCase().includes(search.toLowerCase());
-        const matchRole = filterRole === 'All' || u.role === filterRole;
-        return matchSearch && matchRole;
-    });
+    // Filter and sort users
+    const filteredUsers = useMemo(() => {
+        return allActiveUsers.filter(u => {
+            const matchSearch = u.name?.toLowerCase().includes(search.toLowerCase()) ||
+                u.email?.toLowerCase().includes(search.toLowerCase()) ||
+                u.region?.toLowerCase().includes(search.toLowerCase()) ||
+                u.company?.toLowerCase().includes(search.toLowerCase());
+            const matchRole = filterRole === 'All' || u.role === filterRole;
+            return matchSearch && matchRole;
+        });
+    }, [allActiveUsers, search, filterRole]);
+
+    // Pagination
+    const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+    const paginatedUsers = filteredUsers.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const roles = ['All', ...new Set(allActiveUsers.map(u => u.role).filter(Boolean))];
 
-    const handleUserClick = (user) => {
-        navigate(`/admin/user/${user.id}`)
-    }
+    const handleUserClick = (user) => navigate(`/admin/user/${user.id}`);
 
     const UserCard = ({ user }) => (
         <div
-            className="rounded-xl p-4 transition-all duration-200 hover:-translate-y-1"
+            className="rounded-xl p-4 transition-all duration-200 hover:-translate-y-1 cursor-pointer"
             style={{
                 background: 'rgba(139,92,246,0.06)',
                 border: '1px solid rgba(139,92,246,0.1)'
@@ -209,7 +302,6 @@ export const ActivePlanUsers = () => {
                             Active
                         </span>
                     </div>
-
                     <div className="flex flex-wrap items-center gap-1.5 mt-2">
                         <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: 'rgba(96,165,250,0.12)', color: '#60a5fa' }}>
                             {user.role || 'User'}
@@ -221,7 +313,6 @@ export const ActivePlanUsers = () => {
                             <Smartphone size={10} /> {user.totalDevices || user.deviceCount || 0} devices
                         </span>
                     </div>
-
                     <div className="flex items-center gap-3 mt-2 text-[10px]" style={{ color: '#5a4f72' }}>
                         <span className="flex items-center gap-1">
                             <Calendar size={10} />
@@ -237,11 +328,16 @@ export const ActivePlanUsers = () => {
         </div>
     );
 
+    // Reset page when search/filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, filterRole]);
+
     return (
         <div className="space-y-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 flex-wrap">
                     <button
                         onClick={() => navigate('/admin/plans')}
                         className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-sm"
@@ -256,13 +352,13 @@ export const ActivePlanUsers = () => {
                         <ArrowLeft size={16} /> Back to Plans
                     </button>
                     <div>
-                        <h1 className="text-xl font-bold" style={{ color: '#e2d9f3' }}>Active Users</h1>
-                        <p className="text-sm" style={{ color: '#5a4f72' }}>
+                        <h1 className="text-lg sm:text-xl font-bold" style={{ color: '#e2d9f3' }}>Active Users</h1>
+                        <p className="text-xs sm:text-sm" style={{ color: '#5a4f72' }}>
                             {plan.name} • {allActiveUsers.length} active subscribers
                         </p>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                     <div className="flex rounded-lg overflow-hidden" style={{ border: '1px solid rgba(139,92,246,0.15)' }}>
                         <button
                             onClick={() => setViewMode('grid')}
@@ -279,31 +375,27 @@ export const ActivePlanUsers = () => {
                             <List size={16} />
                         </button>
                     </div>
-                    <button className="p-2 rounded-lg transition-colors" style={{ color: '#5a4f72' }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; e.currentTarget.style.color = '#a78bfa'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#5a4f72'; }}>
+                    <button className="p-2 rounded-lg transition-colors hover:bg-purple-500/10" style={{ color: '#5a4f72' }}>
                         <RefreshCw size={16} />
                     </button>
-                    <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors text-sm" style={{ color: '#5a4f72' }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; e.currentTarget.style.color = '#a78bfa'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#5a4f72'; }}>
+                    <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors text-sm hover:bg-purple-500/10" style={{ color: '#5a4f72' }}>
                         <Download size={14} /> Export
                     </button>
                 </div>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                 {[
                     { label: 'Total Active', value: allActiveUsers.length, icon: UserCheck, color: '#34d399' },
                     { label: 'With Devices', value: allActiveUsers.filter(u => u.totalDevices > 0).length, icon: Smartphone, color: '#60a5fa' },
                     { label: 'Roles', value: new Set(allActiveUsers.map(u => u.role)).size, icon: Users, color: '#a78bfa' },
                     { label: 'Recently Active', value: allActiveUsers.filter(u => u.lastSeen?.includes('m') || u.lastSeen === 'Just now').length, icon: Clock, color: '#fcd34d' },
                 ].map(stat => (
-                    <div key={stat.label} className="rounded-2xl p-4 text-center" style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.12)' }}>
-                        <stat.icon size={18} className="mx-auto mb-1.5" style={{ color: stat.color }} />
-                        <p className="text-xl font-bold" style={{ color: '#e2d9f3' }}>{stat.value}</p>
-                        <p className="text-[10px]" style={{ color: '#5a4f72' }}>{stat.label}</p>
+                    <div key={stat.label} className="rounded-2xl p-3 sm:p-4 text-center" style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.12)' }}>
+                        <stat.icon size={16} className="mx-auto mb-1" style={{ color: stat.color }} />
+                        <p className="text-lg sm:text-xl font-bold" style={{ color: '#e2d9f3' }}>{stat.value}</p>
+                        <p className="text-[10px] sm:text-xs" style={{ color: '#5a4f72' }}>{stat.label}</p>
                     </div>
                 ))}
             </div>
@@ -315,7 +407,7 @@ export const ActivePlanUsers = () => {
                         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
                         <input
                             type="text"
-                            placeholder="Search active users by name, email, or company..."
+                            placeholder="Search active users..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
@@ -337,8 +429,6 @@ export const ActivePlanUsers = () => {
                             border: '1px solid rgba(139,92,246,0.15)',
                             color: '#e2d9f3'
                         }}
-                        onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
-                        onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
                     >
                         {roles.map(role => (
                             <option key={role} value={role} style={{ background: '#1a1430', color: '#e2d9f3' }}>{role}</option>
@@ -346,13 +436,13 @@ export const ActivePlanUsers = () => {
                     </select>
                     <div className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl whitespace-nowrap" style={{ color: '#9c8fc0', background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.1)' }}>
                         <Users size={14} />
-                        <span>{filtered.length} users</span>
+                        <span>{filteredUsers.length} users</span>
                     </div>
                 </div>
             </Panel>
 
             {/* User Grid */}
-            {filtered.length === 0 ? (
+            {filteredUsers.length === 0 ? (
                 <div className="text-center py-16 rounded-2xl" style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.15)' }}>
                     <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(139,92,246,0.08)' }}>
                         <UserCheck size={32} style={{ color: '#5a4f72' }} />
@@ -362,7 +452,7 @@ export const ActivePlanUsers = () => {
                 </div>
             ) : viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    {filtered.map(user => <UserCard key={user.id} user={user} />)}
+                    {paginatedUsers.map(user => <UserCard key={user.id} user={user} />)}
                 </div>
             ) : (
                 <Panel className="overflow-hidden p-0">
@@ -374,23 +464,12 @@ export const ActivePlanUsers = () => {
                                     <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Role</th>
                                     <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Devices</th>
                                     <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Status</th>
-                                    <th
-                                        className="text-left text-xs font-semibold px-4 py-3.5"
-                                        style={{ color: "#5a4f72" }}
-                                    >
-                                        Last Seen
-                                    </th>
-
-                                    <th
-                                        className="text-left text-xs font-semibold px-4 py-3.5"
-                                        style={{ color: "#5a4f72" }}
-                                    >
-                                        Actions
-                                    </th>
+                                    <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Last Seen</th>
+                                    <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filtered.map(user => (
+                                {paginatedUsers.map(user => (
                                     <tr key={user.id} className="border-b transition-colors" style={{ borderColor: 'rgba(139,92,246,0.06)' }}
                                         onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,0.04)'}
                                         onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
@@ -413,21 +492,10 @@ export const ActivePlanUsers = () => {
                                                 Active
                                             </span>
                                         </td>
-                                        <td
-                                            className="px-4 py-4 text-xs"
-                                            style={{ color: "#5a4f72" }}
-                                        >
-                                            {user.lastSeen || "Just now"}
-                                        </td>
-
+                                        <td className="px-4 py-4 text-xs" style={{ color: '#5a4f72' }}>{user.lastSeen || "Just now"}</td>
                                         <td className="px-4 py-4">
-                                            <button
-                                                className="flex items-center gap-1 text-xs font-medium transition-colors hover:text-violet-400"
-                                                style={{ color: "#5a4f72" }}
-                                                onClick={()=>handleUserClick(user)}
-                                            >
-                                                <Eye size={14} />
-                                                View
+                                            <button className="flex items-center gap-1 text-xs font-medium transition-colors hover:text-violet-400" style={{ color: "#5a4f72" }} onClick={() => handleUserClick(user)}>
+                                                <Eye size={14} /> View
                                             </button>
                                         </td>
                                     </tr>
@@ -436,6 +504,17 @@ export const ActivePlanUsers = () => {
                         </table>
                     </div>
                 </Panel>
+            )}
+
+            {/* Pagination */}
+            {filteredUsers.length > 0 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    totalItems={filteredUsers.length}
+                    itemsPerPage={ITEMS_PER_PAGE}
+                />
             )}
         </div>
     );

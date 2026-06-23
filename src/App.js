@@ -13,6 +13,7 @@ import SessionTimedOut from './components/SessionTimedOut';
 import { UserDeviceDetails } from './pages/Users/UserDeviceDetails';
 import { ActivePlanUsers } from './pages/plans/ActivePlanUsers';
 import { InactivePlanUsers } from './pages\/plans/InactivePlanUsers';
+import AdminNotifications from './pages/AdminNotifications';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="plans/:planId/inactive-users" element={<InactivePlanUsers />} / >
           <Route path="analytics" element={<AdminAnalytics />} />
           <Route path="reports" element={<AdminReports />} />
+          <Route path='notifications' element={<AdminNotifications/>}/>
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>

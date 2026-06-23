@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import {
     LayoutDashboard, Users, Settings, X, ChevronDown,
-    LogOut, ChevronRight, BarChart2, MailWarning, LineChart, Cloud
+    LogOut, ChevronRight, BarChart2, MailWarning, LineChart, Cloud,
+    Bell
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png'
@@ -18,6 +19,7 @@ const NAV_ITEMS = [
     },
     { label: "Analytics", icon: LineChart, path: "/admin/analytics" },
     { label: "Reports", icon: MailWarning, path: "/admin/reports" },
+    // { label: "Notifications", icon: Bell, path: "/admin/notifications" },
     { label: "Settings", icon: Settings, path: "/admin/settings" },
 ];
 
