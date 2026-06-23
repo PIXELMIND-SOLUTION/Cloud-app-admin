@@ -1,274 +1,377 @@
-// pages/UserDeviceDetail.js
+// pages/UserDeviceDetails.jsx - Fully Responsive User Details Page
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
-    ArrowLeft, Smartphone, Tablet, Monitor, Watch,
-    Battery, HardDrive, RefreshCw, Lock,
-    CheckCircle, XCircle, Package, AlertCircle,
-    ChevronDown, ChevronUp,
-    Delete,
-    Trash,
-    StopCircle,
-    StopCircleIcon
+    ArrowLeft, Smartphone, Laptop, Tablet, Watch,
+    CheckCircle, XCircle, AlertCircle, Battery, HardDrive,
+    Calendar, Clock, Shield, Lock, Wifi, Cpu, User, Mail, Phone, MapPin, Briefcase,
+    ChevronUp,
+    ChevronDown
 } from 'lucide-react';
 
-/* ── Helpers ─────────────────────────────────────────────────────────────── */
-function DeviceIcon({ type, size = 18 }) {
-    if (type === 'tablet')   return <Tablet size={size} className="text-white" />;
-    if (type === 'laptop')   return <Monitor size={size} className="text-white" />;
-    if (type === 'wearable') return <Watch size={size} className="text-white" />;
-    return <Smartphone size={size} className="text-white" />;
-}
+// ── Data ─────────────────────────────────────────────────────────────────────
+const REGISTERED_USERS = [
+    {
+        id: 1, name: "Raj Mehta", email: "raj.mehta@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
+        avatar: "RM", avatarGrad: "from-violet-500 to-purple-600", region: "Mumbai",
+        totalDevices: 3, activeDevices: 3, status: "active", lastSeen: "2m ago",
+        devices: [
+            { id: "D001", name: "iPhone 14 Pro", os: "iOS 17.4", model: "Apple", type: "mobile", status: "active", battery: 82, storage: 61, enrolled: "12 Jan 2024", appCount: 24, mdmProfile: true, encryption: true, passcode: true, lastSync: "5m ago" },
+            { id: "D002", name: "iPad Air 5", os: "iPadOS 17.2", model: "Apple", type: "tablet", status: "active", battery: 74, storage: 48, enrolled: "20 Feb 2024", appCount: 18, mdmProfile: true, encryption: true, passcode: true, lastSync: "1h ago" },
+            { id: "D003", name: "MacBook Pro 14", os: "macOS 14.3", model: "Apple", type: "laptop", status: "inactive", battery: 45, storage: 78, enrolled: "5 Mar 2024", appCount: 32, mdmProfile: true, encryption: false, passcode: true, lastSync: "3h ago" },
+        ],
+    },
+    {
+        id: 2, name: "Priya Nair", email: "priya.nair@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "PN", avatarGrad: "from-sky-500 to-blue-600", region: "Bangalore",
+        totalDevices: 2, activeDevices: 1, status: "active", lastSeen: "18m ago",
+        devices: [
+            { id: "D004", name: "Samsung Galaxy S23", os: "Android 14", model: "Samsung", type: "mobile", status: "active", battery: 47, storage: 78, enrolled: "8 Feb 2024", appCount: 21, mdmProfile: true, encryption: true, passcode: false, lastSync: "2h ago" },
+            { id: "D005", name: "Galaxy Tab S9", os: "Android 13", model: "Samsung", type: "tablet", status: "active", battery: 12, storage: 55, enrolled: "15 Mar 2024", appCount: 14, mdmProfile: false, encryption: true, passcode: true, lastSync: "2d ago" },
+        ],
+    },
+    {
+        id: 3, name: "Arjun Das", email: "arjun.das@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "AD", avatarGrad: "from-emerald-500 to-teal-600", region: "Delhi",
+        totalDevices: 4, activeDevices: 4, status: "active", lastSeen: "Just now",
+        devices: [
+            { id: "D006", name: "Pixel 7 Pro", os: "Android 14", model: "Google", type: "mobile", status: "active", battery: 91, storage: 34, enrolled: "1 Jan 2024", appCount: 28, mdmProfile: true, encryption: true, passcode: true, lastSync: "Just now" },
+            { id: "D007", name: "Pixel Watch 2", os: "Wear OS 4", model: "Google", type: "wearable", status: "active", battery: 68, storage: 20, enrolled: "1 Jan 2024", appCount: 8, mdmProfile: true, encryption: true, passcode: true, lastSync: "10m ago" },
+            { id: "D008", name: "ThinkPad X1 Carbon", os: "Windows 11 Pro", model: "Lenovo", type: "laptop", status: "active", battery: 76, storage: 45, enrolled: "10 Jan 2024", appCount: 45, mdmProfile: true, encryption: true, passcode: true, lastSync: "30m ago" },
+            { id: "D009", name: "iPhone 15", os: "iOS 17.4", model: "Apple", type: "mobile", status: "active", battery: 88, storage: 29, enrolled: "15 Feb 2024", appCount: 19, mdmProfile: true, encryption: true, passcode: true, lastSync: "1h ago" },
+        ],
+    },
+    {
+        id: 4, name: "Meera Patel", email: "meera.patel@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "MP", avatarGrad: "from-rose-500 to-pink-600", region: "Chennai",
+        totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "1h ago",
+        devices: [
+            { id: "D010", name: "iPhone 15 Plus", os: "iOS 17.3", model: "Apple", type: "mobile", status: "active", battery: 95, storage: 28, enrolled: "20 Jan 2024", appCount: 16, mdmProfile: true, encryption: true, passcode: true, lastSync: "1h ago" },
+        ],
+    },
+    {
+        id: 5, name: "Vikram Singh", email: "vikram.singh@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
+        avatar: "VS", avatarGrad: "from-indigo-500 to-blue-600", region: "Hyderabad",
+        totalDevices: 3, activeDevices: 2, status: "inactive", lastSeen: "2d ago",
+        devices: [
+            { id: "D011", name: "iPad Pro 12.9", os: "iPadOS 17.1", model: "Apple", type: "tablet", status: "active", battery: 74, storage: 48, enrolled: "5 Jan 2024", appCount: 22, mdmProfile: true, encryption: true, passcode: true, lastSync: "2d ago" },
+            { id: "D012", name: "Surface Pro 9", os: "Windows 11", model: "Microsoft", type: "laptop", status: "active", battery: 0, storage: 62, enrolled: "10 Jan 2024", appCount: 38, mdmProfile: false, encryption: false, passcode: false, lastSync: "5d ago" },
+            { id: "D013", name: "Galaxy S22", os: "Android 13", model: "Samsung", type: "mobile", status: "active", battery: 61, storage: 41, enrolled: "15 Jan 2024", appCount: 20, mdmProfile: true, encryption: true, passcode: true, lastSync: "3d ago" },
+        ],
+    },
+    {
+        id: 6, name: "Sneha Reddy", email: "sneha.reddy@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "SR", avatarGrad: "from-amber-500 to-orange-600", region: "Pune",
+        totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "45m ago",
+        devices: [
+            { id: "D014", name: "OnePlus 11", os: "Android 14", model: "OnePlus", type: "mobile", status: "active", battery: 79, storage: 37, enrolled: "22 Feb 2024", appCount: 23, mdmProfile: true, encryption: true, passcode: true, lastSync: "45m ago" },
+            { id: "D015", name: "iPad Mini 6", os: "iPadOS 16.7", model: "Apple", type: "tablet", status: "active", battery: 33, storage: 71, enrolled: "1 Mar 2024", appCount: 12, mdmProfile: true, encryption: true, passcode: false, lastSync: "6h ago" },
+        ],
+    },
+    {
+        id: 7, name: "Kiran Bose", email: "kiran.bose@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "KB", avatarGrad: "from-teal-500 to-cyan-600", region: "Kolkata",
+        totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "10m ago",
+        devices: [
+            { id: "D016", name: "iPhone 13", os: "iOS 16.6", model: "Apple", type: "mobile", status: "active", battery: 38, storage: 82, enrolled: "1 Dec 2023", appCount: 17, mdmProfile: true, encryption: true, passcode: true, lastSync: "10m ago" },
+            { id: "D017", name: "Dell XPS 13", os: "Windows 11", model: "Dell", type: "laptop", status: "active", battery: 72, storage: 44, enrolled: "15 Dec 2023", appCount: 29, mdmProfile: true, encryption: true, passcode: true, lastSync: "20m ago" },
+        ],
+    },
+    {
+        id: 8, name: "Anita Joshi", email: "anita.joshi@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
+        avatar: "AJ", avatarGrad: "from-fuchsia-500 to-purple-600", region: "Ahmedabad",
+        totalDevices: 2, activeDevices: 1, status: "inactive", lastSeen: "3d ago",
+        devices: [
+            { id: "D018", name: "Pixel 6a", os: "Android 13", model: "Google", type: "mobile", status: "offline", battery: 5, storage: 60, enrolled: "10 Nov 2023", appCount: 15, mdmProfile: false, encryption: true, passcode: false, lastSync: "3d ago" },
+            { id: "D019", name: "iPad 10th Gen", os: "iPadOS 16.5", model: "Apple", type: "tablet", status: "active", battery: 88, storage: 30, enrolled: "12 Nov 2023", appCount: 11, mdmProfile: true, encryption: true, passcode: true, lastSync: "4h ago" },
+        ],
+    },
+    {
+        id: 9, name: "Rohan Verma", email: "rohan.verma@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "RV", avatarGrad: "from-lime-500 to-green-600", region: "Jaipur",
+        totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "5m ago",
+        devices: [
+            { id: "D020", name: "Galaxy A54", os: "Android 14", model: "Samsung", type: "mobile", status: "active", battery: 66, storage: 42, enrolled: "5 Feb 2024", appCount: 13, mdmProfile: true, encryption: true, passcode: true, lastSync: "5m ago" },
+        ],
+    },
+    {
+        id: 10, name: "Divya Menon", email: "divya.menon@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "DM", avatarGrad: "from-orange-500 to-red-500", region: "Kochi",
+        totalDevices: 3, activeDevices: 2, status: "active", lastSeen: "30m ago",
+        devices: [
+            { id: "D021", name: "iPhone 12", os: "iOS 16.7", model: "Apple", type: "mobile", status: "active", battery: 71, storage: 38, enrolled: "20 Oct 2023", appCount: 20, mdmProfile: true, encryption: true, passcode: true, lastSync: "30m ago" },
+            { id: "D022", name: "Surface Go 3", os: "Windows 11 S", model: "Microsoft", type: "tablet", status: "active", battery: 28, storage: 77, enrolled: "25 Oct 2023", appCount: 16, mdmProfile: true, encryption: false, passcode: true, lastSync: "5h ago" },
+            { id: "D023", name: "HP Pavilion", os: "Windows 11", model: "HP", type: "laptop", status: "active", battery: 0, storage: 55, enrolled: "1 Nov 2023", appCount: 34, mdmProfile: false, encryption: false, passcode: false, lastSync: "6d ago" },
+        ],
+    },
+    {
+        id: 11, name: "Suresh Iyer", email: "suresh.iyer@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "SI", avatarGrad: "from-cyan-500 to-blue-500", region: "Coimbatore",
+        totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "1h ago",
+        devices: [
+            { id: "D024", name: "Moto G84", os: "Android 13", model: "Motorola", type: "mobile", status: "active", battery: 84, storage: 31, enrolled: "28 Jan 2024", appCount: 10, mdmProfile: true, encryption: true, passcode: true, lastSync: "1h ago" },
+        ],
+    },
+    {
+        id: 12, name: "Pooja Sharma", email: "pooja.sharma@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
+        avatar: "PS", avatarGrad: "from-pink-500 to-rose-600", region: "Lucknow",
+        totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "8m ago",
+        devices: [
+            { id: "D025", name: "iPhone 14", os: "iOS 17.2", model: "Apple", type: "mobile", status: "active", battery: 77, storage: 45, enrolled: "14 Feb 2024", appCount: 22, mdmProfile: true, encryption: true, passcode: true, lastSync: "8m ago" },
+            { id: "D026", name: "MacBook Air M2", os: "macOS 14.2", model: "Apple", type: "laptop", status: "active", battery: 92, storage: 27, enrolled: "14 Feb 2024", appCount: 38, mdmProfile: true, encryption: true, passcode: true, lastSync: "15m ago" },
+        ],
+    },
+];
 
-function statusMeta(status) {
-    const map = {
-        active:    { bg: 'rgba(52,211,153,0.08)',  border: 'rgba(52,211,153,0.2)',  dot: '#34d399', text: '#6ee7b7',  label: 'Active' },
-        compliant: { bg: 'rgba(52,211,153,0.08)',  border: 'rgba(52,211,153,0.2)',  dot: '#34d399', text: '#6ee7b7',  label: 'Compliant' },
-        warning:   { bg: 'rgba(251,191,36,0.08)',  border: 'rgba(251,191,36,0.2)',  dot: '#fbbf24', text: '#fcd34d',  label: 'Warning' },
-        offline:   { bg: 'rgba(100,116,139,0.1)',  border: 'rgba(100,116,139,0.2)', dot: '#64748b', text: '#94a3b8',  label: 'Offline' },
+// ── Reusable Components ──────────────────────────────────────────────────
+
+const Panel = ({ children, className = "" }) => (
+    <div
+        className={`rounded-2xl ${className}`}
+        style={{
+            background: 'rgba(20,16,36,0.8)',
+            border: '1px solid rgba(139,92,246,0.15)',
+            backdropFilter: 'blur(12px)'
+        }}
+    >
+        {children}
+    </div>
+);
+
+const StatusBadge = ({ status }) => {
+    const configs = {
+        active: { color: '#34d399', bg: 'rgba(52,211,153,0.15)', icon: CheckCircle },
+        inactive: { color: '#94a3b8', bg: 'rgba(148,163,184,0.15)', icon: XCircle },
+        offline: { color: '#f87171', bg: 'rgba(248,113,113,0.15)', icon: AlertCircle },
+        warning: { color: '#fcd34d', bg: 'rgba(252,211,53,0.15)', icon: AlertCircle },
     };
-    return map[status] || map.offline;
-}
-
-function MiniBar({ value, warn = 70 }) {
-    const color = value >= warn
-        ? 'linear-gradient(90deg, #f87171, #ef4444)'
-        : value >= 40
-            ? 'linear-gradient(90deg, #8b5cf6, #a855f7)'
-            : 'linear-gradient(90deg, #f59e0b, #f97316)';
+    const config = configs[status] || configs.inactive;
+    const Icon = config.icon;
     return (
-        <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(139,92,246,0.12)' }}>
-            <div className="h-full rounded-full transition-all" style={{ width: `${value}%`, background: color }} />
-        </div>
+        <span
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap"
+            style={{ color: config.color, background: config.bg }}
+        >
+            <Icon size={12} /> {status}
+        </span>
     );
-}
+};
 
-function ConfigCheck({ ok, label }) {
+const DeviceTypeIcon = ({ type }) => {
+    const icons = {
+        mobile: Smartphone,
+        tablet: Tablet,
+        laptop: Laptop,
+        wearable: Watch,
+    };
+    const Icon = icons[type] || Smartphone;
+    return <Icon size={18} className="shrink-0" style={{ color: '#a78bfa' }} />;
+};
+
+const InfoRow = ({ label, value, icon: Icon }) => (
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between py-2.5 gap-1 sm:gap-4" style={{ borderBottom: '1px solid rgba(139,92,246,0.08)' }}>
+        <span className="flex items-center gap-2 text-xs sm:text-sm" style={{ color: '#7c6fa0' }}>
+            {Icon && <Icon size={14} className="shrink-0" />}
+            <span className="font-medium">{label}</span>
+        </span>
+        <span className="text-xs sm:text-sm font-medium break-all" style={{ color: '#e2d9f3' }}>{value}</span>
+    </div>
+);
+
+const DeviceCard = ({ device }) => {
+    const [expanded, setExpanded] = useState(false);
+
     return (
-        <div className="flex items-center gap-2">
-            {ok
-                ? <CheckCircle size={14} style={{ color: '#34d399', flexShrink: 0 }} />
-                : <XCircle size={14} style={{ color: '#f87171', flexShrink: 0 }} />}
-            <span className="text-xs" style={{ color: ok ? '#9c8fc0' : '#f87171', fontWeight: ok ? 400 : 500 }}>
-                {label}
-            </span>
-        </div>
-    );
-}
-
-/* ── Device card ─────────────────────────────────────────────────────────── */
-function DeviceCard({ device }) {
-    const [open, setOpen] = useState(false);
-    const meta = statusMeta(device.status);
-
-    const typeGrad = {
-        mobile:   'linear-gradient(135deg, #7c3aed, #9333ea)',
-        tablet:   'linear-gradient(135deg, #0ea5e9, #0284c7)',
-        laptop:   'linear-gradient(135deg, #4f46e5, #1d4ed8)',
-        wearable: 'linear-gradient(135deg, #059669, #0d9488)',
-    }[device.type] || 'linear-gradient(135deg, #64748b, #475569)';
-
-    return (
-        <div className="rounded-2xl overflow-hidden transition-all"
+        <div
+            className="rounded-2xl p-4 transition-all duration-300 hover:shadow-xl"
             style={{
-                background: meta.bg,
-                border: `1px solid ${meta.border}`,
-                backdropFilter: 'blur(12px)',
-            }}>
-            {/* Card header */}
-            <div className="p-4">
-                <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm shrink-0"
-                            style={{ background: typeGrad, boxShadow: '0 0 12px rgba(124,58,237,0.3)' }}>
-                            <DeviceIcon type={device.type} size={17} />
-                        </div>
-                        <div>
-                            <p className="text-sm font-semibold" style={{ color: '#e2d9f3' }}>{device.name}</p>
-                            <p className="text-xs" style={{ color: '#7c6fa0' }}>{device.model} · {device.os}</p>
-                        </div>
+                background: "rgba(26, 20, 46, 0.9)",
+                border: "1px solid rgba(139,92,246,0.12)",
+            }}
+        >
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <div
+                        className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl"
+                        style={{ background: "rgba(139,92,246,0.12)" }}
+                    >
+                        <DeviceTypeIcon type={device.type} />
                     </div>
-                    <div className="flex items-center gap-2">
-                        <span className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
-                            style={{
-                                color: meta.text,
-                                background: 'rgba(15,12,25,0.6)',
-                                border: `1px solid ${meta.border}`,
-                            }}>
-                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: meta.dot }} />
-                            {meta.label}
-                        </span>
-                        <button onClick={() => setOpen(!open)}
-                            className="w-7 h-7 flex items-center justify-center rounded-xl transition-colors"
-                            style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)' }}
-                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,0.2)'}
-                            onMouseLeave={e => e.currentTarget.style.background = 'rgba(139,92,246,0.1)'}>
-                            {open
-                                ? <ChevronUp size={13} style={{ color: '#a78bfa' }} />
-                                : <ChevronDown size={13} style={{ color: '#a78bfa' }} />}
-                        </button>
+
+                    <div className="min-w-0 flex-1">
+                        <h3 className="font-semibold text-white text-sm md:text-base truncate pr-2">
+                            {device.name}
+                        </h3>
+                        <p className="text-xs text-slate-400 truncate">
+                            {device.model} • {device.os}
+                        </p>
                     </div>
                 </div>
 
-                {/* Battery + Storage */}
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                    {[
-                        { label: 'Battery', value: device.battery, icon: Battery },
-                        { label: 'Storage', value: device.storage, icon: HardDrive },
-                    ].map(bar => (
-                        <div key={bar.label}>
-                            <div className="flex justify-between text-xs mb-1.5" style={{ color: '#7c6fa0' }}>
-                                <span className="flex items-center gap-1">
-                                    <bar.icon size={11} /> {bar.label}
-                                </span>
-                                <span className="font-semibold" style={{ color: '#c4b5fd' }}>{bar.value}%</span>
-                            </div>
-                            <MiniBar value={bar.value} warn={80} />
-                        </div>
-                    ))}
+                <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                    <StatusBadge status={device.status} />
+                    <button
+                        onClick={() => setExpanded(!expanded)}
+                        className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors shrink-0 hover:bg-purple-500/20"
+                        style={{ background: "rgba(139,92,246,0.1)", color: "#a78bfa" }}
+                    >
+                        {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </button>
                 </div>
             </div>
 
-            {/* Expandable detail */}
-            {open && (
-                <div className="p-4 space-y-4" style={{ borderTop: `1px solid ${meta.border}`, background: 'rgba(10,8,20,0.6)' }}>
-                    {/* Meta */}
-                    <div className="grid grid-cols-3 gap-3">
-                        {[
-                            { label: 'Device ID', value: device.id, mono: true },
-                            { label: 'Enrolled', value: device.enrolled },
-                            { label: 'Last Sync', value: device.lastSync },
-                        ].map(item => (
-                            <div key={item.label} className="rounded-xl p-3"
-                                style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.12)' }}>
-                                <p className="text-[10px] mb-0.5" style={{ color: '#5a4f72' }}>{item.label}</p>
-                                <p className="text-xs font-semibold" style={{ color: '#c4b5fd', fontFamily: item.mono ? 'monospace' : undefined }}>{item.value}</p>
-                            </div>
-                        ))}
+            {/* Expanded Details */}
+            {expanded && (
+                <>
+                    <div className="my-4" style={{ borderTop: "1px solid rgba(139,92,246,0.12)" }} />
+
+                    {/* Info Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                        <InfoRow label="Device ID" value={device.id} />
+                        <InfoRow label="Enrolled" value={device.enrolled} icon={Calendar} />
+                        <InfoRow label="Battery" value={`${device.battery}%`} icon={Battery} />
+                        <InfoRow label="Storage" value={`${device.storage}% used`} icon={HardDrive} />
+                        <InfoRow label="Apps" value={device.appCount} icon={Cpu} />
+                        <InfoRow label="Last Sync" value={device.lastSync} icon={Clock} />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        {/* MDM config */}
-                        <div>
-                            <p className="text-[10px] font-semibold uppercase tracking-wider mb-2.5" style={{ color: '#5a4f72' }}>MDM Configuration</p>
-                            <div className="space-y-2">
-                                <ConfigCheck ok={device.mdmProfile} label="MDM Profile Installed" />
-                                <ConfigCheck ok={device.encryption} label="Disk Encryption" />
-                                <ConfigCheck ok={device.passcode} label="Passcode Enforced" />
-                            </div>
-                        </div>
-
-                        {/* App management */}
-                        <div>
-                            <p className="text-[10px] font-semibold uppercase tracking-wider mb-2.5" style={{ color: '#5a4f72' }}>App Management</p>
-                            <div className="rounded-xl p-3 flex items-center gap-3"
-                                style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.12)' }}>
-                                <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                                    style={{ background: 'linear-gradient(135deg,#7c3aed,#a855f7)', boxShadow: '0 0 10px rgba(124,58,237,0.3)' }}>
-                                    <Package size={14} className="text-white" />
-                                </div>
-                                <div>
-                                    <p className="text-lg font-bold" style={{ color: '#e2d9f3' }}>{device.appCount}</p>
-                                    <p className="text-[10px]" style={{ color: '#5a4f72' }}>Managed apps</p>
-                                </div>
-                            </div>
-                        </div>
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mt-4">
+                        {device.mdmProfile && (
+                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-300 flex items-center gap-1">
+                                <Shield size={12} /> MDM Profile
+                            </span>
+                        )}
+                        {device.encryption && (
+                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-500/10 text-blue-300 flex items-center gap-1">
+                                <Lock size={12} /> Encrypted
+                            </span>
+                        )}
+                        {device.passcode && (
+                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 flex items-center gap-1">
+                                <Lock size={12} /> Passcode
+                            </span>
+                        )}
                     </div>
-
-                    {/* Actions */}
-                    <div className="flex gap-2 pt-1">
-                        {[
-                            { icon: StopCircleIcon, label: 'Force Stop', bg: 'rgba(124,58,237,0.15)', hov: 'rgba(124,58,237,0.25)', color: '#c4b5fd', border: 'rgba(139,92,246,0.25)' },
-                            { icon: Lock, label: 'Lock Device', bg: 'rgba(100,116,139,0.12)', hov: 'rgba(100,116,139,0.2)', color: '#94a3b8', border: 'rgba(100,116,139,0.2)' },
-                            { icon: Trash, label: 'Remove', bg: 'rgba(239,68,68,0.1)', hov: 'rgba(239,68,68,0.18)', color: '#f87171', border: 'rgba(239,68,68,0.2)' },
-                        ].map(btn => (
-                            <button key={btn.label}
-                                className="flex-1 py-2 text-xs font-medium rounded-xl flex items-center justify-center gap-1.5 transition-all"
-                                style={{ background: btn.bg, color: btn.color, border: `1px solid ${btn.border}` }}
-                                onMouseEnter={e => e.currentTarget.style.background = btn.hov}
-                                onMouseLeave={e => e.currentTarget.style.background = btn.bg}>
-                                <btn.icon size={12} /> {btn.label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                </>
             )}
         </div>
     );
-}
+};
 
-/* ── Main export ─────────────────────────────────────────────────────────── */
-export const UserDeviceDetail = ({ user, onBack }) => {
-    const active  = user.devices.filter(d => d.status === 'active').length;
-    const warn    = user.devices.filter(d => d.status === 'warning').length;
-    const offline = user.devices.filter(d => d.status === 'offline').length;
+// ── Main Component ────────────────────────────────────────────────────────
 
-    const summaryCards = [
-        { val: active, label: 'Active', bg: 'rgba(52,211,153,0.08)', border: 'rgba(52,211,153,0.2)', color: '#6ee7b7' },
-        ...(warn > 0 ? [{ val: warn, label: 'Warning', bg: 'rgba(251,191,36,0.08)', border: 'rgba(251,191,36,0.2)', color: '#fcd34d' }] : []),
-        ...(offline > 0 ? [{ val: offline, label: 'Offline', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.2)', color: '#94a3b8' }] : []),
-        { val: user.totalDevices, label: 'Total', bg: 'rgba(124,58,237,0.1)', border: 'rgba(139,92,246,0.25)', color: '#c4b5fd' },
-    ];
+export const UserDeviceDetails = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-    const roleStyle = user.role === 'Sub Admin'
-        ? { background: 'rgba(99,102,241,0.15)', color: '#a5b4fc' }
-        : { background: 'rgba(100,116,139,0.12)', color: '#94a3b8' };
+    const user = REGISTERED_USERS.find(u => u.id === parseInt(id));
+
+    if (!user) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh] px-4">
+                <div className="text-center max-w-sm">
+                    <AlertCircle size={48} className="mx-auto mb-4" style={{ color: '#f87171' }} />
+                    <h2 className="text-2xl font-bold" style={{ color: '#e2d9f3' }}>User Not Found</h2>
+                    <p className="mt-2 text-sm" style={{ color: '#5a4f72' }}>The user you're looking for doesn't exist.</p>
+                    <button
+                        onClick={() => navigate('/users')}
+                        className="mt-6 px-6 py-2.5 rounded-xl transition-all text-sm font-medium"
+                        style={{ background: 'rgba(124,58,237,0.15)', color: '#c4b5fd', border: '1px solid rgba(139,92,246,0.25)' }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,58,237,0.25)'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(124,58,237,0.15)'}
+                    >
+                        ← Back to Users
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    const stats = {
+        total: user.devices.length,
+        active: user.devices.filter(d => d.status === 'active').length,
+        offline: user.devices.filter(d => d.status === 'offline').length,
+        warning: user.devices.filter(d => d.status === 'warning').length,
+    };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6 px-2 sm:px-0">
             {/* Header */}
-            <div className="flex items-center gap-4">
-                <button onClick={onBack}
-                    className="flex items-center gap-2 text-sm font-medium px-3.5 py-2 rounded-xl transition-all"
-                    style={{ color: '#9c8fc0', background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.2)' }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#c4b5fd'; e.currentTarget.style.borderColor = 'rgba(139,92,246,0.4)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.color = '#9c8fc0'; e.currentTarget.style.borderColor = 'rgba(139,92,246,0.2)'; }}>
-                    <ArrowLeft size={15} /> Back
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                <button
+                    onClick={() => navigate('/admin/users')}
+                    className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl transition-all text-sm shrink-0"
+                    style={{ background: 'rgba(139,92,246,0.1)', color: '#c4b5fd', border: '1px solid rgba(139,92,246,0.2)' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,0.2)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(139,92,246,0.1)'}
+                >
+                    <ArrowLeft size={16} />
+                    <span className="hidden sm:inline">Back to Users</span>
+                    <span className="sm:hidden">Back</span>
                 </button>
-                <div className="flex-1">
-                    <h1 className="text-xl font-bold" style={{ color: '#e2d9f3' }}>Device Overview</h1>
-                    <p className="text-sm mt-0.5" style={{ color: '#5a4f72' }}>All devices registered under this user</p>
+
+                <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate" style={{ color: '#e2d9f3' }}>
+                            {user.name}
+                        </h1>
+                        <StatusBadge status={user.status} />
+                    </div>
+                    <p className="text-xs sm:text-sm truncate" style={{ color: '#7c6fa0' }}>
+                        {user.email} • {user.role}
+                    </p>
                 </div>
             </div>
 
-            {/* User profile banner */}
-            <div className="rounded-2xl p-5"
-                style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.15)', backdropFilter: 'blur(12px)' }}>
-                <div className="flex items-center gap-4 flex-wrap">
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${user.avatarGrad} flex items-center justify-center text-white text-lg font-bold shrink-0`}
-                        style={{ boxShadow: '0 0 20px rgba(124,58,237,0.3)' }}>
-                        {user.avatar}
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                {[
+                    { label: 'Total Devices', value: stats.total, icon: Smartphone },
+                    { label: 'Active', value: stats.active, icon: CheckCircle, color: '#34d399' },
+                    { label: 'Warning', value: stats.warning, icon: AlertCircle, color: '#fcd34d' },
+                    { label: 'Offline', value: stats.offline, icon: XCircle, color: '#f87171' },
+                ].map(stat => (
+                    <div
+                        key={stat.label}
+                        className="rounded-2xl p-3 sm:p-4 text-center transition-all hover:border-purple-500/30"
+                        style={{
+                            background: 'rgba(20,16,36,0.8)',
+                            border: '1px solid rgba(139,92,246,0.12)',
+                        }}
+                    >
+                        <stat.icon size={18} className="mx-auto mb-1.5" style={{ color: stat.color || '#a78bfa' }} />
+                        <p className="text-xl sm:text-2xl font-bold" style={{ color: '#e2d9f3' }}>{stat.value}</p>
+                        <p className="text-[10px] sm:text-xs" style={{ color: '#5a4f72' }}>{stat.label}</p>
                     </div>
-                    <div className="flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                            <h2 className="text-lg font-bold" style={{ color: '#e2d9f3' }}>{user.name}</h2>
-                            <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={roleStyle}>
-                                {user.role}
-                            </span>
-                        </div>
-                        <p className="text-sm mt-0.5" style={{ color: '#7c6fa0' }}>{user.email} · {user.region}</p>
-                        <p className="text-xs mt-1" style={{ color: '#5a4f72' }}>Last seen: {user.lastSeen}</p>
-                    </div>
-
-                    {/* Device health summary */}
-                    <div className="hidden sm:flex items-center gap-3">
-                        {summaryCards.map(card => (
-                            <div key={card.label} className="text-center px-4 py-2 rounded-2xl"
-                                style={{ background: card.bg, border: `1px solid ${card.border}` }}>
-                                <p className="text-xl font-bold" style={{ color: card.color }}>{card.val}</p>
-                                <p className="text-[10px]" style={{ color: card.color, opacity: 0.7 }}>{card.label}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                ))}
             </div>
 
-            {/* Device cards */}
+            {/* User Information */}
+            <Panel className="p-4 sm:p-6">
+                <h3 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 flex items-center gap-2" style={{ color: '#e2d9f3' }}>
+                    <User size={18} style={{ color: '#a78bfa' }} /> User Information
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                    <InfoRow label="Full Name" value={user.name} icon={User} />
+                    <InfoRow label="Email" value={user.email} icon={Mail} />
+                    <InfoRow label="Mobile" value={user.mobile} icon={Phone} />
+                    <InfoRow label="Region" value={user.region} icon={MapPin} />
+                    <InfoRow label="Role" value={user.role} icon={Briefcase} />
+                    <InfoRow label="Last Seen" value={user.lastSeen} icon={Clock} />
+                </div>
+            </Panel>
+
+            {/* Devices */}
             <div>
-                <p className="text-xs font-semibold uppercase tracking-wider mb-3 px-1" style={{ color: '#5a4f72' }}>
-                    {user.totalDevices} Registered Device{user.totalDevices !== 1 ? 's' : ''}
-                </p>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {user.devices.map(device => (
+                <h3 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 flex items-center gap-2" style={{ color: '#e2d9f3' }}>
+                    <Smartphone size={18} style={{ color: '#a78bfa' }} />
+                    Devices ({user.devices.length})
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+                    {user.devices.map((device) => (
                         <DeviceCard key={device.id} device={device} />
                     ))}
                 </div>

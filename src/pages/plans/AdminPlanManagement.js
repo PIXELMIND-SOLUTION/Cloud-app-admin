@@ -1,5 +1,6 @@
-// pages/AdminPlanManagement.js - Dark Theme
+// pages/AdminPlanManagement.js - Dark Theme with Routing
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Plus, Edit, Trash2, Eye, X, Check, AlertCircle,
     Package, DollarSign, Percent, Tag, List, Save,
@@ -7,8 +8,6 @@ import {
     Users, Clock, Zap, Shield, Server, CreditCard,
     UserCheck, UserX, UserPlus, Calendar, Activity
 } from 'lucide-react';
-import ActivePlanUsers from './ActivePlanUsers';
-import InactivePlanUsers from './InactivePlanUsers';
 
 const Panel = ({ children, className = "" }) => (
     <div
@@ -73,7 +72,7 @@ const PlanService = {
             },
             {
                 id: 3,
-                name: "Bussiness",
+                name: "Business",
                 description: "Full-featured solution for large organizations",
                 price: 299,
                 discountType: "fixed",
@@ -635,6 +634,7 @@ const ViewPlanModal = ({ isOpen, onClose, plan, onViewActiveUsers, onViewInactiv
 
 // ── Main Component ────────────────────────────────────────────────────────────
 const AdminPlanManagement = () => {
+    const navigate = useNavigate();
     const [plans, setPlans] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -643,9 +643,6 @@ const AdminPlanManagement = () => {
     const [viewingPlan, setViewingPlan] = useState(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [isViewOpen, setIsViewOpen] = useState(false);
-    const [isActiveUsersOpen, setIsActiveUsersOpen] = useState(false);
-    const [isInactiveUsersOpen, setIsInactiveUsersOpen] = useState(false);
-    const [userListPlan, setUserListPlan] = useState(null);
 
     const loadPlans = () => {
         setLoading(true);
@@ -708,14 +705,14 @@ const AdminPlanManagement = () => {
         setIsViewOpen(true);
     };
 
+    // Navigate to Active Users page
     const handleViewActiveUsers = (plan) => {
-        setUserListPlan(plan);
-        setIsActiveUsersOpen(true);
+        navigate(`/admin/plans/${plan.id}/active-users`);
     };
 
+    // Navigate to Inactive Users page
     const handleViewInactiveUsers = (plan) => {
-        setUserListPlan(plan);
-        setIsInactiveUsersOpen(true);
+        navigate(`/admin/plans/${plan.id}/inactive-users`);
     };
 
     const handleFormClose = () => {
@@ -900,7 +897,7 @@ const AdminPlanManagement = () => {
                                         </div>
                                     </td>
                                     <td className="px-4 py-4">
-                                        <p className="text-sm font-bold" style={{ color: '#e2d9f3' }}>${plan.price}</p>
+                                        <p className="text-sm font-bold" style={{ color: '#e2d9f3' }}>₹{plan.price} /-</p>
                                     </td>
                                     <td className="px-4 py-4">
                                         {plan.discountAmount > 0 ? (
@@ -918,20 +915,16 @@ const AdminPlanManagement = () => {
                                         <div className="flex items-center gap-1.5">
                                             <button
                                                 onClick={() => handleViewActiveUsers(plan)}
-                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.activeUsers > 0 ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.activeUsers > 0 ? 'cursor-pointer hover:bg-emerald-500/20' : 'cursor-not-allowed opacity-50'}`}
                                                 style={plan.activeUsers > 0 ? { background: 'rgba(52,211,153,0.12)', color: '#34d399' } : { background: 'rgba(100,116,139,0.08)', color: '#5a4f72' }}
-                                                onMouseEnter={e => { if (plan.activeUsers > 0) { e.currentTarget.style.background = 'rgba(52,211,153,0.2)'; } }}
-                                                onMouseLeave={e => { if (plan.activeUsers > 0) { e.currentTarget.style.background = 'rgba(52,211,153,0.12)'; } }}
                                             >
                                                 <UserCheck size={12} />
                                                 {plan.activeUsers || 0}
                                             </button>
                                             <button
                                                 onClick={() => handleViewInactiveUsers(plan)}
-                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.inactiveUsers > 0 ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.inactiveUsers > 0 ? 'cursor-pointer hover:bg-slate-400/20' : 'cursor-not-allowed opacity-50'}`}
                                                 style={plan.inactiveUsers > 0 ? { background: 'rgba(100,116,139,0.12)', color: '#94a3b8' } : { background: 'rgba(100,116,139,0.08)', color: '#5a4f72' }}
-                                                onMouseEnter={e => { if (plan.inactiveUsers > 0) { e.currentTarget.style.background = 'rgba(100,116,139,0.2)'; } }}
-                                                onMouseLeave={e => { if (plan.inactiveUsers > 0) { e.currentTarget.style.background = 'rgba(100,116,139,0.12)'; } }}
                                             >
                                                 <UserX size={12} />
                                                 {plan.inactiveUsers || 0}
@@ -1003,7 +996,7 @@ const AdminPlanManagement = () => {
                 </div>
             </Panel>
 
-            {/* Modals */}
+            {/* Modals - Keep these for form and view */}
             <PlanFormModal
                 isOpen={isFormOpen}
                 onClose={handleFormClose}
@@ -1024,26 +1017,6 @@ const AdminPlanManagement = () => {
                     handleViewInactiveUsers(viewingPlan);
                 }}
             />
-
-            {isActiveUsersOpen && userListPlan && (
-                <ActivePlanUsers
-                    plan={userListPlan}
-                    onClose={() => {
-                        setIsActiveUsersOpen(false);
-                        setUserListPlan(null);
-                    }}
-                />
-            )}
-
-            {isInactiveUsersOpen && userListPlan && (
-                <InactivePlanUsers
-                    plan={userListPlan}
-                    onClose={() => {
-                        setIsInactiveUsersOpen(false);
-                        setUserListPlan(null);
-                    }}
-                />
-            )}
         </div>
     );
 };

@@ -1,102 +1,324 @@
-// components/ActivePlanUsers.js - Dark Theme
+// pages/ActivePlanUsers.js - Full Page Component
 import React, { useState, useEffect } from 'react';
-import { Search, X, UserCheck, Users, Calendar, Smartphone, Mail, Building, Clock } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+    Search, UserCheck, Users, Calendar, Smartphone,
+    Mail, Building, Clock, ArrowLeft, Filter, ChevronDown,
+    Grid, List, Download, RefreshCw,
+    Eye
+} from 'lucide-react';
 
-const ActivePlanUsers = ({ plan, onClose }) => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+// Import users data
+const REGISTERED_USERS = [
+    {
+        id: 1, name: "Raj Mehta", email: "raj.mehta@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
+        avatar: "RM", avatarGrad: "from-violet-500 to-purple-600", region: "Mumbai",
+        totalDevices: 3, activeDevices: 3, status: "active", lastSeen: "2m ago",
+        devices: [
+            { id: "D001", name: "iPhone 14 Pro", os: "iOS 17.4", model: "Apple", type: "mobile", status: "active", battery: 82, storage: 61, enrolled: "12 Jan 2024", appCount: 24, mdmProfile: true, encryption: true, passcode: true, lastSync: "5m ago" },
+            { id: "D002", name: "iPad Air 5", os: "iPadOS 17.2", model: "Apple", type: "tablet", status: "active", battery: 74, storage: 48, enrolled: "20 Feb 2024", appCount: 18, mdmProfile: true, encryption: true, passcode: true, lastSync: "1h ago" },
+            { id: "D003", name: "MacBook Pro 14", os: "macOS 14.3", model: "Apple", type: "laptop", status: "inactive", battery: 45, storage: 78, enrolled: "5 Mar 2024", appCount: 32, mdmProfile: true, encryption: false, passcode: true, lastSync: "3h ago" },
+        ],
+    },
+    {
+        id: 2, name: "Priya Nair", email: "priya.nair@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "PN", avatarGrad: "from-sky-500 to-blue-600", region: "Bangalore",
+        totalDevices: 2, activeDevices: 1, status: "active", lastSeen: "18m ago",
+        devices: [
+            { id: "D004", name: "Samsung Galaxy S23", os: "Android 14", model: "Samsung", type: "mobile", status: "active", battery: 47, storage: 78, enrolled: "8 Feb 2024", appCount: 21, mdmProfile: true, encryption: true, passcode: false, lastSync: "2h ago" },
+            { id: "D005", name: "Galaxy Tab S9", os: "Android 13", model: "Samsung", type: "tablet", status: "active", battery: 12, storage: 55, enrolled: "15 Mar 2024", appCount: 14, mdmProfile: false, encryption: true, passcode: true, lastSync: "2d ago" },
+        ],
+    },
+    {
+        id: 3, name: "Arjun Das", email: "arjun.das@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "AD", avatarGrad: "from-emerald-500 to-teal-600", region: "Delhi",
+        totalDevices: 4, activeDevices: 4, status: "active", lastSeen: "Just now",
+        devices: [
+            { id: "D006", name: "Pixel 7 Pro", os: "Android 14", model: "Google", type: "mobile", status: "active", battery: 91, storage: 34, enrolled: "1 Jan 2024", appCount: 28, mdmProfile: true, encryption: true, passcode: true, lastSync: "Just now" },
+            { id: "D007", name: "Pixel Watch 2", os: "Wear OS 4", model: "Google", type: "wearable", status: "active", battery: 68, storage: 20, enrolled: "1 Jan 2024", appCount: 8, mdmProfile: true, encryption: true, passcode: true, lastSync: "10m ago" },
+            { id: "D008", name: "ThinkPad X1 Carbon", os: "Windows 11 Pro", model: "Lenovo", type: "laptop", status: "active", battery: 76, storage: 45, enrolled: "10 Jan 2024", appCount: 45, mdmProfile: true, encryption: true, passcode: true, lastSync: "30m ago" },
+            { id: "D009", name: "iPhone 15", os: "iOS 17.4", model: "Apple", type: "mobile", status: "active", battery: 88, storage: 29, enrolled: "15 Feb 2024", appCount: 19, mdmProfile: true, encryption: true, passcode: true, lastSync: "1h ago" },
+        ],
+    },
+    {
+        id: 4, name: "Meera Patel", email: "meera.patel@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "MP", avatarGrad: "from-rose-500 to-pink-600", region: "Chennai",
+        totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "1h ago",
+        devices: [
+            { id: "D010", name: "iPhone 15 Plus", os: "iOS 17.3", model: "Apple", type: "mobile", status: "active", battery: 95, storage: 28, enrolled: "20 Jan 2024", appCount: 16, mdmProfile: true, encryption: true, passcode: true, lastSync: "1h ago" },
+        ],
+    },
+    {
+        id: 5, name: "Vikram Singh", email: "vikram.singh@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
+        avatar: "VS", avatarGrad: "from-indigo-500 to-blue-600", region: "Hyderabad",
+        totalDevices: 3, activeDevices: 2, status: "inactive", lastSeen: "2d ago",
+        devices: [
+            { id: "D011", name: "iPad Pro 12.9", os: "iPadOS 17.1", model: "Apple", type: "tablet", status: "active", battery: 74, storage: 48, enrolled: "5 Jan 2024", appCount: 22, mdmProfile: true, encryption: true, passcode: true, lastSync: "2d ago" },
+            { id: "D012", name: "Surface Pro 9", os: "Windows 11", model: "Microsoft", type: "laptop", status: "active", battery: 0, storage: 62, enrolled: "10 Jan 2024", appCount: 38, mdmProfile: false, encryption: false, passcode: false, lastSync: "5d ago" },
+            { id: "D013", name: "Galaxy S22", os: "Android 13", model: "Samsung", type: "mobile", status: "active", battery: 61, storage: 41, enrolled: "15 Jan 2024", appCount: 20, mdmProfile: true, encryption: true, passcode: true, lastSync: "3d ago" },
+        ],
+    },
+    {
+        id: 6, name: "Sneha Reddy", email: "sneha.reddy@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "SR", avatarGrad: "from-amber-500 to-orange-600", region: "Pune",
+        totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "45m ago",
+        devices: [
+            { id: "D014", name: "OnePlus 11", os: "Android 14", model: "OnePlus", type: "mobile", status: "active", battery: 79, storage: 37, enrolled: "22 Feb 2024", appCount: 23, mdmProfile: true, encryption: true, passcode: true, lastSync: "45m ago" },
+            { id: "D015", name: "iPad Mini 6", os: "iPadOS 16.7", model: "Apple", type: "tablet", status: "active", battery: 33, storage: 71, enrolled: "1 Mar 2024", appCount: 12, mdmProfile: true, encryption: true, passcode: false, lastSync: "6h ago" },
+        ],
+    },
+    {
+        id: 7, name: "Kiran Bose", email: "kiran.bose@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "KB", avatarGrad: "from-teal-500 to-cyan-600", region: "Kolkata",
+        totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "10m ago",
+        devices: [
+            { id: "D016", name: "iPhone 13", os: "iOS 16.6", model: "Apple", type: "mobile", status: "active", battery: 38, storage: 82, enrolled: "1 Dec 2023", appCount: 17, mdmProfile: true, encryption: true, passcode: true, lastSync: "10m ago" },
+            { id: "D017", name: "Dell XPS 13", os: "Windows 11", model: "Dell", type: "laptop", status: "active", battery: 72, storage: 44, enrolled: "15 Dec 2023", appCount: 29, mdmProfile: true, encryption: true, passcode: true, lastSync: "20m ago" },
+        ],
+    },
+    {
+        id: 8, name: "Anita Joshi", email: "anita.joshi@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
+        avatar: "AJ", avatarGrad: "from-fuchsia-500 to-purple-600", region: "Ahmedabad",
+        totalDevices: 2, activeDevices: 1, status: "inactive", lastSeen: "3d ago",
+        devices: [
+            { id: "D018", name: "Pixel 6a", os: "Android 13", model: "Google", type: "mobile", status: "offline", battery: 5, storage: 60, enrolled: "10 Nov 2023", appCount: 15, mdmProfile: false, encryption: true, passcode: false, lastSync: "3d ago" },
+            { id: "D019", name: "iPad 10th Gen", os: "iPadOS 16.5", model: "Apple", type: "tablet", status: "active", battery: 88, storage: 30, enrolled: "12 Nov 2023", appCount: 11, mdmProfile: true, encryption: true, passcode: true, lastSync: "4h ago" },
+        ],
+    },
+    {
+        id: 9, name: "Rohan Verma", email: "rohan.verma@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "RV", avatarGrad: "from-lime-500 to-green-600", region: "Jaipur",
+        totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "5m ago",
+        devices: [
+            { id: "D020", name: "Galaxy A54", os: "Android 14", model: "Samsung", type: "mobile", status: "active", battery: 66, storage: 42, enrolled: "5 Feb 2024", appCount: 13, mdmProfile: true, encryption: true, passcode: true, lastSync: "5m ago" },
+        ],
+    },
+    {
+        id: 10, name: "Divya Menon", email: "divya.menon@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "DM", avatarGrad: "from-orange-500 to-red-500", region: "Kochi",
+        totalDevices: 3, activeDevices: 2, status: "active", lastSeen: "30m ago",
+        devices: [
+            { id: "D021", name: "iPhone 12", os: "iOS 16.7", model: "Apple", type: "mobile", status: "active", battery: 71, storage: 38, enrolled: "20 Oct 2023", appCount: 20, mdmProfile: true, encryption: true, passcode: true, lastSync: "30m ago" },
+            { id: "D022", name: "Surface Go 3", os: "Windows 11 S", model: "Microsoft", type: "tablet", status: "active", battery: 28, storage: 77, enrolled: "25 Oct 2023", appCount: 16, mdmProfile: true, encryption: false, passcode: true, lastSync: "5h ago" },
+            { id: "D023", name: "HP Pavilion", os: "Windows 11", model: "HP", type: "laptop", status: "active", battery: 0, storage: 55, enrolled: "1 Nov 2023", appCount: 34, mdmProfile: false, encryption: false, passcode: false, lastSync: "6d ago" },
+        ],
+    },
+    {
+        id: 11, name: "Suresh Iyer", email: "suresh.iyer@corp.io", role: "User", mobile: "+91 9876543210",
+        avatar: "SI", avatarGrad: "from-cyan-500 to-blue-500", region: "Coimbatore",
+        totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "1h ago",
+        devices: [
+            { id: "D024", name: "Moto G84", os: "Android 13", model: "Motorola", type: "mobile", status: "active", battery: 84, storage: 31, enrolled: "28 Jan 2024", appCount: 10, mdmProfile: true, encryption: true, passcode: true, lastSync: "1h ago" },
+        ],
+    },
+    {
+        id: 12, name: "Pooja Sharma", email: "pooja.sharma@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
+        avatar: "PS", avatarGrad: "from-pink-500 to-rose-600", region: "Lucknow",
+        totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "8m ago",
+        devices: [
+            { id: "D025", name: "iPhone 14", os: "iOS 17.2", model: "Apple", type: "mobile", status: "active", battery: 77, storage: 45, enrolled: "14 Feb 2024", appCount: 22, mdmProfile: true, encryption: true, passcode: true, lastSync: "8m ago" },
+            { id: "D026", name: "MacBook Air M2", os: "macOS 14.2", model: "Apple", type: "laptop", status: "active", battery: 92, storage: 27, enrolled: "14 Feb 2024", appCount: 38, mdmProfile: true, encryption: true, passcode: true, lastSync: "15m ago" },
+        ],
+    },
+];
+
+const Panel = ({ children, className = "" }) => (
+    <div
+        className={`rounded-2xl ${className}`}
+        style={{
+            background: 'rgba(20,16,36,0.8)',
+            border: '1px solid rgba(139,92,246,0.15)',
+            backdropFilter: 'blur(12px)'
+        }}
+    >
+        {children}
+    </div>
+);
+
+// ── Active Users Component ──────────────────────────────────────────────────
+export const ActivePlanUsers = () => {
+    const navigate = useNavigate();
+    const { planId } = useParams();
     const [search, setSearch] = useState('');
     const [filterRole, setFilterRole] = useState('All');
+    const [viewMode, setViewMode] = useState('grid');
 
-    useEffect(() => {
-        const allUsers = JSON.parse(localStorage.getItem('planUsers') || '[]');
-        const planUsers = allUsers.filter(u => u.planId === plan.id && u.status === 'active');
-        setUsers(planUsers);
-        setLoading(false);
-    }, [plan]);
+    // Get plan info (in real app, fetch from API)
+    const plan = {
+        id: parseInt(planId),
+        name: "Professional Plan" // This would come from your plan data
+    };
 
-    const filtered = users.filter(u => {
-        const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) ||
-            u.email.toLowerCase().includes(search.toLowerCase()) ||
-            u.company.toLowerCase().includes(search.toLowerCase());
+    // Get active users from REGISTERED_USERS who have devices
+    const activeUsers = REGISTERED_USERS.filter(user => user.status === 'active');
+
+    // Also get users from localStorage if available (for compatibility with existing system)
+    const storedUsers = JSON.parse(localStorage.getItem('planUsers') || '[]');
+    const storedActiveUsers = storedUsers.filter(u => u.planId === parseInt(planId) && u.status === 'active');
+
+    // Combine both sources (in real app, use one source)
+    const allActiveUsers = activeUsers.length > 0 ? activeUsers : storedActiveUsers;
+
+    const filtered = allActiveUsers.filter(u => {
+        const matchSearch = u.name?.toLowerCase().includes(search.toLowerCase()) ||
+            u.email?.toLowerCase().includes(search.toLowerCase()) ||
+            u.region?.toLowerCase().includes(search.toLowerCase()) ||
+            u.company?.toLowerCase().includes(search.toLowerCase());
         const matchRole = filterRole === 'All' || u.role === filterRole;
         return matchSearch && matchRole;
     });
 
-    const roles = ['All', ...new Set(users.map(u => u.role))];
+    const roles = ['All', ...new Set(allActiveUsers.map(u => u.role).filter(Boolean))];
 
-    if (loading) {
-        return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-                <div className="rounded-2xl shadow-2xl w-full max-w-4xl p-12 text-center"
-                    style={{
-                        background: 'rgba(20, 16, 36, 0.95)',
-                        border: '1px solid rgba(139,92,246,0.2)',
-                    }}
-                >
-                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-violet-400 border-t-transparent mx-auto" />
-                    <p className="mt-4 text-sm" style={{ color: '#5a4f72' }}>Loading active users...</p>
-                </div>
-            </div>
-        );
+    const handleUserClick = (user) => {
+        navigate(`/admin/user/${user.id}`)
     }
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
-            <div className="rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col"
-                style={{
-                    background: 'rgba(20, 16, 36, 0.95)',
-                    border: '1px solid rgba(139,92,246,0.2)',
-                }}
-            >
-                {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'rgba(139,92,246,0.15)' }}>
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
-                            <UserCheck size={20} className="text-white" />
-                        </div>
+    const UserCard = ({ user }) => (
+        <div
+            className="rounded-xl p-4 transition-all duration-200 hover:-translate-y-1"
+            style={{
+                background: 'rgba(139,92,246,0.06)',
+                border: '1px solid rgba(139,92,246,0.1)'
+            }}
+            onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(139,92,246,0.12)';
+                e.currentTarget.style.borderColor = 'rgba(52,211,153,0.3)';
+            }}
+            onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(139,92,246,0.06)';
+                e.currentTarget.style.borderColor = 'rgba(139,92,246,0.1)';
+            }}
+            onClick={() => handleUserClick(user)}
+        >
+            <div className="flex items-start gap-3">
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${user.avatarGrad || 'from-purple-500 to-indigo-600'} flex items-center justify-center text-white text-sm font-bold shrink-0`}>
+                    {user.avatar || user.name?.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between">
                         <div>
-                            <h2 className="text-lg font-bold" style={{ color: '#e2d9f3' }}>Active Users</h2>
-                            <p className="text-sm" style={{ color: '#5a4f72' }}>
-                                {plan.name} • {users.length} active subscribers
+                            <p className="text-sm font-semibold truncate" style={{ color: '#e2d9f3' }}>{user.name}</p>
+                            <p className="text-xs truncate flex items-center gap-1" style={{ color: '#5a4f72' }}>
+                                <Mail size={10} /> {user.email}
                             </p>
                         </div>
+                        <span className="flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full whitespace-nowrap"
+                            style={{ background: 'rgba(52,211,153,0.12)', color: '#34d399' }}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            Active
+                        </span>
                     </div>
+
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: 'rgba(96,165,250,0.12)', color: '#60a5fa' }}>
+                            {user.role || 'User'}
+                        </span>
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1" style={{ background: 'rgba(139,92,246,0.08)', color: '#9c8fc0' }}>
+                            <Building size={10} /> {user.company || user.region || 'N/A'}
+                        </span>
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1" style={{ background: 'rgba(168,85,247,0.08)', color: '#a78bfa' }}>
+                            <Smartphone size={10} /> {user.totalDevices || user.deviceCount || 0} devices
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-3 mt-2 text-[10px]" style={{ color: '#5a4f72' }}>
+                        <span className="flex items-center gap-1">
+                            <Calendar size={10} />
+                            Joined {user.enrolled ? new Date(user.enrolled).toLocaleDateString() : 'N/A'}
+                        </span>
+                        <span className="flex items-center gap-1">
+                            <Clock size={10} />
+                            Last seen {user.lastSeen || 'Just now'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
                     <button
-                        onClick={onClose}
-                        className="p-1.5 rounded-lg transition-colors"
-                        style={{ color: '#5a4f72' }}
-                        onMouseEnter={e => { e.currentTarget.style.color = '#c4b5fd'; e.currentTarget.style.background = 'rgba(139,92,246,0.1)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.color = '#5a4f72'; e.currentTarget.style.background = 'transparent'; }}
+                        onClick={() => navigate('/admin/plans')}
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-sm"
+                        style={{
+                            background: 'rgba(139,92,246,0.1)',
+                            color: '#c4b5fd',
+                            border: '1px solid rgba(139,92,246,0.2)'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,0.2)'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(139,92,246,0.1)'}
                     >
-                        <X size={20} />
+                        <ArrowLeft size={16} /> Back to Plans
+                    </button>
+                    <div>
+                        <h1 className="text-xl font-bold" style={{ color: '#e2d9f3' }}>Active Users</h1>
+                        <p className="text-sm" style={{ color: '#5a4f72' }}>
+                            {plan.name} • {allActiveUsers.length} active subscribers
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="flex rounded-lg overflow-hidden" style={{ border: '1px solid rgba(139,92,246,0.15)' }}>
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-purple-500/20' : ''}`}
+                            style={{ color: viewMode === 'grid' ? '#a78bfa' : '#5a4f72' }}
+                        >
+                            <Grid size={16} />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`p-2 transition-colors ${viewMode === 'list' ? 'bg-purple-500/20' : ''}`}
+                            style={{ color: viewMode === 'list' ? '#a78bfa' : '#5a4f72' }}
+                        >
+                            <List size={16} />
+                        </button>
+                    </div>
+                    <button className="p-2 rounded-lg transition-colors" style={{ color: '#5a4f72' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; e.currentTarget.style.color = '#a78bfa'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#5a4f72'; }}>
+                        <RefreshCw size={16} />
+                    </button>
+                    <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors text-sm" style={{ color: '#5a4f72' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; e.currentTarget.style.color = '#a78bfa'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#5a4f72'; }}>
+                        <Download size={14} /> Export
                     </button>
                 </div>
+            </div>
 
-                {/* Filters */}
-                <div className="p-6 border-b" style={{ borderColor: 'rgba(139,92,246,0.1)' }}>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                        <div className="relative flex-1">
-                            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
-                            <input
-                                type="text"
-                                placeholder="Search active users by name, email, or company..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
-                                style={{
-                                    background: 'rgba(139,92,246,0.08)',
-                                    border: '1px solid rgba(139,92,246,0.15)',
-                                    color: '#e2d9f3'
-                                }}
-                                onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
-                                onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
-                            />
-                        </div>
-                        <select
-                            value={filterRole}
-                            onChange={(e) => setFilterRole(e.target.value)}
-                            className="px-3.5 py-2.5 text-sm rounded-xl transition-all"
+            {/* Stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                    { label: 'Total Active', value: allActiveUsers.length, icon: UserCheck, color: '#34d399' },
+                    { label: 'With Devices', value: allActiveUsers.filter(u => u.totalDevices > 0).length, icon: Smartphone, color: '#60a5fa' },
+                    { label: 'Roles', value: new Set(allActiveUsers.map(u => u.role)).size, icon: Users, color: '#a78bfa' },
+                    { label: 'Recently Active', value: allActiveUsers.filter(u => u.lastSeen?.includes('m') || u.lastSeen === 'Just now').length, icon: Clock, color: '#fcd34d' },
+                ].map(stat => (
+                    <div key={stat.label} className="rounded-2xl p-4 text-center" style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.12)' }}>
+                        <stat.icon size={18} className="mx-auto mb-1.5" style={{ color: stat.color }} />
+                        <p className="text-xl font-bold" style={{ color: '#e2d9f3' }}>{stat.value}</p>
+                        <p className="text-[10px]" style={{ color: '#5a4f72' }}>{stat.label}</p>
+                    </div>
+                ))}
+            </div>
+
+            {/* Filters */}
+            <Panel className="p-4">
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="relative flex-1">
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
+                        <input
+                            type="text"
+                            placeholder="Search active users by name, email, or company..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
                             style={{
                                 background: 'rgba(139,92,246,0.08)',
                                 border: '1px solid rgba(139,92,246,0.15)',
@@ -104,114 +326,117 @@ const ActivePlanUsers = ({ plan, onClose }) => {
                             }}
                             onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
                             onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
-                        >
-                            {roles.map(role => (
-                                <option key={role} value={role} style={{ background: '#1a1430', color: '#e2d9f3' }}>{role}</option>
-                            ))}
-                        </select>
-                        <div className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl" style={{ color: '#9c8fc0', background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.1)' }}>
-                            <Users size={14} />
-                            <span>{filtered.length} users</span>
-                        </div>
+                        />
+                    </div>
+                    <select
+                        value={filterRole}
+                        onChange={(e) => setFilterRole(e.target.value)}
+                        className="px-3.5 py-2.5 text-sm rounded-xl transition-all"
+                        style={{
+                            background: 'rgba(139,92,246,0.08)',
+                            border: '1px solid rgba(139,92,246,0.15)',
+                            color: '#e2d9f3'
+                        }}
+                        onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
+                        onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
+                    >
+                        {roles.map(role => (
+                            <option key={role} value={role} style={{ background: '#1a1430', color: '#e2d9f3' }}>{role}</option>
+                        ))}
+                    </select>
+                    <div className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl whitespace-nowrap" style={{ color: '#9c8fc0', background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.1)' }}>
+                        <Users size={14} />
+                        <span>{filtered.length} users</span>
                     </div>
                 </div>
+            </Panel>
 
-                {/* User Grid */}
-                <div className="flex-1 overflow-y-auto p-6">
-                    {filtered.length === 0 ? (
-                        <div className="text-center py-16">
-                            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(139,92,246,0.08)' }}>
-                                <UserCheck size={32} style={{ color: '#5a4f72' }} />
-                            </div>
-                            <p className="text-sm font-medium" style={{ color: '#9c8fc0' }}>No active users found</p>
-                            <p className="text-xs mt-1" style={{ color: '#5a4f72' }}>Try adjusting your search or filters</p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {filtered.map(user => (
-                                <div key={user.id} 
-                                    className="rounded-xl p-4 transition-all duration-200 group"
-                                    style={{
-                                        background: 'rgba(139,92,246,0.06)',
-                                        border: '1px solid rgba(139,92,246,0.1)'
-                                    }}
-                                    onMouseEnter={e => { 
-                                        e.currentTarget.style.background = 'rgba(139,92,246,0.12)';
-                                        e.currentTarget.style.borderColor = 'rgba(52,211,153,0.3)';
-                                    }}
-                                    onMouseLeave={e => { 
-                                        e.currentTarget.style.background = 'rgba(139,92,246,0.06)';
-                                        e.currentTarget.style.borderColor = 'rgba(139,92,246,0.1)';
-                                    }}
-                                >
-                                    <div className="flex items-start gap-3">
-                                        <img
-                                            src={user.avatar}
-                                            alt={user.name}
-                                            className="w-12 h-12 rounded-full border-2 transition-colors"
-                                            style={{ borderColor: 'rgba(52,211,153,0.3)' }}
-                                        />
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-start justify-between">
-                                                <div>
-                                                    <p className="text-sm font-semibold truncate" style={{ color: '#e2d9f3' }}>{user.name}</p>
-                                                    <p className="text-xs truncate flex items-center gap-1" style={{ color: '#5a4f72' }}>
-                                                        <Mail size={10} /> {user.email}
-                                                    </p>
+            {/* User Grid */}
+            {filtered.length === 0 ? (
+                <div className="text-center py-16 rounded-2xl" style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.15)' }}>
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(139,92,246,0.08)' }}>
+                        <UserCheck size={32} style={{ color: '#5a4f72' }} />
+                    </div>
+                    <p className="text-sm font-medium" style={{ color: '#9c8fc0' }}>No active users found</p>
+                    <p className="text-xs mt-1" style={{ color: '#5a4f72' }}>Try adjusting your search or filters</p>
+                </div>
+            ) : viewMode === 'grid' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    {filtered.map(user => <UserCard key={user.id} user={user} />)}
+                </div>
+            ) : (
+                <Panel className="overflow-hidden p-0">
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b" style={{ borderColor: 'rgba(139,92,246,0.1)' }}>
+                                    <th className="text-left text-xs font-semibold px-5 py-3.5" style={{ color: '#5a4f72' }}>User</th>
+                                    <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Role</th>
+                                    <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Devices</th>
+                                    <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#5a4f72' }}>Status</th>
+                                    <th
+                                        className="text-left text-xs font-semibold px-4 py-3.5"
+                                        style={{ color: "#5a4f72" }}
+                                    >
+                                        Last Seen
+                                    </th>
+
+                                    <th
+                                        className="text-left text-xs font-semibold px-4 py-3.5"
+                                        style={{ color: "#5a4f72" }}
+                                    >
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filtered.map(user => (
+                                    <tr key={user.id} className="border-b transition-colors" style={{ borderColor: 'rgba(139,92,246,0.06)' }}
+                                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,0.04)'}
+                                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                                        <td className="px-5 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${user.avatarGrad || 'from-purple-500 to-indigo-600'} flex items-center justify-center text-white text-xs font-bold`}>
+                                                    {user.avatar || user.name?.charAt(0)}
                                                 </div>
-                                                <span className="flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full"
-                                                    style={{ background: 'rgba(52,211,153,0.12)', color: '#34d399' }}>
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                                    Active
-                                                </span>
+                                                <div>
+                                                    <p className="text-sm font-semibold" style={{ color: '#e2d9f3' }}>{user.name}</p>
+                                                    <p className="text-xs" style={{ color: '#5a4f72' }}>{user.email}</p>
+                                                </div>
                                             </div>
-                                            
-                                            <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                                                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: 'rgba(96,165,250,0.12)', color: '#60a5fa' }}>
-                                                    {user.role}
-                                                </span>
-                                                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1" style={{ background: 'rgba(139,92,246,0.08)', color: '#9c8fc0' }}>
-                                                    <Building size={10} /> {user.company}
-                                                </span>
-                                                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1" style={{ background: 'rgba(168,85,247,0.08)', color: '#a78bfa' }}>
-                                                    <Smartphone size={10} /> {user.deviceCount} devices
-                                                </span>
-                                            </div>
-                                            
-                                            <div className="flex items-center gap-3 mt-2 text-[10px]" style={{ color: '#5a4f72' }}>
-                                                <span className="flex items-center gap-1">
-                                                    <Calendar size={10} />
-                                                    Joined {new Date(user.joinedDate).toLocaleDateString()}
-                                                </span>
-                                                <span className="flex items-center gap-1">
-                                                    <Clock size={10} />
-                                                    Last active {new Date(user.lastActive).toLocaleDateString()}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                                        </td>
+                                        <td className="px-4 py-4 text-sm" style={{ color: '#9c8fc0' }}>{user.role || 'User'}</td>
+                                        <td className="px-4 py-4 text-sm" style={{ color: '#9c8fc0' }}>{user.totalDevices || 0}</td>
+                                        <td className="px-4 py-4">
+                                            <span className="flex items-center gap-1.5 text-xs font-medium" style={{ color: '#34d399' }}>
+                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                                Active
+                                            </span>
+                                        </td>
+                                        <td
+                                            className="px-4 py-4 text-xs"
+                                            style={{ color: "#5a4f72" }}
+                                        >
+                                            {user.lastSeen || "Just now"}
+                                        </td>
 
-                {/* Footer */}
-                <div className="flex items-center justify-between px-6 py-4 border-t rounded-b-2xl" style={{ borderColor: 'rgba(139,92,246,0.15)' }}>
-                    <p className="text-xs" style={{ color: '#5a4f72' }}>
-                        Showing {filtered.length} of {users.length} active users
-                    </p>
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 text-sm font-medium rounded-xl transition-colors"
-                        style={{ color: '#9c8fc0' }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.08)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-                    >
-                        Close
-                    </button>
-                </div>
-            </div>
+                                        <td className="px-4 py-4">
+                                            <button
+                                                className="flex items-center gap-1 text-xs font-medium transition-colors hover:text-violet-400"
+                                                style={{ color: "#5a4f72" }}
+                                                onClick={()=>handleUserClick(user)}
+                                            >
+                                                <Eye size={14} />
+                                                View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </Panel>
+            )}
         </div>
     );
 };

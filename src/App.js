@@ -10,6 +10,9 @@ import AdminPlanManagement from './pages/plans/AdminPlanManagement';
 import AdminReports from './pages/AdminReports';
 import AdminAnalytics from './pages/AdminAnalytics';
 import SessionTimedOut from './components/SessionTimedOut';
+import { UserDeviceDetails } from './pages/Users/UserDeviceDetails';
+import { ActivePlanUsers } from './pages/plans/ActivePlanUsers';
+import { InactivePlanUsers } from './pages\/plans/InactivePlanUsers';
 
 function App() {
   return (
@@ -24,11 +27,14 @@ function App() {
             <PrivateRoute>
               <AdminLayout />
             </PrivateRoute>
-          }
+          } InactivePlanUsers
         >
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="users" element={<RegisteredUsers />} />
+          <Route path='user/:id' element={<UserDeviceDetails />} />
           <Route path="plans" element={<AdminPlanManagement />} />
+          <Route path="plans/:planId/active-users" element={<ActivePlanUsers />} />
+          <Route path="plans/:planId/inactive-users" element={<InactivePlanUsers />} / >
           <Route path="analytics" element={<AdminAnalytics />} />
           <Route path="reports" element={<AdminReports />} />
           <Route path="settings" element={<Settings />} />

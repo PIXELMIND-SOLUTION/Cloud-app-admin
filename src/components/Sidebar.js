@@ -77,7 +77,7 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                         >
                             <img src={logo} className='h-8 w-8 object-cover' />
                         </div>
-                        <span className="font-bold text-lg tracking-tight" style={{ color: '#e2d9f3' }}>CloudApp</span>
+                        <span className="font-bold text-lg tracking-tight" style={{ color: '#e2d9f3' }}>RV Cloud Admin</span>
                     </div>
                     <button
                         className="lg:hidden transition-colors"

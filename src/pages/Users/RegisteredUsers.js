@@ -1,15 +1,15 @@
-// pages/RegisteredUsers.js
+// pages/RegisteredUsers.js - Optimized with Routing
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Users, Smartphone, Search, Eye, ShieldCheck, ShieldAlert,
     WifiOff, Cpu, Download, CheckCircle, ChevronLeft, ChevronRight, Filter
 } from 'lucide-react';
-import { UserDeviceDetail } from './UserDeviceDetails';
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 const REGISTERED_USERS = [
     {
-        id: 1, name: "Raj Mehta", email: "raj.mehta@corp.io", role: "Sub Admin",mobile: "+91 9876543210",
+        id: 1, name: "Raj Mehta", email: "raj.mehta@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
         avatar: "RM", avatarGrad: "from-violet-500 to-purple-600", region: "Mumbai",
         totalDevices: 3, activeDevices: 3, status: "active", lastSeen: "2m ago",
         devices: [
@@ -129,59 +129,42 @@ const SUMMARY = [
     { label: "Needs Attention", value: REGISTERED_USERS.flatMap(u => u.devices).filter(d => d.status !== "compliant").length, icon: ShieldAlert, grad: "from-rose-500 to-pink-500" },
 ];
 
+// ── Reusable Components ──────────────────────────────────────────────────
+const UserStatusDot = ({ status }) => (
+    <span className="inline-flex items-center gap-1.5 text-xs font-medium" style={{ color: status === 'active' ? '#34d399' : '#64748b' }}>
+        <span className="w-1.5 h-1.5 rounded-full" style={{ background: status === 'active' ? '#34d399' : '#475569' }} />
+        {status}
+    </span>
+);
 
-
-function UserStatusDot({ status }) {
-    const active = status === 'active';
-    return (
-        <span className="inline-flex items-center gap-1.5 text-xs font-medium"
-            style={{ color: active ? '#34d399' : '#64748b' }}>
-            <span className="w-1.5 h-1.5 rounded-full"
-                style={{ background: active ? '#34d399' : '#475569' }} />
-            {status}
-        </span>
-    );
-}
-
-function HealthPills({ devices }) {
-    const compliant = devices.filter(d => d.status === 'compliant').length;
-    const warn = devices.filter(d => d.status === 'warning').length;
-    const offline = devices.filter(d => d.status === 'offline').length;
+const HealthPills = ({ devices }) => {
+    const counts = {
+        compliant: devices.filter(d => d.status === 'compliant').length,
+        warning: devices.filter(d => d.status === 'warning').length,
+        offline: devices.filter(d => d.status === 'offline').length
+    };
+    const pills = [
+        { key: 'compliant', label: <CheckCircle size={9} />, color: '#6ee7b7', bg: 'rgba(52,211,153,0.12)' },
+        { key: 'warning', label: '⚠', color: '#fcd34d', bg: 'rgba(251,191,36,0.12)' },
+        { key: 'offline', label: <WifiOff size={9} />, color: '#94a3b8', bg: 'rgba(100,116,139,0.15)' }
+    ];
     return (
         <div className="flex items-center gap-1.5 flex-wrap">
-            {compliant > 0 && (
-                <span className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(52,211,153,0.12)', color: '#6ee7b7' }}>
-                    <CheckCircle size={9} /> {compliant}
+            {pills.map(({ key, label, color, bg }) => counts[key] > 0 && (
+                <span key={key} className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: bg, color }}>
+                    {label} {counts[key]}
                 </span>
-            )}
-            {warn > 0 && (
-                <span className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(251,191,36,0.12)', color: '#fcd34d' }}>
-                    ⚠ {warn}
-                </span>
-            )}
-            {offline > 0 && (
-                <span className="flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(100,116,139,0.15)', color: '#94a3b8' }}>
-                    <WifiOff size={9} /> {offline}
-                </span>
-            )}
+            ))}
         </div>
     );
-}
+};
 
-/* ── Pagination ──────────────────────────────────────────────────────────── */
-function Pagination({ current, total, onChange }) {
+const Pagination = ({ current, total, onChange }) => {
     if (total <= 1) return null;
     const pages = [];
-    const delta = 1;
     for (let i = 1; i <= total; i++) {
-        if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
-            pages.push(i);
-        } else if (i === current - delta - 1 || i === current + delta + 1) {
-            pages.push('...');
-        }
+        if (i === 1 || i === total || (i >= current - 1 && i <= current + 1)) pages.push(i);
+        else if (i === current - 2 || i === current + 2) pages.push('...');
     }
     const deduped = pages.filter((p, i) => !(p === '...' && pages[i - 1] === '...'));
 
@@ -190,7 +173,7 @@ function Pagination({ current, total, onChange }) {
             <button onClick={() => onChange(current - 1)} disabled={current === 1}
                 className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{ color: '#7c6fa0' }}
-                onMouseEnter={e => { if (current > 1) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
+                onMouseEnter={e => current > 1 && (e.currentTarget.style.background = 'rgba(139,92,246,0.12)')}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                 <ChevronLeft size={15} />
             </button>
@@ -202,9 +185,7 @@ function Pagination({ current, total, onChange }) {
                         className="w-8 h-8 rounded-lg text-xs font-medium transition-all"
                         style={p === current
                             ? { background: 'linear-gradient(135deg,#7c3aed,#9333ea)', color: '#fff', boxShadow: '0 0 10px rgba(124,58,237,0.4)' }
-                            : { color: '#7c6fa0' }}
-                        onMouseEnter={e => { if (p !== current) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
-                        onMouseLeave={e => { if (p !== current) e.currentTarget.style.background = 'transparent'; }}>
+                            : { color: '#7c6fa0' }}>
                         {p}
                     </button>
                 )
@@ -212,68 +193,59 @@ function Pagination({ current, total, onChange }) {
             <button onClick={() => onChange(current + 1)} disabled={current === total}
                 className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{ color: '#7c6fa0' }}
-                onMouseEnter={e => { if (current < total) e.currentTarget.style.background = 'rgba(139,92,246,0.12)'; }}
+                onMouseEnter={e => current < total && (e.currentTarget.style.background = 'rgba(139,92,246,0.12)')}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                 <ChevronRight size={15} />
             </button>
         </div>
     );
-}
+};
 
-/* ── Panel shell ─────────────────────────────────────────────────────────── */
 const Panel = ({ children, className = "" }) => (
-    <div className={`rounded-2xl ${className}`}
-        style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.15)', backdropFilter: 'blur(12px)' }}>
+    <div className={`rounded-2xl ${className}`} style={{ background: 'rgba(20,16,36,0.8)', border: '1px solid rgba(139,92,246,0.15)', backdropFilter: 'blur(12px)' }}>
         {children}
     </div>
 );
 
-/* ── Mobile card ─────────────────────────────────────────────────────────── */
-function UserCard({ user, onView }) {
-    return (
-        <Panel className="p-4 space-y-3">
-            <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${user.avatarGrad} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
-                    {user.avatar}
+const UserCard = ({ user, onView }) => (
+    <Panel className="p-4 space-y-3">
+        <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${user.avatarGrad} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
+                {user.avatar}
+            </div>
+            <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-semibold truncate" style={{ color: '#e2d9f3' }}>{user.name}</p>
                 </div>
-                <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-semibold truncate" style={{ color: '#e2d9f3' }}>{user.name}</p>
-                    </div>
-                    <p className="text-xs truncate" style={{ color: '#5a4f72' }}>{user.email}</p>
+                <p className="text-xs truncate" style={{ color: '#5a4f72' }}>{user.email}</p>
+            </div>
+            <UserStatusDot status={user.status} />
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-center">
+            {[
+                { val: user.totalDevices, label: 'Devices' },
+                { val: user.region, label: 'Region' },
+                { val: user.lastSeen, label: 'Last seen' },
+            ].map(item => (
+                <div key={item.label} className="rounded-xl py-2" style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.1)' }}>
+                    <p className="text-xs font-bold" style={{ color: '#c4b5fd' }}>{item.val}</p>
+                    <p className="text-[10px]" style={{ color: '#5a4f72' }}>{item.label}</p>
                 </div>
-                <UserStatusDot status={user.status} />
-            </div>
+            ))}
+        </div>
+        <div className="flex items-center justify-between pt-1" style={{ borderTop: '1px solid rgba(139,92,246,0.1)' }}>
+            <HealthPills devices={user.devices} />
+            <button onClick={() => onView(user.id)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl transition-all"
+                style={{ background: 'rgba(124,58,237,0.15)', color: '#c4b5fd', border: '1px solid rgba(139,92,246,0.25)' }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,58,237,0.25)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(124,58,237,0.15)'}>
+                <Eye size={13} /> View
+            </button>
+        </div>
+    </Panel>
+);
 
-            <div className="grid grid-cols-3 gap-2 text-center">
-                {[
-                    { val: user.totalDevices, label: 'Devices' },
-                    { val: user.region, label: 'Region' },
-                    { val: user.lastSeen, label: 'Last seen' },
-                ].map(item => (
-                    <div key={item.label} className="rounded-xl py-2"
-                        style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.1)' }}>
-                        <p className="text-xs font-bold" style={{ color: '#c4b5fd' }}>{item.val}</p>
-                        <p className="text-[10px]" style={{ color: '#5a4f72' }}>{item.label}</p>
-                    </div>
-                ))}
-            </div>
-
-            <div className="flex items-center justify-between pt-1" style={{ borderTop: '1px solid rgba(139,92,246,0.1)' }}>
-                <HealthPills devices={user.devices} />
-                <button onClick={() => onView(user)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl transition-all"
-                    style={{ background: 'rgba(124,58,237,0.15)', color: '#c4b5fd', border: '1px solid rgba(139,92,246,0.25)' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,58,237,0.25)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(124,58,237,0.15)'}>
-                    <Eye size={13} /> View
-                </button>
-            </div>
-        </Panel>
-    );
-}
-
-/* ── Input / select shared dark style ───────────────────────────────────── */
 const darkFieldStyle = {
     background: 'rgba(15,12,25,0.8)',
     border: '1px solid rgba(139,92,246,0.2)',
@@ -281,12 +253,12 @@ const darkFieldStyle = {
     outline: 'none',
 };
 
-/* ── Main component ──────────────────────────────────────────────────────── */
+// ── Main Component ────────────────────────────────────────────────────────
 export const RegisteredUsers = () => {
+    const navigate = useNavigate();
     const [search, setSearch] = useState('');
     const [filterRole, setFilterRole] = useState('All');
     const [filterStatus, setFilterStatus] = useState('All');
-    const [selectedUser, setSelectedUser] = useState(null);
     const [page, setPage] = useState(1);
 
     const filtered = REGISTERED_USERS.filter(u => {
@@ -301,12 +273,11 @@ export const RegisteredUsers = () => {
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
     const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-    const handleFilterChange = setter => e => { setter(e.target.value); setPage(1); };
-    const handleSearch = e => { setSearch(e.target.value); setPage(1); };
+    const handleViewUser = (userId) => {
+        navigate(`/admin/user/${userId}`);
+    };
 
-    if (selectedUser) {
-        return <UserDeviceDetail user={selectedUser} onBack={() => setSelectedUser(null)} />;
-    }
+    const handleFilterChange = setter => e => { setter(e.target.value); setPage(1); };
 
     return (
         <div className="space-y-6">
@@ -348,20 +319,23 @@ export const RegisteredUsers = () => {
                 <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative flex-1">
                         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
-                        <input type="text" placeholder="Search by name, email, or region…"
-                            value={search} onChange={handleSearch}
+                        <input
+                            type="text"
+                            placeholder="Search by name, email, or region…"
+                            value={search}
+                            onChange={e => { setSearch(e.target.value); setPage(1); }}
                             className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
-                            style={{ ...darkFieldStyle, '::placeholder': { color: '#5a4f72' } }}
+                            style={darkFieldStyle}
                             onFocus={e => e.target.style.borderColor = 'rgba(139,92,246,0.5)'}
-                            onBlur={e => e.target.style.borderColor = 'rgba(139,92,246,0.2)'} />
+                            onBlur={e => e.target.style.borderColor = 'rgba(139,92,246,0.2)'}
+                        />
                     </div>
                     {[
                         { value: filterRole, setter: setFilterRole, opts: ['All', 'Sub Admin', 'User'] },
                         { value: filterStatus, setter: setFilterStatus, opts: ['All', 'active', 'inactive'] },
                     ].map((sel, i) => (
                         <select key={i} value={sel.value} onChange={handleFilterChange(sel.setter)}
-                            className="px-3.5 py-2.5 text-sm rounded-xl"
-                            style={darkFieldStyle}>
+                            className="px-3.5 py-2.5 text-sm rounded-xl" style={darkFieldStyle}>
                             {sel.opts.map(o => <option key={o} value={o} style={{ background: '#0f0c19' }}>{o}</option>)}
                         </select>
                     ))}
@@ -383,7 +357,7 @@ export const RegisteredUsers = () => {
                         <p className="text-sm">No users match your filters</p>
                     </div>
                 ) : paginated.map(user => (
-                    <UserCard key={user.id} user={user} onView={setSelectedUser} />
+                    <UserCard key={user.id} user={user} onView={handleViewUser} />
                 ))}
             </div>
 
@@ -394,15 +368,14 @@ export const RegisteredUsers = () => {
                         <thead>
                             <tr style={{ borderBottom: '1px solid rgba(139,92,246,0.12)', background: 'rgba(139,92,246,0.05)' }}>
                                 {['User', 'Mobile', 'Devices', 'Region', 'Status', 'Last Seen', 'Actions'].map(h => (
-                                    <th key={h} className="text-left text-xs font-semibold px-5 py-3.5"
-                                        style={{ color: '#7c6fa0' }}>{h}</th>
+                                    <th key={h} className="text-left text-xs font-semibold px-5 py-3.5" style={{ color: '#7c6fa0' }}>{h}</th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
                             {paginated.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="text-center py-16" style={{ color: '#5a4f72' }}>
+                                    <td colSpan={7} className="text-center py-16" style={{ color: '#5a4f72' }}>
                                         <div className="flex flex-col items-center gap-2">
                                             <Users size={32} className="opacity-30" />
                                             <p className="text-sm">No users match your filters</p>
@@ -420,9 +393,7 @@ export const RegisteredUsers = () => {
                                                 {user.avatar}
                                             </div>
                                             <div>
-                                                <div className="flex items-center gap-2">
-                                                    <p className="text-sm font-semibold" style={{ color: '#e2d9f3' }}>{user.name}</p>
-                                                </div>
+                                                <p className="text-sm font-semibold" style={{ color: '#e2d9f3' }}>{user.name}</p>
                                                 <p className="text-xs" style={{ color: '#5a4f72' }}>{user.email}</p>
                                             </div>
                                         </div>
@@ -439,7 +410,7 @@ export const RegisteredUsers = () => {
                                     <td className="px-4 py-4"><UserStatusDot status={user.status} /></td>
                                     <td className="px-4 py-4 text-xs" style={{ color: '#5a4f72' }}>{user.lastSeen}</td>
                                     <td className="px-4 py-4">
-                                        <button onClick={() => setSelectedUser(user)}
+                                        <button onClick={() => handleViewUser(user.id)}
                                             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl transition-all"
                                             style={{ background: 'rgba(124,58,237,0.15)', color: '#c4b5fd', border: '1px solid rgba(139,92,246,0.25)' }}
                                             onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,58,237,0.25)'}
