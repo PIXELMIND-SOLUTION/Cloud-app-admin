@@ -1,19 +1,18 @@
-// pages/UserDeviceDetails.jsx - Fully Responsive User Details Page
+// pages/UserDeviceDetails.jsx - Fully Responsive User Details Page with Saffron Theme
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft, Smartphone, Laptop, Tablet, Watch,
     CheckCircle, XCircle, AlertCircle, Battery, HardDrive,
     Calendar, Clock, Shield, Lock, Wifi, Cpu, User, Mail, Phone, MapPin, Briefcase,
-    ChevronUp,
-    ChevronDown
+    ChevronUp, ChevronDown
 } from 'lucide-react';
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 const REGISTERED_USERS = [
     {
         id: 1, name: "Raj Mehta", email: "raj.mehta@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
-        avatar: "RM", avatarGrad: "from-violet-500 to-purple-600", region: "Mumbai",
+        avatar: "RM", avatarGrad: "from-orange-500 to-amber-600", region: "Mumbai",
         totalDevices: 3, activeDevices: 3, status: "active", lastSeen: "2m ago",
         devices: [
             { id: "D001", name: "iPhone 14 Pro", os: "iOS 17.4", model: "Apple", type: "mobile", status: "active", battery: 82, storage: 61, enrolled: "12 Jan 2024", appCount: 24, mdmProfile: true, encryption: true, passcode: true, lastSync: "5m ago" },
@@ -23,7 +22,7 @@ const REGISTERED_USERS = [
     },
     {
         id: 2, name: "Priya Nair", email: "priya.nair@corp.io", role: "User", mobile: "+91 9876543210",
-        avatar: "PN", avatarGrad: "from-sky-500 to-blue-600", region: "Bangalore",
+        avatar: "PN", avatarGrad: "from-amber-400 to-orange-500", region: "Bangalore",
         totalDevices: 2, activeDevices: 1, status: "active", lastSeen: "18m ago",
         devices: [
             { id: "D004", name: "Samsung Galaxy S23", os: "Android 14", model: "Samsung", type: "mobile", status: "active", battery: 47, storage: 78, enrolled: "8 Feb 2024", appCount: 21, mdmProfile: true, encryption: true, passcode: false, lastSync: "2h ago" },
@@ -32,7 +31,7 @@ const REGISTERED_USERS = [
     },
     {
         id: 3, name: "Arjun Das", email: "arjun.das@corp.io", role: "User", mobile: "+91 9876543210",
-        avatar: "AD", avatarGrad: "from-emerald-500 to-teal-600", region: "Delhi",
+        avatar: "AD", avatarGrad: "from-orange-600 to-amber-700", region: "Delhi",
         totalDevices: 4, activeDevices: 4, status: "active", lastSeen: "Just now",
         devices: [
             { id: "D006", name: "Pixel 7 Pro", os: "Android 14", model: "Google", type: "mobile", status: "active", battery: 91, storage: 34, enrolled: "1 Jan 2024", appCount: 28, mdmProfile: true, encryption: true, passcode: true, lastSync: "Just now" },
@@ -43,7 +42,7 @@ const REGISTERED_USERS = [
     },
     {
         id: 4, name: "Meera Patel", email: "meera.patel@corp.io", role: "User", mobile: "+91 9876543210",
-        avatar: "MP", avatarGrad: "from-rose-500 to-pink-600", region: "Chennai",
+        avatar: "MP", avatarGrad: "from-amber-500 to-yellow-600", region: "Chennai",
         totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "1h ago",
         devices: [
             { id: "D010", name: "iPhone 15 Plus", os: "iOS 17.3", model: "Apple", type: "mobile", status: "active", battery: 95, storage: 28, enrolled: "20 Jan 2024", appCount: 16, mdmProfile: true, encryption: true, passcode: true, lastSync: "1h ago" },
@@ -51,7 +50,7 @@ const REGISTERED_USERS = [
     },
     {
         id: 5, name: "Vikram Singh", email: "vikram.singh@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
-        avatar: "VS", avatarGrad: "from-indigo-500 to-blue-600", region: "Hyderabad",
+        avatar: "VS", avatarGrad: "from-orange-400 to-amber-500", region: "Hyderabad",
         totalDevices: 3, activeDevices: 2, status: "inactive", lastSeen: "2d ago",
         devices: [
             { id: "D011", name: "iPad Pro 12.9", os: "iPadOS 17.1", model: "Apple", type: "tablet", status: "active", battery: 74, storage: 48, enrolled: "5 Jan 2024", appCount: 22, mdmProfile: true, encryption: true, passcode: true, lastSync: "2d ago" },
@@ -61,7 +60,7 @@ const REGISTERED_USERS = [
     },
     {
         id: 6, name: "Sneha Reddy", email: "sneha.reddy@corp.io", role: "User", mobile: "+91 9876543210",
-        avatar: "SR", avatarGrad: "from-amber-500 to-orange-600", region: "Pune",
+        avatar: "SR", avatarGrad: "from-amber-600 to-orange-700", region: "Pune",
         totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "45m ago",
         devices: [
             { id: "D014", name: "OnePlus 11", os: "Android 14", model: "OnePlus", type: "mobile", status: "active", battery: 79, storage: 37, enrolled: "22 Feb 2024", appCount: 23, mdmProfile: true, encryption: true, passcode: true, lastSync: "45m ago" },
@@ -70,7 +69,7 @@ const REGISTERED_USERS = [
     },
     {
         id: 7, name: "Kiran Bose", email: "kiran.bose@corp.io", role: "User", mobile: "+91 9876543210",
-        avatar: "KB", avatarGrad: "from-teal-500 to-cyan-600", region: "Kolkata",
+        avatar: "KB", avatarGrad: "from-yellow-500 to-amber-600", region: "Kolkata",
         totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "10m ago",
         devices: [
             { id: "D016", name: "iPhone 13", os: "iOS 16.6", model: "Apple", type: "mobile", status: "active", battery: 38, storage: 82, enrolled: "1 Dec 2023", appCount: 17, mdmProfile: true, encryption: true, passcode: true, lastSync: "10m ago" },
@@ -79,7 +78,7 @@ const REGISTERED_USERS = [
     },
     {
         id: 8, name: "Anita Joshi", email: "anita.joshi@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
-        avatar: "AJ", avatarGrad: "from-fuchsia-500 to-purple-600", region: "Ahmedabad",
+        avatar: "AJ", avatarGrad: "from-orange-500 to-amber-600", region: "Ahmedabad",
         totalDevices: 2, activeDevices: 1, status: "inactive", lastSeen: "3d ago",
         devices: [
             { id: "D018", name: "Pixel 6a", os: "Android 13", model: "Google", type: "mobile", status: "offline", battery: 5, storage: 60, enrolled: "10 Nov 2023", appCount: 15, mdmProfile: false, encryption: true, passcode: false, lastSync: "3d ago" },
@@ -88,7 +87,7 @@ const REGISTERED_USERS = [
     },
     {
         id: 9, name: "Rohan Verma", email: "rohan.verma@corp.io", role: "User", mobile: "+91 9876543210",
-        avatar: "RV", avatarGrad: "from-lime-500 to-green-600", region: "Jaipur",
+        avatar: "RV", avatarGrad: "from-amber-400 to-yellow-500", region: "Jaipur",
         totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "5m ago",
         devices: [
             { id: "D020", name: "Galaxy A54", os: "Android 14", model: "Samsung", type: "mobile", status: "active", battery: 66, storage: 42, enrolled: "5 Feb 2024", appCount: 13, mdmProfile: true, encryption: true, passcode: true, lastSync: "5m ago" },
@@ -96,7 +95,7 @@ const REGISTERED_USERS = [
     },
     {
         id: 10, name: "Divya Menon", email: "divya.menon@corp.io", role: "User", mobile: "+91 9876543210",
-        avatar: "DM", avatarGrad: "from-orange-500 to-red-500", region: "Kochi",
+        avatar: "DM", avatarGrad: "from-orange-600 to-red-500", region: "Kochi",
         totalDevices: 3, activeDevices: 2, status: "active", lastSeen: "30m ago",
         devices: [
             { id: "D021", name: "iPhone 12", os: "iOS 16.7", model: "Apple", type: "mobile", status: "active", battery: 71, storage: 38, enrolled: "20 Oct 2023", appCount: 20, mdmProfile: true, encryption: true, passcode: true, lastSync: "30m ago" },
@@ -106,7 +105,7 @@ const REGISTERED_USERS = [
     },
     {
         id: 11, name: "Suresh Iyer", email: "suresh.iyer@corp.io", role: "User", mobile: "+91 9876543210",
-        avatar: "SI", avatarGrad: "from-cyan-500 to-blue-500", region: "Coimbatore",
+        avatar: "SI", avatarGrad: "from-amber-500 to-orange-600", region: "Coimbatore",
         totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "1h ago",
         devices: [
             { id: "D024", name: "Moto G84", os: "Android 13", model: "Motorola", type: "mobile", status: "active", battery: 84, storage: 31, enrolled: "28 Jan 2024", appCount: 10, mdmProfile: true, encryption: true, passcode: true, lastSync: "1h ago" },
@@ -114,7 +113,7 @@ const REGISTERED_USERS = [
     },
     {
         id: 12, name: "Pooja Sharma", email: "pooja.sharma@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
-        avatar: "PS", avatarGrad: "from-pink-500 to-rose-600", region: "Lucknow",
+        avatar: "PS", avatarGrad: "from-orange-400 to-amber-500", region: "Lucknow",
         totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "8m ago",
         devices: [
             { id: "D025", name: "iPhone 14", os: "iOS 17.2", model: "Apple", type: "mobile", status: "active", battery: 77, storage: 45, enrolled: "14 Feb 2024", appCount: 22, mdmProfile: true, encryption: true, passcode: true, lastSync: "8m ago" },
@@ -129,9 +128,10 @@ const Panel = ({ children, className = "" }) => (
     <div
         className={`rounded-2xl ${className}`}
         style={{
-            background: 'rgba(20,16,36,0.8)',
-            border: '1px solid rgba(139,92,246,0.15)',
-            backdropFilter: 'blur(12px)'
+            background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
+            border: '1px solid rgba(255,125,56,0.25)',
+            backdropFilter: 'blur(12px)',
+            boxShadow: '0 4px 20px rgba(255,125,56,0.1)'
         }}
     >
         {children}
@@ -140,7 +140,7 @@ const Panel = ({ children, className = "" }) => (
 
 const StatusBadge = ({ status }) => {
     const configs = {
-        active: { color: '#34d399', bg: 'rgba(52,211,153,0.15)', icon: CheckCircle },
+        active: { color: '#FF7D38', bg: 'rgba(255,125,56,0.2)', icon: CheckCircle },
         inactive: { color: '#94a3b8', bg: 'rgba(148,163,184,0.15)', icon: XCircle },
         offline: { color: '#f87171', bg: 'rgba(248,113,113,0.15)', icon: AlertCircle },
         warning: { color: '#fcd34d', bg: 'rgba(252,211,53,0.15)', icon: AlertCircle },
@@ -165,16 +165,16 @@ const DeviceTypeIcon = ({ type }) => {
         wearable: Watch,
     };
     const Icon = icons[type] || Smartphone;
-    return <Icon size={18} className="shrink-0" style={{ color: '#a78bfa' }} />;
+    return <Icon size={18} className="shrink-0" style={{ color: '#FF7D38' }} />;
 };
 
 const InfoRow = ({ label, value, icon: Icon }) => (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between py-2.5 gap-1 sm:gap-4" style={{ borderBottom: '1px solid rgba(139,92,246,0.08)' }}>
-        <span className="flex items-center gap-2 text-xs sm:text-sm" style={{ color: '#7c6fa0' }}>
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between py-2.5 gap-1 sm:gap-4" style={{ borderBottom: '1px solid rgba(255,125,56,0.08)' }}>
+        <span className="flex items-center gap-2 text-xs sm:text-sm" style={{ color: '#FF9A5F' }}>
             {Icon && <Icon size={14} className="shrink-0" />}
             <span className="font-medium">{label}</span>
         </span>
-        <span className="text-xs sm:text-sm font-medium break-all" style={{ color: '#e2d9f3' }}>{value}</span>
+        <span className="text-xs sm:text-sm font-medium break-all" style={{ color: '#FF7D38' }}>{value}</span>
     </div>
 );
 
@@ -183,10 +183,11 @@ const DeviceCard = ({ device }) => {
 
     return (
         <div
-            className="rounded-2xl p-4 transition-all duration-300 hover:shadow-xl"
+            className="rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
             style={{
-                background: "rgba(26, 20, 46, 0.9)",
-                border: "1px solid rgba(139,92,246,0.12)",
+                background: 'linear-gradient(135deg, rgba(255,125,56,0.15), rgba(255,107,26,0.08))',
+                border: "1px solid rgba(255,125,56,0.2)",
+                boxShadow: '0 4px 15px rgba(255,125,56,0.08)'
             }}
         >
             {/* Header */}
@@ -194,16 +195,16 @@ const DeviceCard = ({ device }) => {
                 <div className="flex items-start gap-3 min-w-0 flex-1">
                     <div
                         className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl"
-                        style={{ background: "rgba(139,92,246,0.12)" }}
+                        style={{ background: "rgba(255,125,56,0.15)" }}
                     >
                         <DeviceTypeIcon type={device.type} />
                     </div>
 
                     <div className="min-w-0 flex-1">
-                        <h3 className="font-semibold text-white text-sm md:text-base truncate pr-2">
+                        <h3 className="font-semibold text-sm md:text-base truncate pr-2" style={{ color: '#FF7D38' }}>
                             {device.name}
                         </h3>
-                        <p className="text-xs text-slate-400 truncate">
+                        <p className="text-xs" style={{ color: '#FF9A5F' }}>
                             {device.model} • {device.os}
                         </p>
                     </div>
@@ -213,8 +214,10 @@ const DeviceCard = ({ device }) => {
                     <StatusBadge status={device.status} />
                     <button
                         onClick={() => setExpanded(!expanded)}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors shrink-0 hover:bg-purple-500/20"
-                        style={{ background: "rgba(139,92,246,0.1)", color: "#a78bfa" }}
+                        className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors shrink-0"
+                        style={{ background: "rgba(255,125,56,0.15)", color: "#FF7D38" }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,125,56,0.25)'; e.currentTarget.style.transform = 'scale(1.1)' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,125,56,0.15)'; e.currentTarget.style.transform = 'scale(1)' }}
                     >
                         {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                     </button>
@@ -224,7 +227,7 @@ const DeviceCard = ({ device }) => {
             {/* Expanded Details */}
             {expanded && (
                 <>
-                    <div className="my-4" style={{ borderTop: "1px solid rgba(139,92,246,0.12)" }} />
+                    <div className="my-4" style={{ borderTop: "1px solid rgba(255,125,56,0.12)" }} />
 
                     {/* Info Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
@@ -239,17 +242,17 @@ const DeviceCard = ({ device }) => {
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2 mt-4">
                         {device.mdmProfile && (
-                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-300 flex items-center gap-1">
+                            <span className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1" style={{ background: 'rgba(255,125,56,0.2)', color: '#FF7D38' }}>
                                 <Shield size={12} /> MDM Profile
                             </span>
                         )}
                         {device.encryption && (
-                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-500/10 text-blue-300 flex items-center gap-1">
+                            <span className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1" style={{ background: 'rgba(255,125,56,0.15)', color: '#FF9A5F' }}>
                                 <Lock size={12} /> Encrypted
                             </span>
                         )}
                         {device.passcode && (
-                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 flex items-center gap-1">
+                            <span className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1" style={{ background: 'rgba(255,125,56,0.12)', color: '#FF8C42' }}>
                                 <Lock size={12} /> Passcode
                             </span>
                         )}
@@ -273,14 +276,14 @@ export const UserDeviceDetails = () => {
             <div className="flex items-center justify-center min-h-[60vh] px-4">
                 <div className="text-center max-w-sm">
                     <AlertCircle size={48} className="mx-auto mb-4" style={{ color: '#f87171' }} />
-                    <h2 className="text-2xl font-bold" style={{ color: '#e2d9f3' }}>User Not Found</h2>
-                    <p className="mt-2 text-sm" style={{ color: '#5a4f72' }}>The user you're looking for doesn't exist.</p>
+                    <h2 className="text-2xl font-bold" style={{ color: '#FF7D38' }}>User Not Found</h2>
+                    <p className="mt-2 text-sm" style={{ color: '#FF9A5F' }}>The user you're looking for doesn't exist.</p>
                     <button
-                        onClick={() => navigate('/users')}
-                        className="mt-6 px-6 py-2.5 rounded-xl transition-all text-sm font-medium"
-                        style={{ background: 'rgba(124,58,237,0.15)', color: '#c4b5fd', border: '1px solid rgba(139,92,246,0.25)' }}
-                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,58,237,0.25)'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(124,58,237,0.15)'}
+                        onClick={() => navigate('/admin/users')}
+                        className="mt-6 px-6 py-2.5 rounded-xl transition-all text-sm font-medium hover:scale-105"
+                        style={{ background: 'rgba(255,125,56,0.2)', color: '#FF7D38', border: '1px solid rgba(255,125,56,0.3)' }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,125,56,0.3)'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,125,56,0.2)'}
                     >
                         ← Back to Users
                     </button>
@@ -302,10 +305,10 @@ export const UserDeviceDetails = () => {
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                 <button
                     onClick={() => navigate('/admin/users')}
-                    className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl transition-all text-sm shrink-0"
-                    style={{ background: 'rgba(139,92,246,0.1)', color: '#c4b5fd', border: '1px solid rgba(139,92,246,0.2)' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(139,92,246,0.2)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(139,92,246,0.1)'}
+                    className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl transition-all text-sm shrink-0 hover:scale-105"
+                    style={{ background: 'rgba(255,125,56,0.15)', color: '#FF7D38', border: '1px solid rgba(255,125,56,0.25)' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,125,56,0.25)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,125,56,0.15)'}
                 >
                     <ArrowLeft size={16} />
                     <span className="hidden sm:inline">Back to Users</span>
@@ -314,12 +317,12 @@ export const UserDeviceDetails = () => {
 
                 <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                        <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate" style={{ color: '#e2d9f3' }}>
+                        <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate" style={{ color: '#FF7D38' }}>
                             {user.name}
                         </h1>
                         <StatusBadge status={user.status} />
                     </div>
-                    <p className="text-xs sm:text-sm truncate" style={{ color: '#7c6fa0' }}>
+                    <p className="text-xs sm:text-sm truncate" style={{ color: '#FF9A5F' }}>
                         {user.email} • {user.role}
                     </p>
                 </div>
@@ -329,29 +332,32 @@ export const UserDeviceDetails = () => {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                 {[
                     { label: 'Total Devices', value: stats.total, icon: Smartphone },
-                    { label: 'Active', value: stats.active, icon: CheckCircle, color: '#34d399' },
+                    { label: 'Active', value: stats.active, icon: CheckCircle, color: '#FF7D38' },
                     { label: 'Warning', value: stats.warning, icon: AlertCircle, color: '#fcd34d' },
                     { label: 'Offline', value: stats.offline, icon: XCircle, color: '#f87171' },
                 ].map(stat => (
                     <div
                         key={stat.label}
-                        className="rounded-2xl p-3 sm:p-4 text-center transition-all hover:border-purple-500/30"
+                        className="rounded-2xl p-3 sm:p-4 text-center transition-all hover:scale-105"
                         style={{
-                            background: 'rgba(20,16,36,0.8)',
-                            border: '1px solid rgba(139,92,246,0.12)',
+                            background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
+                            border: '1px solid rgba(255,125,56,0.2)',
+                            boxShadow: '0 4px 15px rgba(255,125,56,0.08)'
                         }}
+                        onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.4)'}
+                        onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'}
                     >
-                        <stat.icon size={18} className="mx-auto mb-1.5" style={{ color: stat.color || '#a78bfa' }} />
-                        <p className="text-xl sm:text-2xl font-bold" style={{ color: '#e2d9f3' }}>{stat.value}</p>
-                        <p className="text-[10px] sm:text-xs" style={{ color: '#5a4f72' }}>{stat.label}</p>
+                        <stat.icon size={18} className="mx-auto mb-1.5" style={{ color: stat.color || '#FF7D38' }} />
+                        <p className="text-xl sm:text-2xl font-bold" style={{ color: '#FF7D38' }}>{stat.value}</p>
+                        <p className="text-[10px] sm:text-xs" style={{ color: '#FF9A5F' }}>{stat.label}</p>
                     </div>
                 ))}
             </div>
 
             {/* User Information */}
             <Panel className="p-4 sm:p-6">
-                <h3 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 flex items-center gap-2" style={{ color: '#e2d9f3' }}>
-                    <User size={18} style={{ color: '#a78bfa' }} /> User Information
+                <h3 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 flex items-center gap-2" style={{ color: '#FF7D38' }}>
+                    <User size={18} style={{ color: '#FF7D38' }} /> User Information
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                     <InfoRow label="Full Name" value={user.name} icon={User} />
@@ -365,8 +371,8 @@ export const UserDeviceDetails = () => {
 
             {/* Devices */}
             <div>
-                <h3 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 flex items-center gap-2" style={{ color: '#e2d9f3' }}>
-                    <Smartphone size={18} style={{ color: '#a78bfa' }} />
+                <h3 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 flex items-center gap-2" style={{ color: '#FF7D38' }}>
+                    <Smartphone size={18} style={{ color: '#FF7D38' }} />
                     Devices ({user.devices.length})
                 </h3>
 

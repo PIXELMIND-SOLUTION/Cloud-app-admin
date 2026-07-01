@@ -35,8 +35,8 @@ const AnimatedBackground = () => (
             className="absolute inset-0 pointer-events-none"
             style={{
                 backgroundImage: `
-                    linear-gradient(rgba(139,92,246,0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(139,92,246,0.05) 1px, transparent 1px)
+                    linear-gradient(rgba(255,125,56,0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,125,56,0.05) 1px, transparent 1px)
                 `,
                 backgroundSize: '40px 40px',
                 animation: 'gridPulse 6s ease-in-out infinite',
@@ -45,10 +45,10 @@ const AnimatedBackground = () => (
 
         {/* Ambient orbs */}
         {[
-            { w: 500, h: 500, top: '-140px', left: '40px', delay: '0s', color: 'rgba(124,58,237,0.12)' },
-            { w: 350, h: 350, bottom: '0px', left: '200px', delay: '-5s', color: 'rgba(168,85,247,0.1)' },
-            { w: 280, h: 280, top: '30%', right: '5%', delay: '-10s', color: 'rgba(79,70,229,0.1)' },
-            { w: 200, h: 200, bottom: '10%', right: '20%', delay: '-3s', color: 'rgba(139,92,246,0.08)' },
+            { w: 500, h: 500, top: '-140px', left: '40px', delay: '0s', color: 'rgba(255,125,56,0.12)' },
+            { w: 350, h: 350, bottom: '0px', left: '200px', delay: '-5s', color: 'rgba(255,107,26,0.1)' },
+            { w: 280, h: 280, top: '30%', right: '5%', delay: '-10s', color: 'rgba(2,32,60,0.1)' },
+            { w: 200, h: 200, bottom: '10%', right: '20%', delay: '-3s', color: 'rgba(255,125,56,0.08)' },
         ].map((orb, i) => (
             <div
                 key={i}
@@ -86,12 +86,12 @@ const AnimatedBackground = () => (
                     height: 4,
                     top: p.top,
                     left: p.left,
-                    background: '#ffffff',               // fixed white
+                    background: '#ffffff',
                     boxShadow: `
-                0 0 8px #ffffff,
-                0 0 16px #d946ef,
-                0 0 24px #9333ea
-            `,                                   // purple neon glow
+                        0 0 8px #ffffff,
+                        0 0 16px #FF7D38,
+                        0 0 24px #FF6B1A
+                    `,
                     animation: `particleFloat ${p.duration} ease-in-out infinite`,
                     animationDelay: p.delay,
                 }}
@@ -110,7 +110,7 @@ const AnimatedBackground = () => (
                     width: ring.size, height: ring.size,
                     top: ring.top, right: ring.right,
                     bottom: ring.bottom, left: ring.left,
-                    border: '1px solid rgba(139,92,246,0.15)',
+                    border: '1px solid rgba(255,125,56,0.15)',
                     animation: `ringExpand 5s ease-out infinite`,
                     animationDelay: ring.delay,
                 }}
@@ -127,7 +127,7 @@ export const AdminLayout = () => {
     return (
         <div
             className="flex h-screen overflow-hidden font-sans relative"
-            style={{ background: '#0a0814' }}
+            style={{ background: '#02203C' }}
         >
             {/* Animated background layer */}
             <AnimatedBackground />

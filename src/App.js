@@ -14,6 +14,10 @@ import { UserDeviceDetails } from './pages/Users/UserDeviceDetails';
 import { ActivePlanUsers } from './pages/plans/ActivePlanUsers';
 import { InactivePlanUsers } from './pages\/plans/InactivePlanUsers';
 import AdminNotifications from './pages/AdminNotifications';
+import { SubAdminLogin } from './Login/SubAdminLogin';
+import AllStaff from './components/staff/AllStaff';
+import StaffForm from './components/staff/StaffForm';
+import SingleStaff from './components/staff/SingleStaff';
 
 function App() {
   return (
@@ -21,7 +25,7 @@ function App() {
       <SessionTimedOut />
       <Routes>
         <Route path="/" element={<AdminLogin />} />
-
+        <Route path="/staff-login" element={<SubAdminLogin />} />
         <Route
           path="/admin"
           element={
@@ -39,6 +43,10 @@ function App() {
           <Route path="analytics" element={<AdminAnalytics />} />
           <Route path="reports" element={<AdminReports />} />
           <Route path='notifications' element={<AdminNotifications/>}/>
+          <Route path="staff" element={<AllStaff />} />
+          <Route path="staff/add" element={<StaffForm />} />
+          <Route path="staff/add/:id" element={<StaffForm />} />
+          <Route path="staff/:id" element={<SingleStaff />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>

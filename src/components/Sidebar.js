@@ -1,13 +1,14 @@
-// components/Sidebar.js
+// components/Sidebar.js - Updated with Staff Management & Permission-based Access
 import React, { useState } from 'react';
 import {
     LayoutDashboard, Users, Settings, X, ChevronDown,
     LogOut, ChevronRight, BarChart2, MailWarning, LineChart, Cloud,
-    Bell
+    Bell, UserCog, UserPlus, Users as UsersIcon
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png'
 
+// ── Navigation Items ──────────────────────────────────────────────────────────
 const NAV_ITEMS = [
     { label: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
     { label: "Registered Users", icon: Users, path: "/admin/users" },
@@ -19,7 +20,15 @@ const NAV_ITEMS = [
     },
     { label: "Analytics", icon: LineChart, path: "/admin/analytics" },
     { label: "Reports", icon: MailWarning, path: "/admin/reports" },
-    // { label: "Notifications", icon: Bell, path: "/admin/notifications" },
+    {
+        label: "Staff Management",
+        icon: UserCog,
+        path: "/admin/staff",
+        children: [
+            { label: "All Staff", path: "/admin/staff", icon: UsersIcon },
+            { label: "Add Staff", path: "/admin/staff/add", icon: UserPlus },
+        ]
+    },
     { label: "Settings", icon: Settings, path: "/admin/settings" },
 ];
 
@@ -30,13 +39,17 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
     const toggle = (key) => setExpanded(p => ({ ...p, [key]: !p[key] }));
 
     const handleLogout = () => {
-        sessionStorage.removeItem("adminAuth");
-        navigate("/", { replace: true });
+        if (sessionStorage.getItem("adminAuth") === "true") {
+            sessionStorage.removeItem("adminAuth");
+            navigate("/", { replace: true });
+        } else if (sessionStorage.getItem("subAdminAuth") === "true") {
+            sessionStorage.removeItem("subAdminAuth");
+            navigate("/staff-login", { replace: true });
+        }
     };
 
     return (
         <>
-            {/* Mobile overlay */}
             {open && (
                 <div
                     className="fixed inset-0 z-10 lg:hidden"
@@ -53,69 +66,63 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                     lg:translate-x-0 lg:static lg:flex lg:h-screen lg:shrink-0
                 `}
                 style={{
-                    background: 'rgba(10, 8, 20, 0.95)',
-                    borderRight: '1px solid rgba(139,92,246,0.18)',
+                    background: 'rgba(2, 32, 60, 0.95)',
+                    borderRight: '1px solid rgba(255,125,56,0.18)',
                     backdropFilter: 'blur(20px)',
                 }}
             >
-                {/* Ambient orb inside sidebar */}
                 <div
                     className="absolute pointer-events-none"
                     style={{
                         width: 200, height: 200,
-                        background: 'radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%)',
+                        background: 'radial-gradient(circle, rgba(255,125,56,0.15) 0%, transparent 70%)',
                         top: -40, left: -40, borderRadius: '50%',
                     }}
                 />
 
-                {/* Logo */}
                 <div
                     className="flex items-center justify-between px-5 shrink-0"
-                    style={{ height: 64, borderBottom: '1px solid rgba(139,92,246,0.15)' }}
+                    style={{ height: 64, borderBottom: '1px solid rgba(255,125,56,0.15)' }}
                 >
                     <div className="flex items-center gap-2.5">
-                        <div
-                            className="w-8 h-8 flex items-center justify-center rounded-xl"
-                        >
-                            <img src={logo} className='h-8 w-8 object-cover' />
+                        <div className="w-8 h-8 flex items-center justify-center rounded-xl">
+                            <img src={logo} className='h-8 w-8 object-cover' alt="logo" />
                         </div>
-                        <span className="font-bold text-lg tracking-tight" style={{ color: '#e2d9f3' }}>RV Cloud Admin</span>
+                        <span className="font-bold text-lg tracking-tight" style={{ color: '#FF7D38' }}>RV Cloud Admin</span>
                     </div>
                     <button
                         className="lg:hidden transition-colors"
-                        style={{ color: '#7c6fa0' }}
+                        style={{ color: '#FF7D38' }}
                         onClick={() => setOpen(false)}
                     >
                         <X size={18} />
                     </button>
                 </div>
 
-                {/* Profile */}
-                <div className="px-4 py-3" style={{ borderBottom: '1px solid rgba(139,92,246,0.08)' }}>
+                <div className="px-4 py-3" style={{ borderBottom: '1px solid rgba(255,125,56,0.08)' }}>
                     <div
                         className="flex items-center gap-3 rounded-xl p-3"
                         style={{
-                            background: 'rgba(139,92,246,0.1)',
-                            border: '1px solid rgba(139,92,246,0.2)',
+                            background: 'rgba(255,125,56,0.1)',
+                            border: '1px solid rgba(255,125,56,0.2)',
                         }}
                     >
                         <div
                             className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden"
-                            style={{ background: 'linear-gradient(135deg, #6d28d9, #9333ea)' }}
+                            style={{ background: 'linear-gradient(135deg, #FF7D38, #FF6B1A)' }}
                         >
                             <img src='/admin.png' className='w-9 h-9 object-cover' alt="admin" />
                         </div>
                         <div className="min-w-0">
-                            <p className="text-sm font-semibold truncate" style={{ color: '#e2d9f3' }}>Vijay N</p>
-                            <p className="text-xs" style={{ color: '#7c6fa0' }}>Super Admin</p>
+                            <p className="text-sm font-semibold truncate" style={{ color: '#FF7D38' }}>Vijay N</p>
+                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Super Admin</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Nav */}
                 <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5">
                     {NAV_ITEMS.map(item => {
-                        const isActive = active === item.path;
+                        const isActive = active === item.path || (item.children && item.children.some(c => c.path === active));
                         const hasChildren = item.children?.length;
                         const isExpanded = expanded[item.path];
 
@@ -135,16 +142,16 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                                     style={
                                         isActive
                                             ? {
-                                                background: 'linear-gradient(135deg, rgba(124,58,237,0.3), rgba(168,85,247,0.2))',
-                                                color: '#e2d9f3',
-                                                border: '1px solid rgba(139,92,246,0.35)',
+                                                background: 'linear-gradient(135deg, rgba(255,125,56,0.3), rgba(255,107,26,0.2))',
+                                                color: '#FF7D38',
+                                                border: '1px solid rgba(255,125,56,0.35)',
                                             }
                                             : { color: '#7c6fa0', border: '1px solid transparent' }
                                     }
                                     onMouseEnter={e => {
                                         if (!isActive) {
-                                            e.currentTarget.style.background = 'rgba(139,92,246,0.1)';
-                                            e.currentTarget.style.color = '#c4b5fd';
+                                            e.currentTarget.style.background = 'rgba(255,125,56,0.1)';
+                                            e.currentTarget.style.color = '#FF9A5F';
                                         }
                                     }}
                                     onMouseLeave={e => {
@@ -154,27 +161,26 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                                         }
                                     }}
                                 >
-                                    {/* Active glow bar */}
                                     {isActive && (
                                         <span
                                             className="absolute left-0 top-1/2 -translate-y-1/2 rounded-r"
                                             style={{
                                                 width: 3, height: 20,
-                                                background: 'linear-gradient(180deg, #7c3aed, #a855f7)',
-                                                boxShadow: '0 0 10px rgba(139,92,246,0.8)',
+                                                background: 'linear-gradient(180deg, #FF7D38, #FF6B1A)',
+                                                boxShadow: '0 0 10px rgba(255,125,56,0.8)',
                                             }}
                                         />
                                     )}
                                     <item.icon
                                         size={16}
-                                        style={{ color: isActive ? '#c4b5fd' : '#5a4f72', flexShrink: 0 }}
+                                        style={{ color: isActive ? '#FF7D38' : '#5a4f72', flexShrink: 0 }}
                                     />
                                     <span className="flex-1 text-left">{item.label}</span>
                                     {hasChildren && (
                                         <ChevronDown
                                             size={13}
                                             className={`transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
-                                            style={{ color: isActive ? '#c4b5fd' : '#3d3358' }}
+                                            style={{ color: isActive ? '#FF7D38' : '#3d3358' }}
                                         />
                                     )}
                                 </button>
@@ -182,7 +188,7 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                                 {hasChildren && isExpanded && (
                                     <div
                                         className="ml-5 mt-0.5 space-y-0.5 pl-3"
-                                        style={{ borderLeft: '1px solid rgba(139,92,246,0.15)' }}
+                                        style={{ borderLeft: '1px solid rgba(255,125,56,0.15)' }}
                                     >
                                         {item.children.map((child) => (
                                             <button
@@ -192,16 +198,16 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                                                     navigate(child.path);
                                                     setOpen(false);
                                                 }}
-                                                className="w-full text-left text-xs px-2 py-2 rounded-lg transition-colors"
+                                                className="w-full flex items-center gap-2 text-left text-xs px-2 py-2 rounded-lg transition-colors"
                                                 style={
                                                     active === child.path
-                                                        ? { color: '#a78bfa', fontWeight: 600, background: 'rgba(139,92,246,0.12)' }
+                                                        ? { color: '#FF7D38', fontWeight: 600, background: 'rgba(255,125,56,0.12)' }
                                                         : { color: '#5a4f72' }
                                                 }
                                                 onMouseEnter={e => {
                                                     if (active !== child.path) {
-                                                        e.currentTarget.style.color = '#c4b5fd';
-                                                        e.currentTarget.style.background = 'rgba(139,92,246,0.08)';
+                                                        e.currentTarget.style.color = '#FF9A5F';
+                                                        e.currentTarget.style.background = 'rgba(255,125,56,0.08)';
                                                     }
                                                 }}
                                                 onMouseLeave={e => {
@@ -211,7 +217,8 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                                                     }
                                                 }}
                                             >
-                                                <ChevronRight size={10} className="inline mr-1 opacity-50" />
+                                                {child.icon && <child.icon size={12} />}
+                                                <ChevronRight size={10} className="opacity-50" />
                                                 {child.label}
                                             </button>
                                         ))}
@@ -222,8 +229,7 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                     })}
                 </nav>
 
-                {/* Footer */}
-                <div className="px-3 pb-4 shrink-0" style={{ borderTop: '1px solid rgba(139,92,246,0.1)' }}>
+                <div className="px-3 pb-4 shrink-0" style={{ borderTop: '1px solid rgba(255,125,56,0.1)' }}>
                     <button
                         onClick={handleLogout}
                         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors mt-2"

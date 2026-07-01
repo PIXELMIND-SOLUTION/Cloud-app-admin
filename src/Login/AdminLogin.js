@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {
     Smartphone, Shield, Eye, EyeOff, Lock, Mail,
     ArrowRight, AlertCircle, CheckCircle2, Cloud,
-    Check, Copy, Cpu, X, Key, Send
+    Check, Copy, Cpu, X, Key, Send, Users
 } from 'lucide-react';
 import bgImage from '../assets/logoC.png';
 import { useNavigate } from 'react-router-dom';
@@ -85,8 +85,8 @@ const Button = ({ children, loading, onClick, type = 'submit', fullWidth = true,
     const isPrimary = variant === 'primary';
     const baseStyle = fullWidth ? 'w-full' : '';
     const colorStyle = isPrimary
-        ? { background: 'linear-gradient(135deg, #7c3aed, #9333ea)', boxShadow: '0 0 20px rgba(124,58,237,0.3)' }
-        : { background: 'rgba(139,92,246,0.1)', color: '#9c8fc0', border: '1px solid rgba(139,92,246,0.15)' };
+        ? { background: 'linear-gradient(135deg, #FF7D38, #FF6B1A)', boxShadow: '0 0 20px rgba(255,125,56,0.3)' }
+        : { background: 'rgba(255,125,56,0.1)', color: '#FF7D38', border: '1px solid rgba(255,125,56,0.15)' };
 
     return (
         <button
@@ -97,24 +97,24 @@ const Button = ({ children, loading, onClick, type = 'submit', fullWidth = true,
             style={colorStyle}
             onMouseEnter={e => {
                 if (!e.currentTarget.disabled && isPrimary) {
-                    e.currentTarget.style.boxShadow = '0 0 40px rgba(124,58,237,0.5)';
+                    e.currentTarget.style.boxShadow = '0 0 40px rgba(255,125,56,0.5)';
                     e.currentTarget.style.transform = 'scale(1.02)';
                 } else if (!isPrimary) {
-                    e.currentTarget.style.background = 'rgba(139,92,246,0.2)';
+                    e.currentTarget.style.background = 'rgba(255,125,56,0.2)';
                 }
             }}
             onMouseLeave={e => {
                 if (isPrimary) {
-                    e.currentTarget.style.boxShadow = '0 0 20px rgba(124,58,237,0.3)';
+                    e.currentTarget.style.boxShadow = '0 0 20px rgba(255,125,56,0.3)';
                     e.currentTarget.style.transform = 'scale(1)';
                 } else {
-                    e.currentTarget.style.background = 'rgba(139,92,246,0.1)';
+                    e.currentTarget.style.background = 'rgba(255,125,56,0.1)';
                 }
             }}
         >
             {isPrimary && (
                 <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.2), rgba(99,102,241,0.2))' }}
+                    style={{ background: 'linear-gradient(135deg, rgba(255,125,56,0.3), rgba(255,107,26,0.3))' }}
                 />
             )}
             {loading ? (
@@ -154,6 +154,7 @@ export const AdminLogin = ({ onLogin }) => {
     });
 
     const [showForgotModal, setShowForgotModal] = useState(false);
+    const [copySuccess, setCopySuccess] = useState(false);
     const navigate = useNavigate();
 
     const updateState = (key, value) => setState(prev => ({ ...prev, [key]: value }));
@@ -186,6 +187,7 @@ export const AdminLogin = ({ onLogin }) => {
             return;
         }
         updateResetState('loading', true);
+
         setTimeout(() => {
             updateResetState('loading', false);
             updateResetState('success', 'OTP sent successfully to your email!');
@@ -228,30 +230,49 @@ export const AdminLogin = ({ onLogin }) => {
         setResetState(prev => ({ ...prev, step: 1, error: '', success: '' }));
     };
 
+    const STAFF_LOGIN_URL = `${window.location.origin}/staff-login`;
+
+    const copyStaffLoginLink = async () => {
+        try {
+            await navigator.clipboard.writeText(STAFF_LOGIN_URL);
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 3000);
+        } catch {
+            const textArea = document.createElement("textarea");
+            textArea.value = STAFF_LOGIN_URL;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 3000);
+        }
+    };
+
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #7c3aed, #9333ea)', boxShadow: '0 0 20px rgba(124,58,237,0.3)'}}>
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #02203C, #02203C)', boxShadow: '0 0 20px rgba(2,32,60,0.3)' }}>
             {/* Background */}
             <div className="absolute inset-0 z-0">
                 <img src={bgImage} alt="Background" className="w-full h-full object-cover" />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(10, 6, 24, 0.92), rgba(26, 16, 53, 0.88), rgba(13, 8, 32, 0.95))' }} />
-                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 30% 50%, rgba(139,92,246,0.08), transparent 70%)' }} />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(2,32,60,0.92), rgba(2,32,60,0.88), rgba(2,32,60,0.95))' }} />
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 30% 50%, rgba(255,125,56,0.08), transparent 70%)' }} />
             </div>
 
             {/* Main Container */}
-            <div className="relative z-10 w-full max-w-6xl rounded-3xl shadow-2xl overflow-hidden" style={{ border: '1px solid rgba(139,92,246,0.2)', backdropFilter: 'blur(10px)' }}>
+            <div className="relative z-10 w-full max-w-6xl rounded-3xl shadow-2xl overflow-hidden" style={{ border: '1px solid rgba(255,125,56,0.2)', backdropFilter: 'blur(10px)' }}>
                 <div className="flex flex-col lg:flex-row">
                     {/* Left Panel */}
                     <div className="relative lg:w-1/2 h-64 sm:h-72 md:h-80 lg:h-[600px] overflow-hidden">
                         <div className="absolute inset-0">
                             <img src={bgImage} alt="" className="w-full h-full object-cover" />
-                            <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.85), rgba(99,102,241,0.75))' }} />
+                            {/* <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(255,125,56,0.75), rgba(255,125,56,0.75))' }} /> */}
                         </div>
                         <div className="absolute inset-0 overflow-hidden">
                             {[...Array(30)].map((_, i) => (
                                 <div key={i} className="absolute rounded-full animate-pulse" style={{
                                     width: Math.random() * 4 + 2 + 'px',
                                     height: Math.random() * 4 + 2 + 'px',
-                                    background: 'rgba(255,255,255,0.15)',
+                                    background: 'rgba(255,125,56,0.15)',
                                     left: Math.random() * 100 + '%',
                                     top: Math.random() * 100 + '%',
                                     animationDuration: Math.random() * 4 + 2 + 's',
@@ -259,7 +280,7 @@ export const AdminLogin = ({ onLogin }) => {
                                 }} />
                             ))}
                         </div>
-                        <div className="absolute inset-0 flex flex-col justify-center px-8 sm:px-12 lg:px-16 text-white">
+                        {/* <div className="absolute inset-0 flex flex-col justify-center px-8 sm:px-12 lg:px-16 text-white">
                             <div className="max-w-sm">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="w-12 h-12 rounded-2xl flex items-center justify-center" >
@@ -270,10 +291,10 @@ export const AdminLogin = ({ onLogin }) => {
                                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight">Welcome Back!</h1>
                                 <p className="text-base sm:text-lg text-white/90 mb-6">Sign in to manage your cloud infrastructure and monitor your devices in real-time.</p>
                                 <div className="absolute bottom-8 right-8 opacity-30">
-                                    <div className="w-40 h-40 rounded-full" style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.4), transparent 70%)', filter: 'blur(20px)' }} />
+                                    <div className="w-40 h-40 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,125,56,0.4), transparent 70%)', filter: 'blur(20px)' }} />
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Right Panel - Login Form */}
@@ -281,7 +302,7 @@ export const AdminLogin = ({ onLogin }) => {
                         <div className="w-full max-w-sm">
                             <div className="mb-6 lg:mb-8">
                                 <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#e2d9f3' }}>Sign In</h2>
-                                <p className="text-sm mt-1" style={{ color: '#9c8fc0' }}>Access your cloud dashboard</p>
+                                <p className="text-sm sm:text-base mt-1" style={{ color: '#5a4f72' }}>Enter your credentials to access your account.</p>
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-4">
@@ -292,7 +313,6 @@ export const AdminLogin = ({ onLogin }) => {
                                         type="email"
                                         value={state.email}
                                         onChange={e => updateState('email', e.target.value)}
-                                        placeholder="admin@mdm.io"
                                     />
                                 </div>
 
@@ -303,26 +323,78 @@ export const AdminLogin = ({ onLogin }) => {
                                         type={state.showPw ? "text" : "password"}
                                         value={state.password}
                                         onChange={e => updateState('password', e.target.value)}
-                                        placeholder="••••••••"
                                         toggleShow={() => updateState('showPw', !state.showPw)}
                                         showPassword={state.showPw}
                                     />
                                 </div>
 
                                 <div className="flex justify-end">
-                                    <button type="button" onClick={() => setShowForgotModal(true)} className="text-xs font-medium transition-colors" style={{ color: '#a78bfa' }}
-                                        onMouseEnter={e => e.currentTarget.style.color = '#c4b5fd'}
-                                        onMouseLeave={e => e.currentTarget.style.color = '#a78bfa'}>
+                                    <button type="button" onClick={() => setShowForgotModal(true)} className="text-xs font-medium transition-colors" style={{ color: '#FF7D38' }}
+                                        onMouseEnter={e => e.currentTarget.style.color = '#FF9A5F'}
+                                        onMouseLeave={e => e.currentTarget.style.color = '#FF7D38'}>
                                         Forgot password?
                                     </button>
                                 </div>
-
                                 <Message type="error" message={state.error} />
                                 <Message type="success" message={state.success ? 'Login successful! Redirecting...' : ''} />
 
                                 <Button loading={state.loading}>
                                     Sign In <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                                 </Button>
+
+                                {/* Staff Portal Section */}
+                                <div
+                                    className="mt-6 pt-5 border-t flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                                    style={{ borderColor: "#2b2540" }}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <Users size={18} style={{ color: '#a78bfa' }} />
+                                        <div>
+                                            <p className="text-sm font-medium" style={{ color: "#e2d9f3" }}>
+                                                Staff Portal
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-2">
+                                        <a
+                                            href="/staff-login"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-90"
+                                            style={{
+                                                background: "#7C3AED",
+                                                color: "#fff",
+                                            }}
+                                            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 20px rgba(124,58,237,0.4)'; }}
+                                            onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}
+                                        >
+                                            Staff Login
+                                        </a>
+
+                                        <button
+                                            type="button"
+                                            onClick={copyStaffLoginLink}
+                                            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-90"
+                                            style={{
+                                                background: copySuccess ? "#34d399" : "#1F2937",
+                                                color: "#fff",
+                                            }}
+                                        >
+                                            {copySuccess ? (
+                                                <>
+                                                    <Check size={16} />
+                                                    Copied!
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Copy size={16} />
+                                                    Copy Link
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -333,11 +405,11 @@ export const AdminLogin = ({ onLogin }) => {
             {showForgotModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0" style={{ background: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }} onClick={closeModal} />
-                    <div className="relative w-full max-w-md rounded-2xl shadow-2xl overflow-hidden" style={{ background: 'rgba(20, 16, 36, 0.95)', border: '1px solid rgba(139,92,246,0.2)', backdropFilter: 'blur(20px)' }}>
-                        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'rgba(139,92,246,0.15)' }}>
+                    <div className="relative w-full max-w-md rounded-2xl shadow-2xl overflow-hidden" style={{ background: 'rgba(20, 16, 36, 0.95)', border: '1px solid rgba(255,125,56,0.2)', backdropFilter: 'blur(20px)' }}>
+                        <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'rgba(255,125,56,0.15)' }}>
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.15)' }}>
-                                    <Key size={16} style={{ color: '#a78bfa' }} />
+                                <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,125,56,0.15)' }}>
+                                    <Key size={16} style={{ color: '#FF7D38' }} />
                                 </div>
                                 <h3 className="text-lg font-semibold" style={{ color: '#e2d9f3' }}>Reset Password</h3>
                             </div>

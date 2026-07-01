@@ -19,23 +19,23 @@ export const Navbar = ({ setOpen, activePage }) => {
             className="flex items-center px-4 gap-4 shrink-0 sticky top-0 z-10"
             style={{
                 height: 64,
-                background: 'rgba(10, 8, 20, 0.9)',
-                borderBottom: '1px solid rgba(139,92,246,0.18)',
+                background: 'rgba(2, 32, 60, 0.9)',
+                borderBottom: '1px solid rgba(255,125,56,0.18)',
                 backdropFilter: 'blur(20px)',
             }}
         >
             {/* Mobile menu toggle */}
             <button
                 className="lg:hidden p-1.5 rounded-lg transition-colors"
-                style={{ color: '#7c6fa0' }}
+                style={{ color: '#FF7D38' }}
                 onClick={() => setOpen(true)}
                 onMouseEnter={e => {
-                    e.currentTarget.style.background = 'rgba(139,92,246,0.12)';
-                    e.currentTarget.style.color = '#c4b5fd';
+                    e.currentTarget.style.background = 'rgba(255,125,56,0.12)';
+                    e.currentTarget.style.color = '#FF9A5F';
                 }}
                 onMouseLeave={e => {
                     e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = '#7c6fa0';
+                    e.currentTarget.style.color = '#FF7D38';
                 }}
             >
                 <Menu size={20} />
@@ -43,11 +43,11 @@ export const Navbar = ({ setOpen, activePage }) => {
 
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm">
-                <span style={{ color: '#3d3358', fontSize: 13 }}>CloudApp</span>
-                <ChevronRight size={12} style={{ color: '#2d2545' }} />
+                <span style={{ color: '#FF9A5F', fontSize: 13 }}>CloudApp</span>
+                <ChevronRight size={12} style={{ color: '#FF7D38' }} />
                 <span
                     className="font-semibold"
-                    style={{ color: '#c4b5fd', fontSize: 13 }}
+                    style={{ color: '#FF7D38', fontSize: 13 }}
                 >
                     {label}
                 </span>
@@ -61,19 +61,19 @@ export const Navbar = ({ setOpen, activePage }) => {
                 <button
                     className="relative p-2 rounded-xl transition-all"
                     style={{
-                        background: 'rgba(139,92,246,0.08)',
-                        border: '1px solid rgba(139,92,246,0.18)',
-                        color: '#7c6fa0',
+                        background: 'rgba(255,125,56,0.08)',
+                        border: '1px solid rgba(255,125,56,0.18)',
+                        color: '#FF7D38',
                     }}
                     onMouseEnter={e => {
-                        e.currentTarget.style.background = 'rgba(139,92,246,0.18)';
-                        e.currentTarget.style.color = '#c4b5fd';
-                        e.currentTarget.style.borderColor = 'rgba(139,92,246,0.4)';
+                        e.currentTarget.style.background = 'rgba(255,125,56,0.18)';
+                        e.currentTarget.style.color = '#FF9A5F';
+                        e.currentTarget.style.borderColor = 'rgba(255,125,56,0.4)';
                     }}
                     onMouseLeave={e => {
-                        e.currentTarget.style.background = 'rgba(139,92,246,0.08)';
-                        e.currentTarget.style.color = '#7c6fa0';
-                        e.currentTarget.style.borderColor = 'rgba(139,92,246,0.18)';
+                        e.currentTarget.style.background = 'rgba(255,125,56,0.08)';
+                        e.currentTarget.style.color = '#FF7D38';
+                        e.currentTarget.style.borderColor = 'rgba(255,125,56,0.18)';
                     }}
                 >
                     <Bell size={16} />
@@ -94,17 +94,17 @@ export const Navbar = ({ setOpen, activePage }) => {
                 <div
                     className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-xs font-bold cursor-pointer overflow-hidden transition-all"
                     style={{
-                        background: 'linear-gradient(135deg, #6d28d9, #9333ea)',
-                        border: '1px solid rgba(139,92,246,0.4)',
-                        boxShadow: '0 0 12px rgba(124,58,237,0.3)',
+                        background: 'linear-gradient(135deg, #FF7D38, #FF6B1A)',
+                        border: '1px solid rgba(255,125,56,0.4)',
+                        boxShadow: '0 0 12px rgba(255,125,56,0.3)',
                     }}
                     onMouseEnter={e => {
-                        e.currentTarget.style.boxShadow = '0 0 20px rgba(124,58,237,0.5)';
-                        e.currentTarget.style.borderColor = 'rgba(168,85,247,0.6)';
+                        e.currentTarget.style.boxShadow = '0 0 20px rgba(255,125,56,0.5)';
+                        e.currentTarget.style.borderColor = 'rgba(255,107,26,0.6)';
                     }}
                     onMouseLeave={e => {
-                        e.currentTarget.style.boxShadow = '0 0 12px rgba(124,58,237,0.3)';
-                        e.currentTarget.style.borderColor = 'rgba(139,92,246,0.4)';
+                        e.currentTarget.style.boxShadow = '0 0 12px rgba(255,125,56,0.3)';
+                        e.currentTarget.style.borderColor = 'rgba(255,125,56,0.4)';
                     }}
                 >
                     <img src='/admin.png' className='w-9 h-9 object-cover' alt="admin" />

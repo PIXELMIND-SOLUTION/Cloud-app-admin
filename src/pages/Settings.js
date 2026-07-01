@@ -1,4 +1,4 @@
-// pages/Settings.js - Dark Theme
+// pages/Settings.js - Saffron Theme
 import React, { useState, useRef } from 'react';
 import {
     User, Mail, Key, Eye, EyeOff, Save, Camera,
@@ -9,9 +9,10 @@ const Panel = ({ children, className = "" }) => (
     <div
         className={`rounded-2xl p-5 ${className}`}
         style={{
-            background: 'rgba(20, 16, 36, 0.8)',
-            border: '1px solid rgba(139,92,246,0.15)',
+            background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
+            border: '1px solid rgba(255,125,56,0.25)',
             backdropFilter: 'blur(12px)',
+            boxShadow: '0 4px 20px rgba(255,125,56,0.1)'
         }}
     >
         {children}
@@ -48,12 +49,12 @@ export const Settings = () => {
             {/* Page header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-xl font-bold" style={{ color: '#e2d9f3' }}>Settings</h1>
-                    <p className="text-sm mt-0.5" style={{ color: '#5a4f72' }}>Manage your admin profile and password</p>
+                    <h1 className="text-xl font-bold" style={{ color: '#FF7D38' }}>Settings</h1>
+                    <p className="text-sm mt-0.5" style={{ color: '#FF9A5F' }}>Manage your admin profile and password</p>
                 </div>
                 <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl"
-                    style={{ color: '#5a4f72', background: 'rgba(20, 16, 36, 0.8)', border: '1px solid rgba(139,92,246,0.15)' }}>
-                    <Cog size={16} style={{ color: '#a78bfa' }} />
+                    style={{ color: '#FF9A5F', background: 'rgba(2,32,60,0.8)', border: '1px solid rgba(255,125,56,0.15)' }}>
+                    <Cog size={16} style={{ color: '#FF7D38' }} />
                 </div>
             </div>
 
@@ -61,25 +62,25 @@ export const Settings = () => {
                 {/* ── Profile card ── */}
                 <Panel>
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center"
-                            style={{ boxShadow: '0 0 10px rgba(124,58,237,0.3)' }}>
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center"
+                            style={{ boxShadow: '0 0 15px rgba(255,125,56,0.3)' }}>
                             <User size={16} className="text-white" />
                         </div>
                         <div>
-                            <h2 className="font-semibold" style={{ color: '#e2d9f3' }}>Profile</h2>
-                            <p className="text-xs" style={{ color: '#5a4f72' }}>Name, email, and profile photo</p>
+                            <h2 className="font-semibold" style={{ color: '#FF7D38' }}>Profile</h2>
+                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Name, email, and profile photo</p>
                         </div>
                     </div>
 
                     {/* Avatar */}
                     <div className="flex items-center gap-4 mb-6 p-4 rounded-2xl"
                         style={{
-                            background: 'rgba(139,92,246,0.08)',
-                            border: '1px solid rgba(139,92,246,0.1)'
+                            background: 'rgba(255,125,56,0.08)',
+                            border: '1px solid rgba(255,125,56,0.15)'
                         }}
                     >
                         <div className="relative shrink-0">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-sm overflow-hidden">
+                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white text-xl font-bold shadow-sm overflow-hidden">
                                 {avatar
                                     ? <img src={avatar} alt="avatar" className="w-full h-full object-cover" />
                                     : form.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()
@@ -89,26 +90,26 @@ export const Settings = () => {
                                 onClick={() => fileRef.current.click()}
                                 className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full flex items-center justify-center transition-colors"
                                 style={{
-                                    background: 'rgba(20, 16, 36, 0.9)',
-                                    border: '1px solid rgba(139,92,246,0.2)',
-                                    color: '#9c8fc0'
+                                    background: 'rgba(2,32,60,0.9)',
+                                    border: '1px solid rgba(255,125,56,0.2)',
+                                    color: '#FF9A5F'
                                 }}
-                                onMouseEnter={e => { e.currentTarget.style.color = '#c4b5fd'; e.currentTarget.style.borderColor = 'rgba(139,92,246,0.4)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.color = '#9c8fc0'; e.currentTarget.style.borderColor = 'rgba(139,92,246,0.2)'; }}
+                                onMouseEnter={e => { e.currentTarget.style.color = '#FF7D38'; e.currentTarget.style.borderColor = 'rgba(255,125,56,0.4)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.color = '#FF9A5F'; e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'; }}
                             >
                                 <Camera size={11} />
                             </button>
                             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
                         </div>
                         <div>
-                            <p className="text-sm font-semibold" style={{ color: '#e2d9f3' }}>{form.name || "Admin"}</p>
-                            <p className="text-xs mt-0.5" style={{ color: '#5a4f72' }}>{form.email}</p>
+                            <p className="text-sm font-semibold" style={{ color: '#FF7D38' }}>{form.name || "Admin"}</p>
+                            <p className="text-xs mt-0.5" style={{ color: '#FF9A5F' }}>{form.email}</p>
                             <button
                                 onClick={() => fileRef.current.click()}
                                 className="text-xs font-medium mt-1.5 transition-colors"
-                                style={{ color: '#a78bfa' }}
-                                onMouseEnter={e => { e.currentTarget.style.color = '#c4b5fd'; }}
-                                onMouseLeave={e => { e.currentTarget.style.color = '#a78bfa'; }}
+                                style={{ color: '#FF7D38' }}
+                                onMouseEnter={e => { e.currentTarget.style.color = '#FF9A5F'; }}
+                                onMouseLeave={e => { e.currentTarget.style.color = '#FF7D38'; }}
                             >
                                 Change photo
                             </button>
@@ -118,40 +119,40 @@ export const Settings = () => {
                     {/* Name & Email */}
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4f72' }}>Full Name</label>
+                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#FF9A5F' }}>Full Name</label>
                             <div className="relative">
-                                <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
+                                <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#FF9A5F' }} />
                                 <input
                                     type="text"
                                     value={form.name}
                                     onChange={e => setForm({ ...form, name: e.target.value })}
                                     className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
                                     style={{
-                                        background: 'rgba(139,92,246,0.08)',
-                                        border: '1px solid rgba(139,92,246,0.15)',
-                                        color: '#e2d9f3'
+                                        background: 'rgba(255,125,56,0.08)',
+                                        border: '1px solid rgba(255,125,56,0.2)',
+                                        color: '#FF7D38'
                                     }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
-                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
+                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)'}
+                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'}
                                 />
                             </div>
                         </div>
                         <div>
-                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4f72' }}>Email Address</label>
+                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#FF9A5F' }}>Email Address</label>
                             <div className="relative">
-                                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
+                                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#FF9A5F' }} />
                                 <input
                                     type="email"
                                     value={form.email}
                                     onChange={e => setForm({ ...form, email: e.target.value })}
                                     className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
                                     style={{
-                                        background: 'rgba(139,92,246,0.08)',
-                                        border: '1px solid rgba(139,92,246,0.15)',
-                                        color: '#e2d9f3'
+                                        background: 'rgba(255,125,56,0.08)',
+                                        border: '1px solid rgba(255,125,56,0.2)',
+                                        color: '#FF7D38'
                                     }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
-                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
+                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)'}
+                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'}
                                 />
                             </div>
                         </div>
@@ -165,10 +166,10 @@ export const Settings = () => {
                             }`}
                             style={profileSaved
                                 ? { background: 'linear-gradient(135deg, #34d399, #10b981)' }
-                                : { background: 'linear-gradient(135deg, #7c3aed, #9333ea)' }
+                                : { background: 'linear-gradient(135deg, #FF7D38, #FF6B1A)', boxShadow: '0 0 15px rgba(255,125,56,0.3)' }
                             }
-                            onMouseEnter={e => { if (!profileSaved) { e.currentTarget.style.boxShadow = '0 0 20px rgba(124,58,237,0.4)'; } }}
-                            onMouseLeave={e => { if (!profileSaved) { e.currentTarget.style.boxShadow = '0 0 10px rgba(124,58,237,0.2)'; } }}
+                            onMouseEnter={e => { if (!profileSaved) { e.currentTarget.style.boxShadow = '0 0 25px rgba(255,125,56,0.5)'; } }}
+                            onMouseLeave={e => { if (!profileSaved) { e.currentTarget.style.boxShadow = '0 0 15px rgba(255,125,56,0.3)'; } }}
                         >
                             {profileSaved ? <><CheckCircle size={15} /> Saved</> : <><Save size={15} /> Save Changes</>}
                         </button>
@@ -178,21 +179,21 @@ export const Settings = () => {
                 {/* ── Password card ── */}
                 <Panel>
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-400 to-blue-600 flex items-center justify-center"
-                            style={{ boxShadow: '0 0 10px rgba(99,102,241,0.3)' }}>
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center"
+                            style={{ boxShadow: '0 0 15px rgba(255,125,56,0.3)' }}>
                             <Shield size={16} className="text-white" />
                         </div>
                         <div>
-                            <h2 className="font-semibold" style={{ color: '#e2d9f3' }}>Change Password</h2>
-                            <p className="text-xs" style={{ color: '#5a4f72' }}>Update your account password</p>
+                            <h2 className="font-semibold" style={{ color: '#FF7D38' }}>Change Password</h2>
+                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Update your account password</p>
                         </div>
                     </div>
 
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4f72' }}>Current Password</label>
+                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#FF9A5F' }}>Current Password</label>
                             <div className="relative">
-                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
+                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#FF9A5F' }} />
                                 <input
                                     type={showCurrent ? "text" : "password"}
                                     value={passwords.current}
@@ -200,23 +201,23 @@ export const Settings = () => {
                                     placeholder="••••••••"
                                     className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl transition-all"
                                     style={{
-                                        background: 'rgba(139,92,246,0.08)',
-                                        border: '1px solid rgba(139,92,246,0.15)',
-                                        color: '#e2d9f3'
+                                        background: 'rgba(255,125,56,0.08)',
+                                        border: '1px solid rgba(255,125,56,0.2)',
+                                        color: '#FF7D38'
                                     }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
-                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
+                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)'}
+                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'}
                                 />
                                 <button onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2">
-                                    {showCurrent ? <EyeOff size={13} style={{ color: '#5a4f72' }} /> : <Eye size={13} style={{ color: '#5a4f72' }} />}
+                                    {showCurrent ? <EyeOff size={13} style={{ color: '#FF9A5F' }} /> : <Eye size={13} style={{ color: '#FF9A5F' }} />}
                                 </button>
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4f72' }}>New Password</label>
+                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#FF9A5F' }}>New Password</label>
                             <div className="relative">
-                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
+                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#FF9A5F' }} />
                                 <input
                                     type={showNew ? "text" : "password"}
                                     value={passwords.newPw}
@@ -224,23 +225,23 @@ export const Settings = () => {
                                     placeholder="••••••••"
                                     className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl transition-all"
                                     style={{
-                                        background: 'rgba(139,92,246,0.08)',
-                                        border: '1px solid rgba(139,92,246,0.15)',
-                                        color: '#e2d9f3'
+                                        background: 'rgba(255,125,56,0.08)',
+                                        border: '1px solid rgba(255,125,56,0.2)',
+                                        color: '#FF7D38'
                                     }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
-                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.15)'}
+                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)'}
+                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'}
                                 />
                                 <button onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2">
-                                    {showNew ? <EyeOff size={13} style={{ color: '#5a4f72' }} /> : <Eye size={13} style={{ color: '#5a4f72' }} />}
+                                    {showNew ? <EyeOff size={13} style={{ color: '#FF9A5F' }} /> : <Eye size={13} style={{ color: '#FF9A5F' }} />}
                                 </button>
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#5a4f72' }}>Confirm New Password</label>
+                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#FF9A5F' }}>Confirm New Password</label>
                             <div className="relative">
-                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#5a4f72' }} />
+                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#FF9A5F' }} />
                                 <input
                                     type="password"
                                     value={passwords.confirm}
@@ -248,18 +249,18 @@ export const Settings = () => {
                                     placeholder="••••••••"
                                     className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
                                     style={{
-                                        background: 'rgba(139,92,246,0.08)',
+                                        background: 'rgba(255,125,56,0.08)',
                                         border: passwords.confirm && passwords.newPw !== passwords.confirm
                                             ? '1px solid rgba(248,113,113,0.3)'
-                                            : '1px solid rgba(139,92,246,0.15)',
+                                            : '1px solid rgba(255,125,56,0.2)',
                                         color: passwords.confirm && passwords.newPw !== passwords.confirm
                                             ? '#f87171'
-                                            : '#e2d9f3'
+                                            : '#FF7D38'
                                     }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(139,92,246,0.5)'}
+                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)'}
                                     onBlur={e => e.currentTarget.style.borderColor = passwords.confirm && passwords.newPw !== passwords.confirm
                                         ? 'rgba(248,113,113,0.3)'
-                                        : 'rgba(139,92,246,0.15)'
+                                        : 'rgba(255,125,56,0.2)'
                                     }
                                 />
                             </div>
@@ -278,10 +279,10 @@ export const Settings = () => {
                             }`}
                             style={pwSaved
                                 ? { background: 'linear-gradient(135deg, #34d399, #10b981)' }
-                                : { background: 'linear-gradient(135deg, #7c3aed, #9333ea)' }
+                                : { background: 'linear-gradient(135deg, #FF7D38, #FF6B1A)', boxShadow: '0 0 15px rgba(255,125,56,0.3)' }
                             }
-                            onMouseEnter={e => { if (!pwSaved && !e.currentTarget.disabled) { e.currentTarget.style.boxShadow = '0 0 20px rgba(124,58,237,0.4)'; } }}
-                            onMouseLeave={e => { if (!pwSaved) { e.currentTarget.style.boxShadow = '0 0 10px rgba(124,58,237,0.2)'; } }}
+                            onMouseEnter={e => { if (!pwSaved && !e.currentTarget.disabled) { e.currentTarget.style.boxShadow = '0 0 25px rgba(255,125,56,0.5)'; } }}
+                            onMouseLeave={e => { if (!pwSaved) { e.currentTarget.style.boxShadow = '0 0 15px rgba(255,125,56,0.3)'; } }}
                         >
                             {pwSaved ? <><CheckCircle size={15} /> Updated</> : <><Key size={15} /> Update Password</>}
                         </button>

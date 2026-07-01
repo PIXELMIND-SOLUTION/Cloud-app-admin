@@ -1,9 +1,14 @@
 import { Navigate } from "react-router-dom";
 
 const PrivateRoute = ({ children }) => {
-  const isAuthenticated = sessionStorage.getItem("adminAuth");
+  const adminAuth = sessionStorage.getItem("adminAuth") === "true";
+  const subAdminAuth = sessionStorage.getItem("subAdminAuth") === "true";
 
-  return isAuthenticated ? children : <Navigate to="/" replace />;
+  if (adminAuth || subAdminAuth) {
+    return children;
+  }
+
+  return <Navigate to="/" replace />;
 };
 
 export default PrivateRoute;
