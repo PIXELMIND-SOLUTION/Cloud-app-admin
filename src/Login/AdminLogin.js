@@ -250,22 +250,21 @@ export const AdminLogin = ({ onLogin }) => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #02203C, #02203C)', boxShadow: '0 0 20px rgba(2,32,60,0.3)' }}>
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #fff, #fff)', boxShadow: '0 0 20px rgba(2,32,60,0.3)' }}>
             {/* Background */}
             <div className="absolute inset-0 z-0">
-                <img src={bgImage} alt="Background" className="w-full h-full object-cover" />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(2,32,60,0.92), rgba(2,32,60,0.88), rgba(2,32,60,0.95))' }} />
-                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 30% 50%, rgba(255,125,56,0.08), transparent 70%)' }} />
+                {/* <img src={bgImage} alt="Background" className="w-full h-full object-cover" /> */}
+                {/* <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(2,32,60,0.92), rgba(2,32,60,0.88), rgba(2,32,60,0.95))' }} />
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 30% 50%, rgba(255,125,56,0.08), transparent 70%)' }} /> */}
             </div>
 
             {/* Main Container */}
             <div className="relative z-10 w-full max-w-6xl rounded-3xl shadow-2xl overflow-hidden" style={{ border: '1px solid rgba(255,125,56,0.2)', backdropFilter: 'blur(10px)' }}>
-                <div className="flex flex-col lg:flex-row">
+                <div className="flex flex-col lg:flex-row" style={{ background: 'linear-gradient(135deg, #02203C, #02203C)', boxShadow: '0 0 20px rgba(2,32,60,0.3)' }}>
                     {/* Left Panel */}
                     <div className="relative lg:w-1/2 h-64 sm:h-72 md:h-80 lg:h-[600px] overflow-hidden">
                         <div className="absolute inset-0">
                             <img src={bgImage} alt="" className="w-full h-full object-cover" />
-                            {/* <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(255,125,56,0.75), rgba(255,125,56,0.75))' }} /> */}
                         </div>
                         <div className="absolute inset-0 overflow-hidden">
                             {[...Array(30)].map((_, i) => (
@@ -280,37 +279,23 @@ export const AdminLogin = ({ onLogin }) => {
                                 }} />
                             ))}
                         </div>
-                        {/* <div className="absolute inset-0 flex flex-col justify-center px-8 sm:px-12 lg:px-16 text-white">
-                            <div className="max-w-sm">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center" >
-                                        <img src='/logo.png' className='w-12 h-12 object-cover' alt="Logo" />
-                                    </div>
-                                    <span className="text-2xl font-bold tracking-tight text-white">RV Cloud Admin</span>
-                                </div>
-                                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight">Welcome Back!</h1>
-                                <p className="text-base sm:text-lg text-white/90 mb-6">Sign in to manage your cloud infrastructure and monitor your devices in real-time.</p>
-                                <div className="absolute bottom-8 right-8 opacity-30">
-                                    <div className="w-40 h-40 rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,125,56,0.4), transparent 70%)', filter: 'blur(20px)' }} />
-                                </div>
-                            </div>
-                        </div> */}
                     </div>
 
                     {/* Right Panel - Login Form */}
                     <div className="lg:w-1/2 flex items-center justify-center p-6 sm:p-8 lg:p-12">
-                        <div className="w-full max-w-sm">
+                        <div className="w-full max-w-md">
                             <div className="mb-6 lg:mb-8">
-                                <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#e2d9f3' }}>Sign In</h2>
-                                <p className="text-sm sm:text-base mt-1" style={{ color: '#5a4f72' }}>Enter your credentials to access your account.</p>
+                                <h2 className="text-2xl sm:text-3xl font-bold" style={{ color: '#e2d9f3' }}>Login</h2>
+                                <p className="text-sm sm:text-base mt-1" style={{ color: '#5a4f72' }}>Access your Dashboard</p>
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium mb-1.5" style={{ color: '#9c8fc0' }}>Email Address</label>
+                                    <label className="block text-sm font-medium mb-1.5" style={{ color: '#9c8fc0' }}>Admin Email Address</label>
                                     <InputField
                                         icon={Mail}
                                         type="email"
+                                        placeholder="Enter your admin email"
                                         value={state.email}
                                         onChange={e => updateState('email', e.target.value)}
                                     />
@@ -322,6 +307,7 @@ export const AdminLogin = ({ onLogin }) => {
                                         icon={Lock}
                                         type={state.showPw ? "text" : "password"}
                                         value={state.password}
+                                        placeholder="Enter your password"
                                         onChange={e => updateState('password', e.target.value)}
                                         toggleShow={() => updateState('showPw', !state.showPw)}
                                         showPassword={state.showPw}
@@ -342,57 +328,77 @@ export const AdminLogin = ({ onLogin }) => {
                                     Sign In <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                                 </Button>
 
-                                {/* Staff Portal Section */}
+                                {/* Staff Portal */}
                                 <div
-                                    className="mt-6 pt-5 border-t flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                                    className="mt-8 pt-6 border-t"
                                     style={{ borderColor: "#2b2540" }}
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <Users size={18} style={{ color: '#a78bfa' }} />
-                                        <div>
-                                            <p className="text-sm font-medium" style={{ color: "#e2d9f3" }}>
-                                                Staff Portal
-                                            </p>
+                                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+
+                                        {/* Left */}
+                                        <div className="flex items-center gap-3 text-center md:text-left">
+                                            <div
+                                                className="w-11 h-11 rounded-xl flex items-center justify-center"
+                                                style={{ background: "rgb(255, 255, 255)" }}
+                                            >
+                                                <Users size={20} style={{ color: "#FF7D38" }} />
+                                            </div>
+
+                                            <div>
+                                                <p
+                                                    className="text-sm font-semibold"
+                                                    style={{ color: "#e2d9f3" }}
+                                                >
+                                                    Staff Portal
+                                                </p>
+
+                                                {/* <p
+                                                    className="text-xs"
+                                                    style={{ color: "#8b82a5" }}
+                                                >
+                                                    Access the staff dashboard
+                                                </p> */}
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="flex gap-2">
-                                        <a
-                                            href="/staff-login"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-90"
-                                            style={{
-                                                background: "#7C3AED",
-                                                color: "#fff",
-                                            }}
-                                            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 20px rgba(124,58,237,0.4)'; }}
-                                            onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}
-                                        >
-                                            Staff Login
-                                        </a>
+                                        {/* Right */}
+                                        <div className="flex w-full md:w-auto gap-2">
+                                            <a
+                                                href="/staff-login"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex-1 md:flex-none text-center px-5 py-2.5 rounded-lg text-sm font-semibold transition-all"
+                                                style={{
+                                                    background: "#FF7D38",
+                                                    color: "#fff",
+                                                }}
+                                            >
+                                                Staff Login
+                                            </a>
 
-                                        <button
-                                            type="button"
-                                            onClick={copyStaffLoginLink}
-                                            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-90"
-                                            style={{
-                                                background: copySuccess ? "#34d399" : "#1F2937",
-                                                color: "#fff",
-                                            }}
-                                        >
-                                            {copySuccess ? (
-                                                <>
-                                                    <Check size={16} />
-                                                    Copied!
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Copy size={16} />
-                                                    Copy Link
-                                                </>
-                                            )}
-                                        </button>
+                                            <button
+                                                type="button"
+                                                onClick={copyStaffLoginLink}
+                                                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all"
+                                                style={{
+                                                    background: copySuccess ? "#34d399" : "#1F2937",
+                                                    color: "#fff",
+                                                }}
+                                            >
+                                                {copySuccess ? (
+                                                    <>
+                                                        <Check size={16} />
+                                                        Copied
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Copy size={16} />
+                                                        Copy Link
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+
                                     </div>
                                 </div>
                             </form>

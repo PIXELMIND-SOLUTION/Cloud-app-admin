@@ -1,4 +1,4 @@
-// pages/AdminPlanManagement.js - Optimized & Responsive with Saffron Theme
+// pages/AdminPlanManagement.js - Light Theme with Saffron Accents
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -7,25 +7,24 @@ import {
     Users, UserCheck, UserX, Calendar, Clock,
     MoreVertical, ChevronDown, ChevronUp
 } from 'lucide-react';
+import { canDelete, canEdit, canView } from '../../view/Permissions';
 
 // ── Reusable Components ──────────────────────────────────────────────────────
 
 const Panel = ({ children, className = "" }) => (
     <div
-        className={`rounded-2xl p-4 sm:p-5 transition-all ${className}`}
+        className={`rounded-2xl p-4 sm:p-5 transition-all bg-white ${className}`}
         style={{
-            background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
-            border: '1px solid rgba(255,125,56,0.25)',
-            backdropFilter: 'blur(12px)',
-            boxShadow: '0 4px 20px rgba(255,125,56,0.1)'
+            border: '1px solid rgba(255,125,56,0.2)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)'
         }}
         onMouseEnter={e => {
-            e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)';
-            e.currentTarget.style.boxShadow = '0 4px 30px rgba(255,125,56,0.2)';
+            e.currentTarget.style.borderColor = 'rgba(255,125,56,0.4)';
+            e.currentTarget.style.boxShadow = '0 8px 30px rgba(255,125,56,0.12)';
         }}
         onMouseLeave={e => {
-            e.currentTarget.style.borderColor = 'rgba(255,125,56,0.25)';
-            e.currentTarget.style.boxShadow = '0 4px 20px rgba(255,125,56,0.1)';
+            e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)';
+            e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.06)';
         }}
     >
         {children}
@@ -33,36 +32,38 @@ const Panel = ({ children, className = "" }) => (
 );
 
 const StatCard = ({ label, value, icon: Icon, grad }) => (
-    <div className="rounded-2xl p-4 flex items-center gap-3 transition-all hover:scale-105"
-        style={{
-            background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
-            border: '1px solid rgba(255,125,56,0.25)',
-            backdropFilter: 'blur(12px)',
-            boxShadow: '0 4px 20px rgba(255,125,56,0.1)'
-        }}
-        onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)'}
-        onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.25)'}
-    >
-        <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center shrink-0`}
-            style={{ boxShadow: '0 0 15px rgba(255,125,56,0.3)' }}>
+    <div className="relative overflow-hidden rounded-2xl p-4 flex items-center gap-3 transition-all hover:scale-105 bg-white border border-orange-200 shadow-sm hover:shadow-lg">
+
+        {/* Decorative Background */}
+        <div className="absolute -top-8 -left-8 w-20 h-20 rounded-full bg-orange-400/10" />
+        <div className="absolute -top-4 -left-4 w-28 h-28 rounded-full border border-orange-300/20" />
+        <div className="absolute -top-8 -left-8 w-36 h-36 rounded-full border border-orange-300/10" />
+        <div className="absolute -bottom-4 -right-4 w-12 h-12 rounded-full bg-orange-400/10" />
+
+        {/* Content */}
+        <div
+            className={`relative z-10 w-9 h-9 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center shrink-0 shadow-lg`}
+        >
             <Icon size={15} className="text-white" />
         </div>
-        <div className="min-w-0">
-            <p className="text-[10px] font-medium truncate" style={{ color: '#FF9A5F' }}>{label}</p>
-            <p className="text-lg sm:text-xl font-bold truncate" style={{ color: '#FF7D38' }}>{value}</p>
+
+        <div className="relative z-10 min-w-0">
+            <p className="text-[10px] font-medium truncate text-gray-500">
+                {label}
+            </p>
+            <p className="text-lg sm:text-xl font-bold truncate text-orange-500">
+                {value}
+            </p>
         </div>
+
     </div>
 );
 
 const StatusBadge = ({ status }) => (
     <button
-        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap`}
-        style={status === 'active'
-            ? { background: 'rgba(255,125,56,0.2)', color: '#FF7D38' }
-            : { background: 'rgba(100,116,139,0.08)', color: '#94a3b8' }
-        }
+        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${status === 'active' ? 'bg-orange-50 text-orange-500' : 'bg-gray-100 text-gray-500'}`}
     >
-        <span className={`w-1.5 h-1.5 rounded-full ${status === 'active' ? 'bg-amber-500 animate-pulse' : 'bg-slate-400'}`} />
+        <span className={`w-1.5 h-1.5 rounded-full ${status === 'active' ? 'bg-orange-500 animate-pulse' : 'bg-gray-400'}`} />
         {status}
     </button>
 );
@@ -213,19 +214,18 @@ const PlanFormModal = ({ isOpen, onClose, plan, onSave }) => {
 
     const Field = ({ label, error, children }) => (
         <div>
-            <label className="block text-sm font-medium mb-1.5" style={{ color: '#FF9A5F' }}>{label}</label>
+            <label className="block text-sm font-medium mb-1.5 text-gray-600">{label}</label>
             {children}
-            {error && <p className="mt-1 text-xs" style={{ color: '#f87171' }}>{error}</p>}
+            {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
         </div>
     );
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-            <div className="rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
-                style={{ background: 'rgba(2,32,60,0.95)', border: '1px solid rgba(255,125,56,0.3)' }}>
-                <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'rgba(255,125,56,0.15)' }}>
-                    <h2 className="text-lg font-bold" style={{ color: '#FF7D38' }}>{plan ? 'Edit Plan' : 'Create New Plan'}</h2>
-                    <button onClick={onClose} className="p-1.5 rounded-lg transition-colors hover:bg-orange-500/10" style={{ color: '#FF9A5F' }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div className="rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col bg-white border border-orange-200">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-orange-100">
+                    <h2 className="text-lg font-bold text-gray-800">{plan ? 'Edit Plan' : 'Create New Plan'}</h2>
+                    <button onClick={onClose} className="p-1.5 rounded-lg transition-colors hover:bg-orange-50 text-gray-500">
                         <X size={20} />
                     </button>
                 </div>
@@ -234,36 +234,31 @@ const PlanFormModal = ({ isOpen, onClose, plan, onSave }) => {
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <Field label="Plan Name *" error={errors.name}>
                             <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full px-4 py-2.5 rounded-xl transition-all" placeholder="e.g., Professional Plan"
-                                style={{ background: 'rgba(255,125,56,0.08)', border: errors.name ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(255,125,56,0.2)', color: '#FF7D38' }} />
+                                className="w-full px-4 py-2.5 rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200" placeholder="e.g., Professional Plan" />
                         </Field>
 
                         <Field label="Description *" error={errors.description}>
                             <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                rows={3} className="w-full px-4 py-2.5 rounded-xl transition-all resize-none" placeholder="Describe what this plan offers..."
-                                style={{ background: 'rgba(255,125,56,0.08)', border: errors.description ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(255,125,56,0.2)', color: '#FF7D38' }} />
+                                rows={3} className="w-full px-4 py-2.5 rounded-xl transition-all resize-none bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200" placeholder="Describe what this plan offers..." />
                         </Field>
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <Field label="Price ($) *" error={errors.price}>
                                 <input type="number" min="0" step="0.01" value={formData.price}
                                     onChange={e => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                                    className="w-full px-4 py-2.5 rounded-xl transition-all"
-                                    style={{ background: 'rgba(255,125,56,0.08)', border: errors.price ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(255,125,56,0.2)', color: '#FF7D38' }} />
+                                    className="w-full px-4 py-2.5 rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200" />
                             </Field>
                             <Field label="Discount Type">
                                 <select value={formData.discountType} onChange={e => setFormData({ ...formData, discountType: e.target.value })}
-                                    className="w-full px-4 py-2.5 rounded-xl transition-all"
-                                    style={{ background: 'rgba(255,125,56,0.08)', border: '1px solid rgba(255,125,56,0.2)', color: '#FF7D38' }}>
-                                    <option value="percentage" style={{ background: '#02203C' }}>Percentage (%)</option>
-                                    <option value="fixed" style={{ background: '#02203C' }}>Fixed ($)</option>
+                                    className="w-full px-4 py-2.5 rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200">
+                                    <option value="percentage" className="bg-white">Percentage (%)</option>
+                                    <option value="fixed" className="bg-white">Fixed ($)</option>
                                 </select>
                             </Field>
                             <Field label="Discount Amount" error={errors.discountAmount}>
                                 <input type="number" min="0" step={formData.discountType === 'percentage' ? 1 : 0.01}
                                     value={formData.discountAmount} onChange={e => setFormData({ ...formData, discountAmount: parseFloat(e.target.value) || 0 })}
-                                    className="w-full px-4 py-2.5 rounded-xl transition-all"
-                                    style={{ background: 'rgba(255,125,56,0.08)', border: errors.discountAmount ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(255,125,56,0.2)', color: '#FF7D38' }} />
+                                    className="w-full px-4 py-2.5 rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200" />
                             </Field>
                         </div>
 
@@ -272,15 +267,14 @@ const PlanFormModal = ({ isOpen, onClose, plan, onSave }) => {
                                 {formData.features.map((feature, index) => (
                                     <div key={index} className="flex items-center gap-2">
                                         <input type="text" value={feature} onChange={e => updateFeature(index, e.target.value)}
-                                            className="flex-1 px-4 py-2.5 rounded-xl transition-all" placeholder={`Feature ${index + 1}`}
-                                            style={{ background: 'rgba(255,125,56,0.08)', border: errors.features ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(255,125,56,0.2)', color: '#FF7D38' }} />
+                                            className="flex-1 px-4 py-2.5 rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200" placeholder={`Feature ${index + 1}`} />
                                         <button type="button" onClick={() => removeFeature(index)} disabled={formData.features.length === 1}
-                                            className="p-2 rounded-lg transition-colors hover:bg-red-500/10 disabled:opacity-30" style={{ color: '#f87171' }}>
+                                            className="p-2 rounded-lg transition-colors hover:bg-red-50 disabled:opacity-30 text-red-500">
                                             <X size={18} />
                                         </button>
                                     </div>
                                 ))}
-                                <button type="button" onClick={addFeature} className="flex items-center gap-1.5 text-sm font-medium transition-colors" style={{ color: '#FF7D38' }}>
+                                <button type="button" onClick={addFeature} className="flex items-center gap-1.5 text-sm font-medium transition-colors text-orange-500 hover:text-orange-600">
                                     <Plus size={16} /> Add Feature
                                 </button>
                             </div>
@@ -288,12 +282,11 @@ const PlanFormModal = ({ isOpen, onClose, plan, onSave }) => {
                     </form>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t rounded-b-2xl" style={{ borderColor: 'rgba(255,125,56,0.15)' }}>
-                    <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-xl transition-colors" style={{ color: '#FF9A5F' }}>
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-orange-100 rounded-b-2xl">
+                    <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-xl transition-colors text-gray-600 hover:bg-gray-50">
                         Cancel
                     </button>
-                    <button onClick={handleSubmit} className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white rounded-xl transition-all shadow-sm hover:shadow-orange-500/50"
-                        style={{ background: 'linear-gradient(135deg, #FF7D38, #FF6B1A)', boxShadow: '0 0 15px rgba(255,125,56,0.3)' }}>
+                    <button onClick={handleSubmit} className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white rounded-xl transition-all shadow-sm bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-orange-500/30">
                         <Save size={16} /> {plan ? 'Update Plan' : 'Create Plan'}
                     </button>
                 </div>
@@ -314,101 +307,100 @@ const ViewPlanModal = ({ isOpen, onClose, plan, onViewActiveUsers, onViewInactiv
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-            <div className="rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
-                style={{ background: 'rgba(2,32,60,0.95)', border: '1px solid rgba(255,125,56,0.3)' }}>
-                <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'rgba(255,125,56,0.15)' }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div className="rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col bg-white border border-orange-200">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-orange-100">
                     <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plan.status === 'active' ? 'from-amber-400 to-orange-500' : 'from-slate-400 to-slate-500'} flex items-center justify-center`}>
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plan.status === 'active' ? 'from-orange-500 to-amber-600' : 'from-gray-400 to-gray-500'} flex items-center justify-center`}>
                             <Package size={20} className="text-white" />
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold" style={{ color: '#FF7D38' }}>{plan.name}</h2>
-                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Created {new Date(plan.createdAt).toLocaleDateString()}</p>
+                            <h2 className="text-lg font-bold text-gray-800">{plan.name}</h2>
+                            <p className="text-xs text-gray-500">Created {new Date(plan.createdAt).toLocaleDateString()}</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-1.5 rounded-lg transition-colors" style={{ color: '#FF9A5F' }}>
+                    <button onClick={onClose} className="p-1.5 rounded-lg transition-colors hover:bg-orange-50 text-gray-500">
                         <X size={20} />
                     </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="rounded-xl p-4" style={{ background: 'rgba(255,125,56,0.1)' }}>
-                            <p className="text-xs font-medium" style={{ color: '#FF9A5F' }}>Status</p>
+                        <div className="rounded-xl p-4 bg-orange-50 border border-orange-200">
+                            <p className="text-xs font-medium text-gray-500">Status</p>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className={`w-2 h-2 rounded-full ${plan.status === 'active' ? 'bg-amber-500 animate-pulse' : 'bg-slate-400'}`} />
-                                <span className="text-sm font-semibold capitalize" style={{ color: '#FF7D38' }}>{plan.status}</span>
+                                <span className={`w-2 h-2 rounded-full ${plan.status === 'active' ? 'bg-orange-500 animate-pulse' : 'bg-gray-400'}`} />
+                                <span className="text-sm font-semibold capitalize text-orange-500">{plan.status}</span>
                             </div>
                         </div>
-                        <div className="rounded-xl p-4" style={{ background: 'rgba(255,125,56,0.1)' }}>
-                            <p className="text-xs font-medium" style={{ color: '#FF9A5F' }}>Pricing</p>
+                        <div className="rounded-xl p-4 bg-orange-50 border border-orange-200">
+                            <p className="text-xs font-medium text-gray-500">Pricing</p>
                             <div className="flex items-baseline gap-2 mt-1 flex-wrap">
-                                <span className="text-2xl font-bold" style={{ color: '#FF7D38' }}>${getFinalPrice().toFixed(2)}</span>
-                                {plan.discountAmount > 0 && <span className="text-sm line-through" style={{ color: '#FF9A5F' }}>${plan.price}</span>}
+                                <span className="text-2xl font-bold text-orange-500">${getFinalPrice().toFixed(2)}</span>
+                                {plan.discountAmount > 0 && <span className="text-sm line-through text-gray-400">${plan.price}</span>}
                             </div>
                         </div>
                     </div>
 
-                    <div className="rounded-xl p-4" style={{ background: 'rgba(255,125,56,0.1)' }}>
-                        <p className="text-xs font-medium mb-1" style={{ color: '#FF9A5F' }}>Description</p>
-                        <p className="text-sm" style={{ color: '#FF7D38' }}>{plan.description}</p>
+                    <div className="rounded-xl p-4 bg-orange-50 border border-orange-200">
+                        <p className="text-xs font-medium mb-1 text-gray-500">Description</p>
+                        <p className="text-sm text-gray-700">{plan.description}</p>
                     </div>
 
                     <div>
-                        <p className="text-xs font-medium mb-3" style={{ color: '#FF9A5F' }}>Features</p>
+                        <p className="text-xs font-medium mb-3 text-gray-500">Features</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {plan.features.map((feature, index) => (
-                                <div key={index} className="flex items-center gap-2 rounded-lg px-3 py-2" style={{ background: 'rgba(255,125,56,0.08)' }}>
-                                    <Check size={14} style={{ color: '#FF7D38' }} />
-                                    <span className="text-sm" style={{ color: '#FF7D38' }}>{feature}</span>
+                                <div key={index} className="flex items-center gap-2 rounded-lg px-3 py-2 bg-orange-50">
+                                    <Check size={14} className="text-orange-500" />
+                                    <span className="text-sm text-gray-700">{feature}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className="rounded-xl p-4" style={{ background: 'rgba(255,125,56,0.1)', border: '1px solid rgba(255,125,56,0.15)' }}>
-                        <p className="text-xs font-medium mb-3" style={{ color: '#FF9A5F' }}>Subscriber Statistics</p>
+                    <div className="rounded-xl p-4 bg-orange-50 border border-orange-200">
+                        <p className="text-xs font-medium mb-3 text-gray-500">Subscriber Statistics</p>
                         <div className="grid grid-cols-3 gap-3">
                             <div className="text-center">
-                                <p className="text-2xl font-bold" style={{ color: '#FF7D38' }}>{plan.subscriberCount || 0}</p>
-                                <p className="text-[10px]" style={{ color: '#FF9A5F' }}>Total</p>
+                                <p className="text-2xl font-bold text-orange-500">{plan.subscriberCount || 0}</p>
+                                <p className="text-[10px] text-gray-500">Total</p>
                             </div>
-                            <div className="text-center cursor-pointer rounded-lg p-2 transition-colors hover:bg-orange-500/10"
+                            <div className="text-center cursor-pointer rounded-lg p-2 transition-colors hover:bg-orange-100"
                                 onClick={() => plan.activeUsers > 0 && onViewActiveUsers()}>
-                                <p className={`text-2xl font-bold ${plan.activeUsers > 0 ? 'text-amber-400' : ''}`} style={{ color: plan.activeUsers > 0 ? '#FF7D38' : '#FF9A5F' }}>
+                                <p className={`text-2xl font-bold ${plan.activeUsers > 0 ? 'text-orange-500' : 'text-gray-400'}`}>
                                     {plan.activeUsers || 0}
                                 </p>
-                                <p className="text-[10px] flex items-center justify-center gap-1" style={{ color: '#FF9A5F' }}>
+                                <p className="text-[10px] flex items-center justify-center gap-1 text-gray-500">
                                     <UserCheck size={12} /> Active
                                 </p>
                             </div>
-                            <div className="text-center cursor-pointer rounded-lg p-2 transition-colors hover:bg-slate-400/10"
+                            <div className="text-center cursor-pointer rounded-lg p-2 transition-colors hover:bg-gray-100"
                                 onClick={() => plan.inactiveUsers > 0 && onViewInactiveUsers()}>
-                                <p className={`text-2xl font-bold ${plan.inactiveUsers > 0 ? 'text-slate-400' : ''}`} style={{ color: plan.inactiveUsers > 0 ? '#94a3b8' : '#FF9A5F' }}>
+                                <p className={`text-2xl font-bold ${plan.inactiveUsers > 0 ? 'text-gray-500' : 'text-gray-400'}`}>
                                     {plan.inactiveUsers || 0}
                                 </p>
-                                <p className="text-[10px] flex items-center justify-center gap-1" style={{ color: '#FF9A5F' }}>
+                                <p className="text-[10px] flex items-center justify-center gap-1 text-gray-500">
                                     <UserX size={12} /> Inactive
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 text-xs rounded-xl p-4" style={{ background: 'rgba(255,125,56,0.06)' }}>
+                    <div className="grid grid-cols-2 gap-4 text-xs rounded-xl p-4 bg-gray-50">
                         <div>
-                            <span className="font-medium" style={{ color: '#FF9A5F' }}>Created</span>
-                            <p style={{ color: '#FF7D38' }}>{new Date(plan.createdAt).toLocaleString()}</p>
+                            <span className="font-medium text-gray-500">Created</span>
+                            <p className="text-gray-700">{new Date(plan.createdAt).toLocaleString()}</p>
                         </div>
                         <div>
-                            <span className="font-medium" style={{ color: '#FF9A5F' }}>Last Updated</span>
-                            <p style={{ color: '#FF7D38' }}>{new Date(plan.updatedAt).toLocaleString()}</p>
+                            <span className="font-medium text-gray-500">Last Updated</span>
+                            <p className="text-gray-700">{new Date(plan.updatedAt).toLocaleString()}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t rounded-b-2xl" style={{ borderColor: 'rgba(255,125,56,0.15)' }}>
-                    <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-xl transition-colors" style={{ color: '#FF9A5F' }}>
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-orange-100 rounded-b-2xl">
+                    <button onClick={onClose} className="px-4 py-2 text-sm font-medium rounded-xl transition-colors text-gray-600 hover:bg-gray-50">
                         Close
                     </button>
                 </div>
@@ -426,64 +418,63 @@ const PlanCard = ({ plan, onView, onEdit, onDelete, onToggleStatus, onViewActive
         <Panel className="p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-3 min-w-0">
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plan.status === 'active' ? 'from-amber-400 to-orange-500' : 'from-slate-400 to-slate-500'} flex items-center justify-center shrink-0`}>
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plan.status === 'active' ? 'from-orange-500 to-amber-600' : 'from-gray-400 to-gray-500'} flex items-center justify-center shrink-0`}>
                         <Package size={16} className="text-white" />
                     </div>
                     <div className="min-w-0">
-                        <p className="text-sm font-semibold truncate" style={{ color: '#FF7D38' }}>{plan.name}</p>
-                        <p className="text-xs truncate" style={{ color: '#FF9A5F' }}>{plan.description}</p>
+                        <p className="text-sm font-semibold truncate text-gray-800">{plan.name}</p>
+                        <p className="text-xs truncate text-gray-500">{plan.description}</p>
                     </div>
                 </div>
                 <StatusBadge status={plan.status} />
             </div>
 
             <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="rounded-xl py-2" style={{ background: 'rgba(255,125,56,0.08)' }}>
-                    <p className="text-sm font-bold" style={{ color: '#FF7D38' }}>${plan.price}</p>
-                    <p className="text-[10px]" style={{ color: '#FF9A5F' }}>Price</p>
+                <div className="rounded-xl py-2 bg-orange-50">
+                    <p className="text-sm font-bold text-orange-500">${plan.price}</p>
+                    <p className="text-[10px] text-gray-500">Price</p>
                 </div>
-                <div className="rounded-xl py-2" style={{ background: 'rgba(255,125,56,0.08)' }}>
-                    <p className="text-sm font-bold" style={{ color: '#FF7D38' }}>{plan.features.length}</p>
-                    <p className="text-[10px]" style={{ color: '#FF9A5F' }}>Features</p>
+                <div className="rounded-xl py-2 bg-orange-50">
+                    <p className="text-sm font-bold text-orange-500">{plan.features.length}</p>
+                    <p className="text-[10px] text-gray-500">Features</p>
                 </div>
-                <div className="rounded-xl py-2" style={{ background: 'rgba(255,125,56,0.08)' }}>
-                    <p className="text-sm font-bold" style={{ color: '#FF7D38' }}>{plan.subscriberCount || 0}</p>
-                    <p className="text-[10px]" style={{ color: '#FF9A5F' }}>Users</p>
+                <div className="rounded-xl py-2 bg-orange-50">
+                    <p className="text-sm font-bold text-orange-500">{plan.subscriberCount || 0}</p>
+                    <p className="text-[10px] text-gray-500">Users</p>
                 </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-                <button onClick={() => onViewActive(plan)} className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.activeUsers > 0 ? 'hover:bg-orange-500/20' : 'opacity-50 cursor-not-allowed'}`}
-                    style={plan.activeUsers > 0 ? { background: 'rgba(255,125,56,0.15)', color: '#FF7D38' } : { background: 'rgba(100,116,139,0.08)', color: '#FF9A5F' }}>
+                <button onClick={() => onViewActive(plan)} className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.activeUsers > 0 ? 'hover:bg-orange-50' : 'opacity-50 cursor-not-allowed'}`}
+                    style={plan.activeUsers > 0 ? { background: 'rgba(255,125,56,0.12)', color: '#FF7D38' } : { background: 'rgba(100,116,139,0.08)', color: '#94a3b8' }}>
                     <UserCheck size={12} /> {plan.activeUsers || 0} Active
                 </button>
-                <button onClick={() => onViewInactive(plan)} className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.inactiveUsers > 0 ? 'hover:bg-slate-400/20' : 'opacity-50 cursor-not-allowed'}`}
-                    style={plan.inactiveUsers > 0 ? { background: 'rgba(100,116,139,0.12)', color: '#94a3b8' } : { background: 'rgba(100,116,139,0.08)', color: '#FF9A5F' }}>
+                <button onClick={() => onViewInactive(plan)} className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.inactiveUsers > 0 ? 'hover:bg-gray-100' : 'opacity-50 cursor-not-allowed'}`}
+                    style={plan.inactiveUsers > 0 ? { background: 'rgba(100,116,139,0.12)', color: '#64748b' } : { background: 'rgba(100,116,139,0.08)', color: '#94a3b8' }}>
                     <UserX size={12} /> {plan.inactiveUsers || 0} Inactive
                 </button>
-                <button onClick={() => setExpanded(!expanded)} className="ml-auto p-1 rounded-lg transition-colors" style={{ color: '#FF9A5F' }}>
+                <button onClick={() => setExpanded(!expanded)} className="ml-auto p-1 rounded-lg transition-colors text-gray-400 hover:text-orange-500">
                     {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </button>
             </div>
 
             {expanded && (
-                <div className="pt-3 space-y-2" style={{ borderTop: '1px solid rgba(255,125,56,0.1)' }}>
-                    <div className="flex items-center justify-between text-xs" style={{ color: '#FF9A5F' }}>
+                <div className="pt-3 space-y-2 border-t border-orange-100">
+                    <div className="flex items-center justify-between text-xs text-gray-500">
                         <span>Updated: {new Date(plan.updatedAt).toLocaleDateString()}</span>
                         <span>ID: {plan.id}</span>
                     </div>
                     <div className="flex items-center gap-1.5 flex-wrap">
-                        <button onClick={() => onView(plan)} className="flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg transition-colors" style={{ color: '#FF7D38' }}>
+                        <button onClick={() => onView(plan)} className="flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg transition-colors text-orange-500 hover:bg-orange-50">
                             <Eye size={14} /> View
                         </button>
-                        <button onClick={() => onEdit(plan)} className="flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg transition-colors" style={{ color: '#FF7D38' }}>
+                        <button onClick={() => onEdit(plan)} className="flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg transition-colors text-orange-500 hover:bg-orange-50">
                             <Edit size={14} /> Edit
                         </button>
-                        <button onClick={() => onToggleStatus(plan.id)} className={`flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg transition-colors`}
-                            style={{ color: plan.status === 'active' ? '#fcd34d' : '#FF7D38' }}>
+                        <button onClick={() => onToggleStatus(plan.id)} className={`flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg transition-colors ${plan.status === 'active' ? 'text-amber-500 hover:bg-amber-50' : 'text-orange-500 hover:bg-orange-50'}`}>
                             {plan.status === 'active' ? 'Deactivate' : 'Activate'}
                         </button>
-                        <button onClick={() => onDelete(plan.id)} className="flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg transition-colors ml-auto" style={{ color: '#f87171' }}>
+                        <button onClick={() => onDelete(plan.id)} className="flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg transition-colors ml-auto text-red-500 hover:bg-red-50">
                             <Trash2 size={14} /> Delete
                         </button>
                     </div>
@@ -505,6 +496,12 @@ const AdminPlanManagement = () => {
     const [viewingPlan, setViewingPlan] = useState(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [isViewOpen, setIsViewOpen] = useState(false);
+
+    // Check permissions for the 'plans' component
+        const hasViewPermission = canView('plans');
+        const hasEditPermission = canEdit('plans');
+        const hasDeletePermission = canDelete('plans');
+    
 
     const loadPlans = () => {
         setLoading(true);
@@ -564,21 +561,20 @@ const AdminPlanManagement = () => {
     const stats = useMemo(() => [
         { label: 'Total Plans', value: plans.length, icon: Package, grad: 'from-orange-500 to-amber-600' },
         { label: 'Active Plans', value: plans.filter(p => p.status === 'active').length, icon: Check, grad: 'from-amber-400 to-orange-500' },
-        { label: 'Inactive Plans', value: plans.filter(p => p.status === 'inactive').length, icon: Archive, grad: 'from-slate-400 to-slate-500' },
+        { label: 'Inactive Plans', value: plans.filter(p => p.status === 'inactive').length, icon: Archive, grad: 'from-gray-400 to-gray-500' },
         { label: 'Total Subscribers', value: plans.reduce((acc, p) => acc + (p.subscriberCount || 0), 0), icon: Users, grad: 'from-yellow-500 to-amber-600' },
     ], [plans]);
 
     return (
-        <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
+        <div className="space-y-4 sm:space-y-6 px-2 sm:px-0 bg-gray-50 min-h-screen p-4 rounded-2xl">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-orange-200 shadow-sm">
                 <div>
-                    <h1 className="text-lg sm:text-xl font-bold" style={{ color: '#FF7D38' }}>Plan Management</h1>
-                    <p className="text-xs sm:text-sm mt-0.5" style={{ color: '#FF9A5F' }}>Create, manage, and customize subscription plans</p>
+                    <h1 className="text-lg sm:text-xl font-bold text-gray-800">Plan Management</h1>
+                    <p className="text-xs sm:text-sm mt-0.5 text-gray-500">Create, manage, and customize subscription plans</p>
                 </div>
                 <button onClick={() => { setSelectedPlan(null); setIsFormOpen(true); }}
-                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white rounded-xl transition-all shadow-sm hover:shadow-orange-500/50 shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #FF7D38, #FF6B1A)', boxShadow: '0 0 15px rgba(255,125,56,0.3)' }}>
+                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white rounded-xl transition-all shadow-sm bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-orange-500/30 shrink-0">
                     <Plus size={16} /> New Plan
                 </button>
             </div>
@@ -592,18 +588,15 @@ const AdminPlanManagement = () => {
             <Panel>
                 <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative flex-1">
-                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#FF9A5F' }} />
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         <input type="text" placeholder="Search plans..." value={search} onChange={(e) => setSearch(e.target.value)}
-                            className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
-                            style={{ background: 'rgba(255,125,56,0.08)', border: '1px solid rgba(255,125,56,0.2)', color: '#FF7D38' }} />
+                            className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200" />
                     </div>
                     <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}
-                        className="px-3.5 py-2.5 text-sm rounded-xl transition-all"
-                        style={{ background: 'rgba(255,125,56,0.08)', border: '1px solid rgba(255,125,56,0.2)', color: '#FF7D38' }}>
-                        {['All', 'active', 'inactive'].map(s => <option key={s} value={s} style={{ background: '#02203C' }}>{s}</option>)}
+                        className="px-3.5 py-2.5 text-sm rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200">
+                        {['All', 'active', 'inactive'].map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
-                    <button onClick={loadPlans} className="flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm rounded-xl transition-colors"
-                        style={{ color: '#FF9A5F', border: '1px solid rgba(255,125,56,0.2)' }}>
+                    <button onClick={loadPlans} className="flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm rounded-xl transition-colors bg-orange-50 text-orange-500 border border-orange-200 hover:bg-orange-100">
                         <RefreshCw size={14} /> <span className="hidden sm:inline">Refresh</span>
                     </button>
                 </div>
@@ -614,12 +607,12 @@ const AdminPlanManagement = () => {
                 {loading ? (
                     <div className="text-center py-16">
                         <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange-400 border-t-transparent mx-auto" />
-                        <p className="text-sm mt-4" style={{ color: '#FF9A5F' }}>Loading plans...</p>
+                        <p className="text-sm mt-4 text-gray-500">Loading plans...</p>
                     </div>
                 ) : filtered.length === 0 ? (
-                    <div className="text-center py-16 rounded-2xl" style={{ background: 'rgba(2,32,60,0.8)', border: '1px solid rgba(255,125,56,0.15)' }}>
-                        <Package size={32} className="mx-auto mb-3 opacity-30" style={{ color: '#FF9A5F' }} />
-                        <p className="text-sm" style={{ color: '#FF9A5F' }}>No plans match your filters</p>
+                    <div className="text-center py-16 rounded-2xl bg-white border border-orange-200">
+                        <Package size={32} className="mx-auto mb-3 opacity-30 text-gray-400" />
+                        <p className="text-sm text-gray-500">No plans match your filters</p>
                     </div>
                 ) : filtered.map(plan => (
                     <PlanCard key={plan.id} plan={plan} onView={() => { setViewingPlan(plan); setIsViewOpen(true); }}
@@ -633,24 +626,24 @@ const AdminPlanManagement = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b" style={{ borderColor: 'rgba(255,125,56,0.1)' }}>
-                                <th className="text-left text-xs font-semibold px-5 py-3.5" style={{ color: '#FF9A5F' }}>Plan</th>
-                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#FF9A5F' }}>Price</th>
-                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#FF9A5F' }}>Discount</th>
-                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#FF9A5F' }}>Features</th>
-                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#FF9A5F' }}>Users</th>
-                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#FF9A5F' }}>Status</th>
-                                <th className="text-left text-xs font-semibold px-4 py-3.5" style={{ color: '#FF9A5F' }}>Updated</th>
-                                <th className="text-xs font-semibold px-4 py-3.5" style={{ color: '#FF9A5F' }}>Actions</th>
+                            <tr className="border-b border-orange-200 bg-orange-50">
+                                <th className="text-left text-xs font-semibold px-5 py-3.5 text-gray-600">Plan</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5 text-gray-600">Price</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5 text-gray-600">Discount</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5 text-gray-600">Features</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5 text-gray-600">Users</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5 text-gray-600">Status</th>
+                                <th className="text-left text-xs font-semibold px-4 py-3.5 text-gray-600">Updated</th>
+                                <th className="text-xs font-semibold px-4 py-3.5 text-gray-600">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y" style={{ borderColor: 'rgba(255,125,56,0.06)' }}>
+                        <tbody className="divide-y divide-orange-100">
                             {loading ? (
                                 <tr>
                                     <td colSpan={8} className="text-center py-16">
                                         <div className="flex flex-col items-center gap-2">
                                             <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange-400 border-t-transparent" />
-                                            <p className="text-sm" style={{ color: '#FF9A5F' }}>Loading plans...</p>
+                                            <p className="text-sm text-gray-500">Loading plans...</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -658,72 +651,75 @@ const AdminPlanManagement = () => {
                                 <tr>
                                     <td colSpan={8} className="text-center py-16">
                                         <div className="flex flex-col items-center gap-2">
-                                            <Package size={32} className="opacity-30" style={{ color: '#FF9A5F' }} />
-                                            <p className="text-sm" style={{ color: '#FF9A5F' }}>No plans match your filters</p>
+                                            <Package size={32} className="opacity-30 text-gray-400" />
+                                            <p className="text-sm text-gray-500">No plans match your filters</p>
                                         </div>
                                     </td>
                                 </tr>
                             ) : filtered.map(plan => (
-                                <tr key={plan.id} className="transition-colors" style={{ borderColor: 'rgba(255,125,56,0.06)' }}
-                                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,125,56,0.05)'}
-                                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                                <tr key={plan.id} className="hover:bg-orange-50 transition-colors">
                                     <td className="px-5 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${plan.status === 'active' ? 'from-amber-400 to-orange-500' : 'from-slate-400 to-slate-500'} flex items-center justify-center shrink-0`}>
+                                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${plan.status === 'active' ? 'from-orange-500 to-amber-600' : 'from-gray-400 to-gray-500'} flex items-center justify-center shrink-0`}>
                                                 <Package size={14} className="text-white" />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-semibold" style={{ color: '#FF7D38' }}>{plan.name}</p>
-                                                <p className="text-xs truncate max-w-[180px]" style={{ color: '#FF9A5F' }}>{plan.description}</p>
+                                                <p className="text-sm font-semibold text-gray-800">{plan.name}</p>
+                                                <p className="text-xs truncate max-w-[180px] text-gray-500">{plan.description}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-4 py-4 text-sm font-bold" style={{ color: '#FF7D38' }}>${plan.price}</td>
+                                    <td className="px-4 py-4 text-sm font-bold text-orange-500">${plan.price}</td>
                                     <td className="px-4 py-4">
                                         {plan.discountAmount > 0 ? (
-                                            <span className="text-xs font-medium px-2 py-1 rounded-full" style={{ background: 'rgba(255,125,56,0.15)', color: '#FF7D38' }}>
+                                            <span className="text-xs font-medium px-2 py-1 rounded-full bg-orange-50 text-orange-500 border border-orange-200">
                                                 {plan.discountType === 'percentage' ? `${plan.discountAmount}%` : `$${plan.discountAmount}`}
                                             </span>
-                                        ) : <span className="text-xs" style={{ color: '#FF9A5F' }}>—</span>}
+                                        ) : <span className="text-xs text-gray-400">—</span>}
                                     </td>
-                                    <td className="px-4 py-4 text-sm" style={{ color: '#FF7D38' }}>{plan.features.length}</td>
+                                    <td className="px-4 py-4 text-sm text-gray-700">{plan.features.length}</td>
                                     <td className="px-4 py-4">
                                         <div className="flex items-center gap-1.5">
                                             <button onClick={() => handleViewActiveUsers(plan)}
-                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.activeUsers > 0 ? 'hover:bg-orange-500/20' : 'opacity-50 cursor-not-allowed'}`}
-                                                style={plan.activeUsers > 0 ? { background: 'rgba(255,125,56,0.15)', color: '#FF7D38' } : { background: 'rgba(100,116,139,0.08)', color: '#FF9A5F' }}>
+                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.activeUsers > 0 ? 'hover:bg-orange-50' : 'opacity-50 cursor-not-allowed'}`}
+                                                style={plan.activeUsers > 0 ? { background: 'rgba(255,125,56,0.12)', color: '#FF7D38' } : { background: 'rgba(100,116,139,0.08)', color: '#94a3b8' }}>
                                                 <UserCheck size={12} /> {plan.activeUsers || 0}
                                             </button>
                                             <button onClick={() => handleViewInactiveUsers(plan)}
-                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.inactiveUsers > 0 ? 'hover:bg-slate-400/20' : 'opacity-50 cursor-not-allowed'}`}
-                                                style={plan.inactiveUsers > 0 ? { background: 'rgba(100,116,139,0.12)', color: '#94a3b8' } : { background: 'rgba(100,116,139,0.08)', color: '#FF9A5F' }}>
+                                                className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${plan.inactiveUsers > 0 ? 'hover:bg-gray-100' : 'opacity-50 cursor-not-allowed'}`}
+                                                style={plan.inactiveUsers > 0 ? { background: 'rgba(100,116,139,0.12)', color: '#64748b' } : { background: 'rgba(100,116,139,0.08)', color: '#94a3b8' }}>
                                                 <UserX size={12} /> {plan.inactiveUsers || 0}
                                             </button>
                                         </div>
                                     </td>
                                     <td className="px-4 py-4">
                                         <button onClick={() => handleToggleStatus(plan.id)}
-                                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors`}
-                                            style={plan.status === 'active' ? { background: 'rgba(255,125,56,0.15)', color: '#FF7D38' } : { background: 'rgba(100,116,139,0.08)', color: '#94a3b8' }}>
-                                            <span className={`w-1.5 h-1.5 rounded-full ${plan.status === 'active' ? 'bg-amber-500 animate-pulse' : 'bg-slate-400'}`} />
+                                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${plan.status === 'active' ? 'bg-orange-50 text-orange-500 border border-orange-200' : 'bg-gray-100 text-gray-500'}`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full ${plan.status === 'active' ? 'bg-orange-500 animate-pulse' : 'bg-gray-400'}`} />
                                             {plan.status}
                                         </button>
                                     </td>
-                                    <td className="px-4 py-4 text-xs" style={{ color: '#FF9A5F' }}>{new Date(plan.updatedAt).toLocaleDateString()}</td>
+                                    <td className="px-4 py-4 text-xs text-gray-500">{new Date(plan.updatedAt).toLocaleDateString()}</td>
                                     <td className="px-4 py-4">
                                         <div className="flex items-center gap-1.5">
-                                            <button onClick={() => { setViewingPlan(plan); setIsViewOpen(true); }}
-                                                className="p-1.5 rounded-lg transition-colors" style={{ color: '#FF9A5F' }}>
-                                                <Eye size={16} />
-                                            </button>
-                                            <button onClick={() => { setSelectedPlan(plan); setIsFormOpen(true); }}
-                                                className="p-1.5 rounded-lg transition-colors" style={{ color: '#FF9A5F' }}>
-                                                <Edit size={16} />
-                                            </button>
-                                            <button onClick={() => handleDelete(plan.id)}
-                                                className="p-1.5 rounded-lg transition-colors" style={{ color: '#FF9A5F' }}>
-                                                <Trash2 size={16} />
-                                            </button>
+                                            {hasViewPermission && (
+                                                <button onClick={() => { setViewingPlan(plan); setIsViewOpen(true); }}
+                                                    className="p-1.5 rounded-lg transition-colors text-gray-400 hover:text-orange-500 hover:bg-orange-50">
+                                                    <Eye size={16} />
+                                                </button>
+                                            )}
+                                            {hasEditPermission && (
+                                                <button onClick={() => { setSelectedPlan(plan); setIsFormOpen(true); }}
+                                                    className="p-1.5 rounded-lg transition-colors text-gray-400 hover:text-orange-500 hover:bg-orange-50">
+                                                    <Edit size={16} />
+                                                </button>
+                                            )}
+                                            {hasDeletePermission && (
+                                                <button onClick={() => handleDelete(plan.id)}
+                                                    className="p-1.5 rounded-lg transition-colors text-gray-400 hover:text-red-500 hover:bg-red-50">
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
@@ -731,8 +727,8 @@ const AdminPlanManagement = () => {
                         </tbody>
                     </table>
                 </div>
-                <div className="px-5 py-3 border-t flex items-center justify-between" style={{ borderColor: 'rgba(255,125,56,0.1)' }}>
-                    <p className="text-xs" style={{ color: '#FF9A5F' }}>Showing {filtered.length} of {plans.length} plans</p>
+                <div className="px-5 py-3 border-t border-orange-200 flex items-center justify-between bg-orange-50">
+                    <p className="text-xs text-gray-500">Showing {filtered.length} of {plans.length} plans</p>
                 </div>
             </Panel>
 

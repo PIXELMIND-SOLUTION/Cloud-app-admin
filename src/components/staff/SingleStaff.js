@@ -1,21 +1,19 @@
-// pages/ViewStaff.js - View Staff Details with Actions
+// pages/ViewStaff.js - View Staff Details with Actions (Light Theme)
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
     ArrowLeft, User, Mail, Phone, Shield,
     Building, UserCog, Calendar,
     Edit, Trash2, LayoutDashboard, Users, BarChart2,
-    LineChart, MailWarning, Settings
+    LineChart, MailWarning, Settings, Download
 } from 'lucide-react';
 
 const Panel = ({ children, className = "" }) => (
     <div
-        className={`rounded-2xl p-4 sm:p-5 transition-all ${className}`}
+        className={`rounded-2xl p-4 sm:p-5 transition-all bg-white ${className}`}
         style={{
-            background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
-            border: '1px solid rgba(255,125,56,0.25)',
-            backdropFilter: 'blur(12px)',
-            boxShadow: '0 4px 20px rgba(255,125,56,0.1)'
+            border: '1px solid rgba(255,125,56,0.2)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)'
         }}
     >
         {children}
@@ -43,12 +41,12 @@ const StaffService = {
 
 // ── Component Map for Display ──────────────────────────────────────────────
 const COMPONENT_MAP = {
-    dashboard: { label: 'Dashboard', icon: LayoutDashboard, color: '#FF7D38' },
     users: { label: 'Registered Users', icon: Users, color: '#3b82f6' },
     plans: { label: 'Plans', icon: BarChart2, color: '#34d399' },
     analytics: { label: 'Analytics', icon: LineChart, color: '#a78bfa' },
     reports: { label: 'Reports', icon: MailWarning, color: '#f59e0b' },
     staff: { label: 'Staff Management', icon: UserCog, color: '#ec4899' },
+    notifications: { label: 'Notifications', icon: MailWarning, color: '#8b5cf6' },
     settings: { label: 'Settings', icon: Settings, color: '#6366f1' }
 };
 
@@ -57,6 +55,18 @@ export const SingleStaff = () => {
     const { id } = useParams();
     const [staff, setStaff] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [passwordInput, setPasswordInput] = useState("");
+
+    const handleShowPassword = () => {
+        if (passwordInput === "0000") {
+            setShowPassword(true);
+        } else {
+            alert("Incorrect security password");
+            setShowPassword(false);
+        }
+    };
 
     useEffect(() => {
         const data = StaffService.getById(id);
@@ -75,12 +85,16 @@ export const SingleStaff = () => {
         navigate('/admin/staff');
     };
 
+    const handleExport = () => {
+        alert(`Exporting data for ${staff?.name}`);
+    };
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
+            <div className="flex items-center justify-center min-h-[400px] bg-gray-50 rounded-2xl">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-400 border-t-transparent mx-auto" />
-                    <p className="mt-4 text-sm" style={{ color: '#FF9A5F' }}>Loading...</p>
+                    <p className="mt-4 text-sm text-gray-500">Loading...</p>
                 </div>
             </div>
         );
@@ -88,13 +102,12 @@ export const SingleStaff = () => {
 
     if (!staff) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
+            <div className="flex items-center justify-center min-h-[400px] bg-gray-50 rounded-2xl">
                 <div className="text-center">
-                    <User size={48} className="mx-auto mb-3 opacity-30" style={{ color: '#FF9A5F' }} />
-                    <h2 className="text-xl font-bold" style={{ color: '#FF7D38' }}>Staff Not Found</h2>
+                    <User size={48} className="mx-auto mb-3 opacity-30 text-gray-400" />
+                    <h2 className="text-xl font-bold text-gray-800">Staff Not Found</h2>
                     <button onClick={handleBack}
-                        className="mt-4 px-4 py-2 rounded-xl transition-all text-sm"
-                        style={{ color: '#FF7D38', border: '1px solid rgba(255,125,56,0.2)' }}>
+                        className="mt-4 px-4 py-2 rounded-xl transition-all text-sm bg-orange-50 text-orange-500 border border-orange-200 hover:bg-orange-100">
                         Back to Staff
                     </button>
                 </div>
@@ -103,26 +116,27 @@ export const SingleStaff = () => {
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="space-y-6 bg-gray-50 min-h-screen p-4 rounded-2xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-orange-200 shadow-sm">
                 <div className="flex items-center gap-3">
                     <button onClick={handleBack}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-sm"
-                        style={{ color: '#FF7D38', border: '1px solid rgba(255,125,56,0.2)' }}>
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all text-sm bg-orange-50 text-orange-500 border border-orange-200 hover:bg-orange-100">
                         <ArrowLeft size={16} /> Back
                     </button>
-                    <h1 className="text-lg sm:text-xl font-bold" style={{ color: '#FF7D38' }}>Staff Details</h1>
+                    <h1 className="text-lg sm:text-xl font-bold text-gray-800">Staff Details</h1>
                 </div>
                 <div className="flex items-center gap-2">
                     <button onClick={handleEdit}
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition-all"
-                        style={{ color: '#FF7D38', border: '1px solid rgba(255,125,56,0.2)' }}>
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition-all bg-orange-50 text-orange-500 border border-orange-200 hover:bg-orange-100">
                         <Edit size={16} /> Edit
                     </button>
                     <button onClick={handleDelete}
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition-all"
-                        style={{ color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)' }}>
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition-all bg-red-50 text-red-500 border border-red-200 hover:bg-red-100">
                         <Trash2 size={16} /> Delete
+                    </button>
+                    <button onClick={handleExport}
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition-all bg-green-50 text-green-500 border border-green-200 hover:bg-green-100">
+                        <Download size={16} /> Export
                     </button>
                 </div>
             </div>
@@ -131,37 +145,36 @@ export const SingleStaff = () => {
                 {/* Profile Card */}
                 <Panel className="lg:col-span-1">
                     <div className="text-center">
-                        <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white text-2xl font-bold mx-auto shadow-lg`}>
+                        <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white text-2xl font-bold mx-auto shadow-md`}>
                             {staff.avatar}
                         </div>
-                        <h2 className="text-xl font-bold mt-3" style={{ color: '#FF7D38' }}>{staff.name}</h2>
-                        <p className="text-sm" style={{ color: '#FF9A5F' }}>{staff.role}</p>
+                        <h2 className="text-xl font-bold mt-3 text-gray-800">{staff.name}</h2>
+                        <p className="text-sm text-gray-500">{staff.role}</p>
                         <div className="mt-3 flex justify-center">
-                            <span className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full`}
-                                style={staff.status === 'active' ? { background: 'rgba(52,211,153,0.12)', color: '#34d399' } : { background: 'rgba(100,116,139,0.08)', color: '#94a3b8' }}>
-                                <span className={`w-1.5 h-1.5 rounded-full ${staff.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                            <span className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full ${staff.status === 'active' ? 'bg-green-50 text-green-600 border border-green-200' : 'bg-gray-50 text-gray-500 border border-gray-200'}`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${staff.status === 'active' ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
                                 {staff.status}
                             </span>
                         </div>
                     </div>
 
-                    <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(255,125,56,0.1)' }}>
+                    <div className="mt-4 pt-4 border-t border-orange-200">
                         <div className="space-y-3">
                             <div className="flex items-center gap-3 text-sm">
-                                <Mail size={16} style={{ color: '#FF9A5F' }} />
-                                <span style={{ color: '#FF7D38' }}>{staff.email}</span>
+                                <Mail size={16} className="text-gray-400" />
+                                <span className="text-gray-700">{staff.email}</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm">
-                                <Phone size={16} style={{ color: '#FF9A5F' }} />
-                                <span style={{ color: '#FF7D38' }}>{staff.phone}</span>
+                                <Phone size={16} className="text-gray-400" />
+                                <span className="text-gray-700">{staff.phone}</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm">
-                                <Building size={16} style={{ color: '#FF9A5F' }} />
-                                <span style={{ color: '#FF7D38' }}>{staff.department}</span>
+                                <Building size={16} className="text-gray-400" />
+                                <span className="text-gray-700">{staff.department}</span>
                             </div>
                             <div className="flex items-center gap-3 text-sm">
-                                <Calendar size={16} style={{ color: '#FF9A5F' }} />
-                                <span style={{ color: '#FF7D38' }}>Joined: {staff.joined}</span>
+                                <Calendar size={16} className="text-gray-400" />
+                                <span className="text-gray-700">Joined: {staff.joined}</span>
                             </div>
                         </div>
                     </div>
@@ -169,38 +182,64 @@ export const SingleStaff = () => {
 
                 {/* Details Card */}
                 <Panel className="lg:col-span-2">
-                    <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>Staff Information</h3>
-                    
+                    <h3 className="text-sm font-semibold mb-4 text-gray-800">Staff Information</h3>
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="p-3 rounded-xl" style={{ background: 'rgba(255,125,56,0.06)' }}>
-                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Full Name</p>
-                            <p className="text-sm font-semibold mt-0.5" style={{ color: '#FF7D38' }}>{staff.name}</p>
+                        <div className="p-3 rounded-xl bg-orange-50 border border-orange-200">
+                            <p className="text-xs text-gray-500">Full Name</p>
+                            <p className="text-sm font-semibold mt-0.5 text-gray-800">{staff.name}</p>
                         </div>
-                        <div className="p-3 rounded-xl" style={{ background: 'rgba(255,125,56,0.06)' }}>
-                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Email</p>
-                            <p className="text-sm font-semibold mt-0.5" style={{ color: '#FF7D38' }}>{staff.email}</p>
+                        <div className="p-3 rounded-xl bg-orange-50 border border-orange-200">
+                            <p className="text-xs text-gray-500">Email</p>
+                            <p className="text-sm font-semibold mt-0.5 text-gray-800">{staff.email}</p>
                         </div>
-                        <div className="p-3 rounded-xl" style={{ background: 'rgba(255,125,56,0.06)' }}>
-                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Role</p>
-                            <p className="text-sm font-semibold mt-0.5" style={{ color: '#FF7D38' }}>{staff.role}</p>
+                        <div className="p-3 rounded-xl bg-orange-50 border border-orange-200">
+                            <p className="text-xs text-gray-500">Role</p>
+                            <p className="text-sm font-semibold mt-0.5 text-gray-800">{staff.role}</p>
                         </div>
-                        <div className="p-3 rounded-xl" style={{ background: 'rgba(255,125,56,0.06)' }}>
-                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Department</p>
-                            <p className="text-sm font-semibold mt-0.5" style={{ color: '#FF7D38' }}>{staff.department}</p>
+                        <div className="p-3 rounded-xl bg-orange-50 border border-orange-200">
+                            <p className="text-xs text-gray-500">Department</p>
+                            <p className="text-sm font-semibold mt-0.5 text-gray-800">{staff.department}</p>
                         </div>
-                        <div className="p-3 rounded-xl" style={{ background: 'rgba(255,125,56,0.06)' }}>
-                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Phone</p>
-                            <p className="text-sm font-semibold mt-0.5" style={{ color: '#FF7D38' }}>{staff.phone}</p>
+                        <div className="p-3 rounded-xl bg-orange-50 border border-orange-200">
+                            <p className="text-xs text-gray-500">Phone</p>
+                            <p className="text-sm font-semibold mt-0.5 text-gray-800">{staff.phone}</p>
                         </div>
-                        <div className="p-3 rounded-xl" style={{ background: 'rgba(255,125,56,0.06)' }}>
-                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Joined</p>
-                            <p className="text-sm font-semibold mt-0.5" style={{ color: '#FF7D38' }}>{staff.joined}</p>
+                        <div className="p-3 rounded-xl bg-orange-50 border border-orange-200">
+                            <p className="text-xs text-gray-500">Joined</p>
+                            <p className="text-sm font-semibold mt-0.5 text-gray-800">{staff.joined}</p>
+                        </div>
+                        <div className="p-3 rounded-xl bg-orange-50 border border-orange-200">
+                            <p className="text-xs text-gray-500 mb-2">Password</p>
+
+                            <p className="text-sm font-semibold text-gray-800 mb-3">
+                                {showPassword ? staff.password : "********"}
+                            </p>
+
+                            {!showPassword && (
+                                <div className="flex gap-2">
+                                    <input
+                                        type="password"
+                                        placeholder="Security Password"
+                                        value={passwordInput}
+                                        onChange={(e) => setPasswordInput(e.target.value)}
+                                        className="flex-1 px-3 py-2 text-sm border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+                                    />
+
+                                    <button
+                                        onClick={handleShowPassword}
+                                        className="px-3 py-2 rounded-lg bg-orange-500 text-white text-sm hover:bg-orange-600"
+                                    >
+                                        Show
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     {/* Component Permissions */}
-                    <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(255,125,56,0.1)' }}>
-                        <h4 className="text-sm font-semibold mb-3" style={{ color: '#FF7D38' }}>Component Permissions</h4>
+                    <div className="mt-4 pt-4 border-t border-orange-200">
+                        <h4 className="text-sm font-semibold mb-3 text-gray-800">Component Permissions</h4>
                         <div className="space-y-2">
                             {staff.permissions && staff.permissions.map((perm, idx) => {
                                 const comp = COMPONENT_MAP[perm.componentId];
@@ -209,29 +248,30 @@ export const SingleStaff = () => {
                                 const hasView = perm.actions.includes('view');
                                 const hasEdit = perm.actions.includes('edit');
                                 const hasDelete = perm.actions.includes('delete');
-                                
+                                const hasExport = perm.actions.includes('export');
+
                                 return (
-                                    <div key={idx} className="flex items-center justify-between p-3 rounded-xl" 
-                                        style={{ background: 'rgba(255,125,56,0.06)', border: '1px solid rgba(255,125,56,0.08)' }}>
+                                    <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-orange-50 border border-orange-200">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(255,125,56,0.08)' }}>
+                                            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white">
                                                 <Icon size={16} style={{ color: comp.color }} />
                                             </div>
-                                            <span className="text-sm" style={{ color: '#FF7D38' }}>{comp.label}</span>
+                                            <span className="text-sm text-gray-800">{comp.label}</span>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            {hasView && <span className="text-[10px] px-2 py-0.5 rounded" style={{ background: 'rgba(59,130,246,0.12)', color: '#3b82f6' }}>View</span>}
-                                            {hasEdit && <span className="text-[10px] px-2 py-0.5 rounded" style={{ background: 'rgba(255,125,56,0.12)', color: '#FF7D38' }}>Edit</span>}
-                                            {hasDelete && <span className="text-[10px] px-2 py-0.5 rounded" style={{ background: 'rgba(239,68,68,0.12)', color: '#ef4444' }}>Delete</span>}
-                                            {!hasView && !hasEdit && !hasDelete && (
-                                                <span className="text-[10px] px-2 py-0.5 rounded" style={{ background: 'rgba(100,116,139,0.08)', color: '#94a3b8' }}>No Access</span>
+                                            {hasView && <span className="text-[10px] px-2 py-0.5 rounded bg-blue-50 text-blue-500 border border-blue-200">View</span>}
+                                            {hasEdit && <span className="text-[10px] px-2 py-0.5 rounded bg-orange-50 text-orange-500 border border-orange-200">Edit</span>}
+                                            {hasDelete && <span className="text-[10px] px-2 py-0.5 rounded bg-red-50 text-red-500 border border-red-200">Delete</span>}
+                                            {hasExport && <span className="text-[10px] px-2 py-0.5 rounded bg-green-50 text-green-500 border border-green-200">Export</span>}
+                                            {!hasView && !hasEdit && !hasDelete && !hasExport && (
+                                                <span className="text-[10px] px-2 py-0.5 rounded bg-gray-50 text-gray-500 border border-gray-200">No Access</span>
                                             )}
                                         </div>
                                     </div>
                                 );
                             })}
                             {(!staff.permissions || staff.permissions.length === 0) && (
-                                <div className="text-center py-4" style={{ color: '#FF9A5F' }}>
+                                <div className="text-center py-4 text-gray-500">
                                     <p className="text-sm">No permissions assigned</p>
                                 </div>
                             )}

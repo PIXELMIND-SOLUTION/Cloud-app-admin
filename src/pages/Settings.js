@@ -1,4 +1,4 @@
-// pages/Settings.js - Saffron Theme
+// pages/Settings.js - Light Theme with Saffron Accents
 import React, { useState, useRef } from 'react';
 import {
     User, Mail, Key, Eye, EyeOff, Save, Camera,
@@ -7,12 +7,10 @@ import {
 
 const Panel = ({ children, className = "" }) => (
     <div
-        className={`rounded-2xl p-5 ${className}`}
+        className={`rounded-2xl p-5 bg-white ${className}`}
         style={{
-            background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
-            border: '1px solid rgba(255,125,56,0.25)',
-            backdropFilter: 'blur(12px)',
-            boxShadow: '0 4px 20px rgba(255,125,56,0.1)'
+            border: '1px solid rgba(255,125,56,0.2)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)'
         }}
     >
         {children}
@@ -45,16 +43,15 @@ export const Settings = () => {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 bg-gray-50 min-h-screen p-4 rounded-2xl">
             {/* Page header */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-orange-200 shadow-sm">
                 <div>
-                    <h1 className="text-xl font-bold" style={{ color: '#FF7D38' }}>Settings</h1>
-                    <p className="text-sm mt-0.5" style={{ color: '#FF9A5F' }}>Manage your admin profile and password</p>
+                    <h1 className="text-xl font-bold text-gray-800">Settings</h1>
+                    <p className="text-sm mt-0.5 text-gray-500">Manage your admin profile and password</p>
                 </div>
-                <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl"
-                    style={{ color: '#FF9A5F', background: 'rgba(2,32,60,0.8)', border: '1px solid rgba(255,125,56,0.15)' }}>
-                    <Cog size={16} style={{ color: '#FF7D38' }} />
+                <div className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl bg-orange-50 text-orange-500 border border-orange-200">
+                    <Cog size={16} />
                 </div>
             </div>
 
@@ -62,25 +59,19 @@ export const Settings = () => {
                 {/* ── Profile card ── */}
                 <Panel>
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center"
-                            style={{ boxShadow: '0 0 15px rgba(255,125,56,0.3)' }}>
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-md">
                             <User size={16} className="text-white" />
                         </div>
                         <div>
-                            <h2 className="font-semibold" style={{ color: '#FF7D38' }}>Profile</h2>
-                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Name, email, and profile photo</p>
+                            <h2 className="font-semibold text-gray-800">Profile</h2>
+                            <p className="text-xs text-gray-500">Name, email, and profile photo</p>
                         </div>
                     </div>
 
                     {/* Avatar */}
-                    <div className="flex items-center gap-4 mb-6 p-4 rounded-2xl"
-                        style={{
-                            background: 'rgba(255,125,56,0.08)',
-                            border: '1px solid rgba(255,125,56,0.15)'
-                        }}
-                    >
+                    <div className="flex items-center gap-4 mb-6 p-4 rounded-2xl bg-orange-50 border border-orange-200">
                         <div className="relative shrink-0">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white text-xl font-bold shadow-sm overflow-hidden">
+                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white text-xl font-bold shadow-md overflow-hidden">
                                 {avatar
                                     ? <img src={avatar} alt="avatar" className="w-full h-full object-cover" />
                                     : form.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()
@@ -88,28 +79,18 @@ export const Settings = () => {
                             </div>
                             <button
                                 onClick={() => fileRef.current.click()}
-                                className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full flex items-center justify-center transition-colors"
-                                style={{
-                                    background: 'rgba(2,32,60,0.9)',
-                                    border: '1px solid rgba(255,125,56,0.2)',
-                                    color: '#FF9A5F'
-                                }}
-                                onMouseEnter={e => { e.currentTarget.style.color = '#FF7D38'; e.currentTarget.style.borderColor = 'rgba(255,125,56,0.4)'; }}
-                                onMouseLeave={e => { e.currentTarget.style.color = '#FF9A5F'; e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'; }}
+                                className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full flex items-center justify-center transition-colors bg-white border border-orange-200 text-gray-400 hover:text-orange-500 hover:border-orange-400 shadow-sm"
                             >
                                 <Camera size={11} />
                             </button>
                             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
                         </div>
                         <div>
-                            <p className="text-sm font-semibold" style={{ color: '#FF7D38' }}>{form.name || "Admin"}</p>
-                            <p className="text-xs mt-0.5" style={{ color: '#FF9A5F' }}>{form.email}</p>
+                            <p className="text-sm font-semibold text-gray-800">{form.name || "Admin"}</p>
+                            <p className="text-xs mt-0.5 text-gray-500">{form.email}</p>
                             <button
                                 onClick={() => fileRef.current.click()}
-                                className="text-xs font-medium mt-1.5 transition-colors"
-                                style={{ color: '#FF7D38' }}
-                                onMouseEnter={e => { e.currentTarget.style.color = '#FF9A5F'; }}
-                                onMouseLeave={e => { e.currentTarget.style.color = '#FF7D38'; }}
+                                className="text-xs font-medium mt-1.5 transition-colors text-orange-500 hover:text-orange-600"
                             >
                                 Change photo
                             </button>
@@ -119,40 +100,26 @@ export const Settings = () => {
                     {/* Name & Email */}
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#FF9A5F' }}>Full Name</label>
+                            <label className="block text-xs font-medium mb-1.5 text-gray-600">Full Name</label>
                             <div className="relative">
-                                <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#FF9A5F' }} />
+                                <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="text"
                                     value={form.name}
                                     onChange={e => setForm({ ...form, name: e.target.value })}
-                                    className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
-                                    style={{
-                                        background: 'rgba(255,125,56,0.08)',
-                                        border: '1px solid rgba(255,125,56,0.2)',
-                                        color: '#FF7D38'
-                                    }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)'}
-                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'}
+                                    className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200"
                                 />
                             </div>
                         </div>
                         <div>
-                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#FF9A5F' }}>Email Address</label>
+                            <label className="block text-xs font-medium mb-1.5 text-gray-600">Email Address</label>
                             <div className="relative">
-                                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#FF9A5F' }} />
+                                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="email"
                                     value={form.email}
                                     onChange={e => setForm({ ...form, email: e.target.value })}
-                                    className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
-                                    style={{
-                                        background: 'rgba(255,125,56,0.08)',
-                                        border: '1px solid rgba(255,125,56,0.2)',
-                                        color: '#FF7D38'
-                                    }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)'}
-                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'}
+                                    className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200"
                                 />
                             </div>
                         </div>
@@ -162,14 +129,8 @@ export const Settings = () => {
                         <button
                             onClick={handleProfileSave}
                             className={`flex items-center gap-2 text-sm font-medium px-5 py-2.5 rounded-xl transition-all ${
-                                profileSaved ? "text-white" : "text-white"
-                            }`}
-                            style={profileSaved
-                                ? { background: 'linear-gradient(135deg, #34d399, #10b981)' }
-                                : { background: 'linear-gradient(135deg, #FF7D38, #FF6B1A)', boxShadow: '0 0 15px rgba(255,125,56,0.3)' }
-                            }
-                            onMouseEnter={e => { if (!profileSaved) { e.currentTarget.style.boxShadow = '0 0 25px rgba(255,125,56,0.5)'; } }}
-                            onMouseLeave={e => { if (!profileSaved) { e.currentTarget.style.boxShadow = '0 0 15px rgba(255,125,56,0.3)'; } }}
+                                profileSaved ? "bg-gradient-to-r from-green-500 to-emerald-500" : "bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-orange-500/30"
+                            } text-white shadow-sm`}
                         >
                             {profileSaved ? <><CheckCircle size={15} /> Saved</> : <><Save size={15} /> Save Changes</>}
                         </button>
@@ -179,93 +140,72 @@ export const Settings = () => {
                 {/* ── Password card ── */}
                 <Panel>
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center"
-                            style={{ boxShadow: '0 0 15px rgba(255,125,56,0.3)' }}>
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-md">
                             <Shield size={16} className="text-white" />
                         </div>
                         <div>
-                            <h2 className="font-semibold" style={{ color: '#FF7D38' }}>Change Password</h2>
-                            <p className="text-xs" style={{ color: '#FF9A5F' }}>Update your account password</p>
+                            <h2 className="font-semibold text-gray-800">Change Password</h2>
+                            <p className="text-xs text-gray-500">Update your account password</p>
                         </div>
                     </div>
 
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#FF9A5F' }}>Current Password</label>
+                            <label className="block text-xs font-medium mb-1.5 text-gray-600">Current Password</label>
                             <div className="relative">
-                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#FF9A5F' }} />
+                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type={showCurrent ? "text" : "password"}
                                     value={passwords.current}
                                     onChange={e => setPasswords({ ...passwords, current: e.target.value })}
                                     placeholder="••••••••"
-                                    className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl transition-all"
-                                    style={{
-                                        background: 'rgba(255,125,56,0.08)',
-                                        border: '1px solid rgba(255,125,56,0.2)',
-                                        color: '#FF7D38'
-                                    }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)'}
-                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'}
+                                    className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200"
                                 />
-                                <button onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2">
-                                    {showCurrent ? <EyeOff size={13} style={{ color: '#FF9A5F' }} /> : <Eye size={13} style={{ color: '#FF9A5F' }} />}
+                                <button onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500">
+                                    {showCurrent ? <EyeOff size={13} /> : <Eye size={13} />}
                                 </button>
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#FF9A5F' }}>New Password</label>
+                            <label className="block text-xs font-medium mb-1.5 text-gray-600">New Password</label>
                             <div className="relative">
-                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#FF9A5F' }} />
+                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type={showNew ? "text" : "password"}
                                     value={passwords.newPw}
                                     onChange={e => setPasswords({ ...passwords, newPw: e.target.value })}
                                     placeholder="••••••••"
-                                    className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl transition-all"
-                                    style={{
-                                        background: 'rgba(255,125,56,0.08)',
-                                        border: '1px solid rgba(255,125,56,0.2)',
-                                        color: '#FF7D38'
-                                    }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)'}
-                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'}
+                                    className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200"
                                 />
-                                <button onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2">
-                                    {showNew ? <EyeOff size={13} style={{ color: '#FF9A5F' }} /> : <Eye size={13} style={{ color: '#FF9A5F' }} />}
+                                <button onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500">
+                                    {showNew ? <EyeOff size={13} /> : <Eye size={13} />}
                                 </button>
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-xs font-medium mb-1.5" style={{ color: '#FF9A5F' }}>Confirm New Password</label>
+                            <label className="block text-xs font-medium mb-1.5 text-gray-600">Confirm New Password</label>
                             <div className="relative">
-                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#FF9A5F' }} />
+                                <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                                 <input
                                     type="password"
                                     value={passwords.confirm}
                                     onChange={e => setPasswords({ ...passwords, confirm: e.target.value })}
                                     placeholder="••••••••"
-                                    className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all"
+                                    className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl transition-all bg-orange-50 border border-orange-200 text-gray-800 focus:border-orange-400 focus:ring-2 focus:ring-orange-200"
                                     style={{
-                                        background: 'rgba(255,125,56,0.08)',
-                                        border: passwords.confirm && passwords.newPw !== passwords.confirm
-                                            ? '1px solid rgba(248,113,113,0.3)'
-                                            : '1px solid rgba(255,125,56,0.2)',
+                                        borderColor: passwords.confirm && passwords.newPw !== passwords.confirm
+                                            ? '#ef4444'
+                                            : undefined,
                                         color: passwords.confirm && passwords.newPw !== passwords.confirm
-                                            ? '#f87171'
-                                            : '#FF7D38'
+                                            ? '#ef4444'
+                                            : undefined
                                     }}
-                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.5)'}
-                                    onBlur={e => e.currentTarget.style.borderColor = passwords.confirm && passwords.newPw !== passwords.confirm
-                                        ? 'rgba(248,113,113,0.3)'
-                                        : 'rgba(255,125,56,0.2)'
-                                    }
                                 />
                             </div>
                             {passwords.confirm && passwords.newPw !== passwords.confirm && (
-                                <p className="text-xs mt-1" style={{ color: '#f87171' }}>Passwords do not match</p>
+                                <p className="text-xs mt-1 text-red-500">Passwords do not match</p>
                             )}
                         </div>
                     </div>
@@ -275,14 +215,8 @@ export const Settings = () => {
                             onClick={handlePwSave}
                             disabled={!passwords.current || !passwords.newPw || passwords.newPw !== passwords.confirm}
                             className={`flex items-center gap-2 text-sm font-medium px-5 py-2.5 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
-                                pwSaved ? "text-white" : "text-white"
-                            }`}
-                            style={pwSaved
-                                ? { background: 'linear-gradient(135deg, #34d399, #10b981)' }
-                                : { background: 'linear-gradient(135deg, #FF7D38, #FF6B1A)', boxShadow: '0 0 15px rgba(255,125,56,0.3)' }
-                            }
-                            onMouseEnter={e => { if (!pwSaved && !e.currentTarget.disabled) { e.currentTarget.style.boxShadow = '0 0 25px rgba(255,125,56,0.5)'; } }}
-                            onMouseLeave={e => { if (!pwSaved) { e.currentTarget.style.boxShadow = '0 0 15px rgba(255,125,56,0.3)'; } }}
+                                pwSaved ? "bg-gradient-to-r from-green-500 to-emerald-500" : "bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-orange-500/30"
+                            } text-white shadow-sm`}
                         >
                             {pwSaved ? <><CheckCircle size={15} /> Updated</> : <><Key size={15} /> Update Password</>}
                         </button>

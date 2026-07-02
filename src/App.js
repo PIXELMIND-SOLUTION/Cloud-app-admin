@@ -41,7 +41,7 @@ function App() {
           <Route path="plans/:planId/active-users" element={<ActivePlanUsers />} />
           <Route path="plans/:planId/inactive-users" element={<InactivePlanUsers />} / >
           <Route path="analytics" element={<AdminAnalytics />} />
-          <Route path="reports" element={<AdminReports />} />
+          <Route path="complaints" element={<AdminReports />} />
           <Route path='notifications' element={<AdminNotifications/>}/>
           <Route path="staff" element={<AllStaff />} />
           <Route path="staff/add" element={<StaffForm />} />

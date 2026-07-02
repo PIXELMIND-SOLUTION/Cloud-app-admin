@@ -1,5 +1,5 @@
-// components/AdminAnalytics.js - Simplified with Saffron Theme
-import React, { useState, useEffect, useMemo } from 'react';
+// components/AdminAnalytics.js - Light Theme with Saffron Accents
+import React, { useState, useEffect } from 'react';
 import {
     TrendingUp, TrendingDown, Users, Smartphone, Shield,
     AlertTriangle, Clock, Zap, Server,
@@ -42,12 +42,10 @@ ChartJS.register(
 // ── Utility ──────────────────────────────────────────────────────────────
 const Panel = ({ children, className = "" }) => (
     <div
-        className={`rounded-2xl p-5 ${className}`}
+        className={`rounded-2xl p-5 bg-white ${className}`}
         style={{
-            background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
-            border: '1px solid rgba(255,125,56,0.25)',
-            backdropFilter: 'blur(12px)',
-            boxShadow: '0 4px 20px rgba(255,125,56,0.1)'
+            border: '1px solid rgba(255,125,56,0.2)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)'
         }}
     >
         {children}
@@ -60,7 +58,7 @@ const chartOptions = {
     plugins: {
         legend: {
             labels: {
-                color: '#FF9A5F',
+                color: '#4a4a4a',
                 font: { size: 11 },
                 padding: 15,
                 usePointStyle: true,
@@ -71,11 +69,11 @@ const chartOptions = {
     scales: {
         x: {
             grid: { color: 'rgba(255,125,56,0.08)', drawBorder: false },
-            ticks: { color: '#FF9A5F', font: { size: 10 } }
+            ticks: { color: '#6b7280', font: { size: 10 } }
         },
         y: {
             grid: { color: 'rgba(255,125,56,0.08)', drawBorder: false },
-            ticks: { color: '#FF9A5F', font: { size: 10 } }
+            ticks: { color: '#6b7280', font: { size: 10 } }
         }
     }
 };
@@ -115,35 +113,59 @@ const getChartData = () => {
 // ── Metric Card ──────────────────────────────────────────────────────────
 const MetricCard = ({ label, value, icon: Icon, trend, trendValue, color }) => {
     const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus;
-    const trendColor = trend === 'up' ? '#FF7D38' : trend === 'down' ? '#f87171' : '#FF9A5F';
+    const trendColor = trend === 'up' ? '#FF7D38' : trend === 'down' ? '#ef4444' : '#6b7280';
 
     return (
-        <div
-            className="rounded-2xl p-4 transition-all hover:scale-[1.02]"
-            style={{
-                background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
-                border: '1px solid rgba(255,125,56,0.25)',
-                backdropFilter: 'blur(12px)',
-                boxShadow: '0 4px 20px rgba(255,125,56,0.1)'
-            }}
-        >
-            <div className="flex items-start justify-between">
-                <div>
-                    <p className="text-xs font-medium" style={{ color: '#FF9A5F' }}>{label}</p>
-                    <p className="text-xl font-bold mt-1" style={{ color: '#FF7D38' }}>{value}</p>
+        <div className="relative overflow-hidden rounded-2xl p-4 transition-all hover:scale-[1.02] hover:shadow-lg bg-white border border-orange-200 shadow-sm">
+
+            {/* Decorative Background */}
+            <div className="absolute -top-8 -left-8 w-20 h-20 rounded-full bg-orange-400/10" />
+            <div className="absolute -top-4 -left-4 w-28 h-28 rounded-full border border-orange-300/20" />
+            <div className="absolute -top-8 -left-8 w-36 h-36 rounded-full border border-orange-300/10" />
+
+            <div className="absolute -bottom-4 -right-4 w-12 h-12 rounded-full bg-orange-400/10" />
+
+            {/* Content */}
+            <div className="relative z-10">
+                <div className="flex items-start justify-between">
+                    <div>
+                        <p className="text-xs font-medium text-gray-500">
+                            {label}
+                        </p>
+
+                        <p className="text-xl font-bold mt-1 text-gray-800">
+                            {value}
+                        </p>
+                    </div>
+
+                    <div
+                        className={`w-8 h-8 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shrink-0 ml-2 shadow-lg`}
+                    >
+                        <Icon size={14} className="text-white" />
+                    </div>
                 </div>
-                <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shrink-0 ml-2`}
-                    style={{ boxShadow: '0 0 15px rgba(255,125,56,0.3)' }}>
-                    <Icon size={14} className="text-white" />
-                </div>
+
+                {trend && (
+                    <div className="flex items-center gap-1.5 mt-3">
+                        <TrendIcon
+                            size={12}
+                            style={{ color: trendColor }}
+                        />
+
+                        <span
+                            className="text-xs font-semibold"
+                            style={{ color: trendColor }}
+                        >
+                            {trendValue}
+                        </span>
+
+                        <span className="text-[10px] text-gray-500">
+                            vs last month
+                        </span>
+                    </div>
+                )}
             </div>
-            {trend && (
-                <div className="flex items-center gap-1.5 mt-3">
-                    <TrendIcon size={12} style={{ color: trendColor }} />
-                    <span className="text-xs font-semibold" style={{ color: trendColor }}>{trendValue}</span>
-                    <span className="text-[10px]" style={{ color: '#FF9A5F' }}>vs last month</span>
-                </div>
-            )}
+
         </div>
     );
 };
@@ -160,7 +182,7 @@ const LineChartComponent = ({ data, labels, color = '#FF7D38' }) => {
             fill: true,
             tension: 0.4,
             pointBackgroundColor: color,
-            pointBorderColor: '#02203C',
+            pointBorderColor: '#ffffff',
             pointBorderWidth: 2,
             pointRadius: 3
         }]
@@ -189,7 +211,7 @@ const DoughnutChartComponent = ({ data, labels, colors }) => {
         datasets: [{
             data,
             backgroundColor: colors,
-            borderColor: '#02203C',
+            borderColor: '#ffffff',
             borderWidth: 3
         }]
     };
@@ -205,7 +227,7 @@ const RadarChartComponent = ({ data, labels }) => {
             borderColor: '#FF7D38',
             borderWidth: 2,
             pointBackgroundColor: '#FF7D38',
-            pointBorderColor: '#02203C',
+            pointBorderColor: '#ffffff',
             pointBorderWidth: 2
         }]
     };
@@ -239,31 +261,29 @@ const AdminAnalytics = () => {
             <div className="flex items-center justify-center min-h-[400px]">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-400 border-t-transparent mx-auto" />
-                    <p className="mt-4 text-sm" style={{ color: '#FF9A5F' }}>Loading...</p>
+                    <p className="mt-4 text-sm text-gray-500">Loading...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 bg-gray-50 min-h-screen p-4 rounded-2xl">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-orange-200 shadow-sm">
                 <div>
-                    <h1 className="text-xl font-bold" style={{ color: '#FF7D38' }}>Analytics Dashboard</h1>
-                    <p className="text-sm mt-0.5" style={{ color: '#FF9A5F' }}>Overview of users, devices, and system metrics</p>
+                    <h1 className="text-xl font-bold text-gray-800">Analytics Dashboard</h1>
+                    <p className="text-sm mt-0.5 text-gray-500">Overview of users, devices, and system metrics</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => { setLoading(true); setTimeout(() => { setStats(getBasicData()); setLoading(false); }, 300); }}
-                        className="p-2 rounded-xl transition-colors"
-                        style={{ color: '#FF9A5F', border: '1px solid rgba(255,125,56,0.2)' }}
+                        className="p-2 rounded-xl transition-colors bg-orange-50 text-orange-500 border border-orange-200 hover:bg-orange-100"
                     >
                         <RefreshCw size={16} />
                     </button>
                     <button
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-xl transition-all"
-                        style={{ background: 'linear-gradient(135deg, #FF7D38, #FF6B1A)', boxShadow: '0 0 15px rgba(255,125,56,0.3)' }}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-white rounded-xl transition-all bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-orange-500/30 shadow-sm"
                     >
                         <Download size={14} /> Export
                     </button>
@@ -271,21 +291,16 @@ const AdminAnalytics = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex flex-wrap gap-1 rounded-2xl p-1"
-                style={{
-                    background: 'rgba(2,32,60,0.8)',
-                    border: '1px solid rgba(255,125,56,0.15)',
-                }}
-            >
+            <div className="flex flex-wrap gap-1 rounded-2xl p-1 bg-white border border-orange-200 shadow-sm">
                 {tabs.map(tab => (
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition-all ${activeTab === tab.id ? 'text-white' : ''}`}
-                        style={activeTab === tab.id
-                            ? { background: 'linear-gradient(135deg, #FF7D38, #FF6B1A)' }
-                            : { color: '#FF9A5F' }
-                        }
+                        className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition-all ${
+                            activeTab === tab.id 
+                                ? 'text-white bg-gradient-to-r from-orange-500 to-orange-600 shadow-md' 
+                                : 'text-gray-600 hover:bg-orange-50'
+                        }`}
                     >
                         <tab.icon size={16} />
                         <span className="hidden sm:inline">{tab.label}</span>
@@ -333,13 +348,13 @@ const AdminAnalytics = () => {
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <Panel>
-                            <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>User Growth</h3>
+                            <h3 className="text-sm font-semibold mb-4 text-gray-800">User Growth</h3>
                             <div className="h-[300px]">
                                 <LineChartComponent data={chartData.users} labels={chartData.dates} />
                             </div>
                         </Panel>
                         <Panel>
-                            <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>Revenue Trend</h3>
+                            <h3 className="text-sm font-semibold mb-4 text-gray-800">Revenue Trend</h3>
                             <div className="h-[300px]">
                                 <LineChartComponent data={chartData.revenue} labels={chartData.dates} color="#F59E0B" />
                             </div>
@@ -348,7 +363,7 @@ const AdminAnalytics = () => {
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <Panel>
-                            <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>Device Distribution</h3>
+                            <h3 className="text-sm font-semibold mb-4 text-gray-800">Device Distribution</h3>
                             <div className="h-[280px]">
                                 <DoughnutChartComponent
                                     data={[35, 30, 20, 15]}
@@ -358,7 +373,7 @@ const AdminAnalytics = () => {
                             </div>
                         </Panel>
                         <Panel>
-                            <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>System Performance</h3>
+                            <h3 className="text-sm font-semibold mb-4 text-gray-800">System Performance</h3>
                             <div className="h-[280px]">
                                 <RadarChartComponent
                                     data={[85, 78, 92, 70, 88]}
@@ -374,7 +389,7 @@ const AdminAnalytics = () => {
             {activeTab === 'users' && stats && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Panel>
-                        <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>User Roles</h3>
+                        <h3 className="text-sm font-semibold mb-4 text-gray-800">User Roles</h3>
                         <div className="h-[280px]">
                             <DoughnutChartComponent
                                 data={[15, 25, 60]}
@@ -384,7 +399,7 @@ const AdminAnalytics = () => {
                         </div>
                     </Panel>
                     <Panel>
-                        <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>User Retention</h3>
+                        <h3 className="text-sm font-semibold mb-4 text-gray-800">User Retention</h3>
                         <div className="h-[250px]">
                             <BarChartComponent
                                 data={[92, 87, 81, 73, 65]}
@@ -393,7 +408,7 @@ const AdminAnalytics = () => {
                         </div>
                     </Panel>
                     <Panel>
-                        <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>Plan Distribution</h3>
+                        <h3 className="text-sm font-semibold mb-4 text-gray-800">Plan Distribution</h3>
                         <div className="h-[280px]">
                             <DoughnutChartComponent
                                 data={[30, 45, 25]}
@@ -403,7 +418,7 @@ const AdminAnalytics = () => {
                         </div>
                     </Panel>
                     <Panel>
-                        <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>User Engagement</h3>
+                        <h3 className="text-sm font-semibold mb-4 text-gray-800">User Engagement</h3>
                         <div className="h-[280px]">
                             <DoughnutChartComponent
                                 data={[60, 25, 10, 5]}
@@ -419,7 +434,7 @@ const AdminAnalytics = () => {
             {activeTab === 'devices' && stats && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Panel>
-                        <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>Device OS</h3>
+                        <h3 className="text-sm font-semibold mb-4 text-gray-800">Device OS</h3>
                         <div className="h-[280px]">
                             <DoughnutChartComponent
                                 data={[35, 28, 20, 12, 5]}
@@ -429,7 +444,7 @@ const AdminAnalytics = () => {
                         </div>
                     </Panel>
                     <Panel>
-                        <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>Battery Health</h3>
+                        <h3 className="text-sm font-semibold mb-4 text-gray-800">Battery Health</h3>
                         <div className="h-[280px]">
                             <DoughnutChartComponent
                                 data={[40, 35, 15, 10]}
@@ -439,7 +454,7 @@ const AdminAnalytics = () => {
                         </div>
                     </Panel>
                     <Panel>
-                        <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>Storage Usage</h3>
+                        <h3 className="text-sm font-semibold mb-4 text-gray-800">Storage Usage</h3>
                         <div className="h-[280px]">
                             <DoughnutChartComponent
                                 data={[25, 40, 25, 10]}
@@ -449,7 +464,7 @@ const AdminAnalytics = () => {
                         </div>
                     </Panel>
                     <Panel>
-                        <h3 className="text-sm font-semibold mb-4" style={{ color: '#FF7D38' }}>Manufacturers</h3>
+                        <h3 className="text-sm font-semibold mb-4 text-gray-800">Manufacturers</h3>
                         <div className="h-[280px]">
                             <DoughnutChartComponent
                                 data={[30, 20, 15, 12, 10, 8, 5]}
@@ -462,21 +477,16 @@ const AdminAnalytics = () => {
             )}
 
             {/* Footer */}
-            <div className="rounded-2xl px-6 py-4 flex flex-wrap items-center justify-between gap-3"
-                style={{
-                    background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
-                    border: '1px solid rgba(255,125,56,0.25)',
-                }}
-            >
-                <div className="flex items-center gap-4 text-xs" style={{ color: '#FF9A5F' }}>
+            <div className="rounded-2xl px-6 py-4 flex flex-wrap items-center justify-between gap-3 bg-white border border-orange-200 shadow-sm">
+                <div className="flex items-center gap-4 text-xs text-gray-500">
                     <span>Last updated: {new Date().toLocaleString()}</span>
-                    <span className="w-px h-4" style={{ background: 'rgba(255,125,56,0.15)' }} />
+                    <span className="w-px h-4 bg-orange-200" />
                     <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
                         System Online
                     </span>
                 </div>
-                <div className="flex items-center gap-4 text-xs" style={{ color: '#FF9A5F' }}>
+                <div className="flex items-center gap-4 text-xs text-gray-500">
                     <span>v2.4.1</span>
                 </div>
             </div>

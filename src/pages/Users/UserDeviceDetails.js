@@ -1,15 +1,15 @@
-// pages/UserDeviceDetails.jsx - Fully Responsive User Details Page with Saffron Theme
+// pages/AdminDeviceDetails.jsx - Fully Responsive Admin Details Page with Light Theme
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft, Smartphone, Laptop, Tablet, Watch,
     CheckCircle, XCircle, AlertCircle, Battery, HardDrive,
     Calendar, Clock, Shield, Lock, Wifi, Cpu, User, Mail, Phone, MapPin, Briefcase,
-    ChevronUp, ChevronDown
+    ChevronUp, ChevronDown, UserCog
 } from 'lucide-react';
 
-// ── Data ─────────────────────────────────────────────────────────────────────
-const REGISTERED_USERS = [
+// ── Data (same as above) ─────────────────────────────────────────────────────
+const REGISTERED_ADMINS = [
     {
         id: 1, name: "Raj Mehta", email: "raj.mehta@corp.io", role: "Sub Admin", mobile: "+91 9876543210",
         avatar: "RM", avatarGrad: "from-orange-500 to-amber-600", region: "Mumbai",
@@ -21,7 +21,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 2, name: "Priya Nair", email: "priya.nair@corp.io", role: "User", mobile: "+91 9876543210",
+        id: 2, name: "Priya Nair", email: "priya.nair@corp.io", role: "Admin", mobile: "+91 9876543210",
         avatar: "PN", avatarGrad: "from-amber-400 to-orange-500", region: "Bangalore",
         totalDevices: 2, activeDevices: 1, status: "active", lastSeen: "18m ago",
         devices: [
@@ -30,7 +30,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 3, name: "Arjun Das", email: "arjun.das@corp.io", role: "User", mobile: "+91 9876543210",
+        id: 3, name: "Arjun Das", email: "arjun.das@corp.io", role: "Admin", mobile: "+91 9876543210",
         avatar: "AD", avatarGrad: "from-orange-600 to-amber-700", region: "Delhi",
         totalDevices: 4, activeDevices: 4, status: "active", lastSeen: "Just now",
         devices: [
@@ -41,7 +41,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 4, name: "Meera Patel", email: "meera.patel@corp.io", role: "User", mobile: "+91 9876543210",
+        id: 4, name: "Meera Patel", email: "meera.patel@corp.io", role: "Admin", mobile: "+91 9876543210",
         avatar: "MP", avatarGrad: "from-amber-500 to-yellow-600", region: "Chennai",
         totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "1h ago",
         devices: [
@@ -59,7 +59,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 6, name: "Sneha Reddy", email: "sneha.reddy@corp.io", role: "User", mobile: "+91 9876543210",
+        id: 6, name: "Sneha Reddy", email: "sneha.reddy@corp.io", role: "Admin", mobile: "+91 9876543210",
         avatar: "SR", avatarGrad: "from-amber-600 to-orange-700", region: "Pune",
         totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "45m ago",
         devices: [
@@ -68,7 +68,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 7, name: "Kiran Bose", email: "kiran.bose@corp.io", role: "User", mobile: "+91 9876543210",
+        id: 7, name: "Kiran Bose", email: "kiran.bose@corp.io", role: "Admin", mobile: "+91 9876543210",
         avatar: "KB", avatarGrad: "from-yellow-500 to-amber-600", region: "Kolkata",
         totalDevices: 2, activeDevices: 2, status: "active", lastSeen: "10m ago",
         devices: [
@@ -86,7 +86,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 9, name: "Rohan Verma", email: "rohan.verma@corp.io", role: "User", mobile: "+91 9876543210",
+        id: 9, name: "Rohan Verma", email: "rohan.verma@corp.io", role: "Admin", mobile: "+91 9876543210",
         avatar: "RV", avatarGrad: "from-amber-400 to-yellow-500", region: "Jaipur",
         totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "5m ago",
         devices: [
@@ -94,7 +94,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 10, name: "Divya Menon", email: "divya.menon@corp.io", role: "User", mobile: "+91 9876543210",
+        id: 10, name: "Divya Menon", email: "divya.menon@corp.io", role: "Admin", mobile: "+91 9876543210",
         avatar: "DM", avatarGrad: "from-orange-600 to-red-500", region: "Kochi",
         totalDevices: 3, activeDevices: 2, status: "active", lastSeen: "30m ago",
         devices: [
@@ -104,7 +104,7 @@ const REGISTERED_USERS = [
         ],
     },
     {
-        id: 11, name: "Suresh Iyer", email: "suresh.iyer@corp.io", role: "User", mobile: "+91 9876543210",
+        id: 11, name: "Suresh Iyer", email: "suresh.iyer@corp.io", role: "Admin", mobile: "+91 9876543210",
         avatar: "SI", avatarGrad: "from-amber-500 to-orange-600", region: "Coimbatore",
         totalDevices: 1, activeDevices: 1, status: "active", lastSeen: "1h ago",
         devices: [
@@ -126,12 +126,10 @@ const REGISTERED_USERS = [
 
 const Panel = ({ children, className = "" }) => (
     <div
-        className={`rounded-2xl ${className}`}
+        className={`rounded-2xl bg-white ${className}`}
         style={{
-            background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
-            border: '1px solid rgba(255,125,56,0.25)',
-            backdropFilter: 'blur(12px)',
-            boxShadow: '0 4px 20px rgba(255,125,56,0.1)'
+            border: '1px solid rgba(255,125,56,0.2)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.06)'
         }}
     >
         {children}
@@ -140,10 +138,10 @@ const Panel = ({ children, className = "" }) => (
 
 const StatusBadge = ({ status }) => {
     const configs = {
-        active: { color: '#FF7D38', bg: 'rgba(255,125,56,0.2)', icon: CheckCircle },
-        inactive: { color: '#94a3b8', bg: 'rgba(148,163,184,0.15)', icon: XCircle },
-        offline: { color: '#f87171', bg: 'rgba(248,113,113,0.15)', icon: AlertCircle },
-        warning: { color: '#fcd34d', bg: 'rgba(252,211,53,0.15)', icon: AlertCircle },
+        active: { color: '#FF7D38', bg: 'rgba(255,125,56,0.15)', icon: CheckCircle },
+        inactive: { color: '#64748b', bg: 'rgba(100,116,139,0.1)', icon: XCircle },
+        offline: { color: '#ef4444', bg: 'rgba(239,68,68,0.1)', icon: AlertCircle },
+        warning: { color: '#d97706', bg: 'rgba(217,119,6,0.1)', icon: AlertCircle },
     };
     const config = configs[status] || configs.inactive;
     const Icon = config.icon;
@@ -165,16 +163,16 @@ const DeviceTypeIcon = ({ type }) => {
         wearable: Watch,
     };
     const Icon = icons[type] || Smartphone;
-    return <Icon size={18} className="shrink-0" style={{ color: '#FF7D38' }} />;
+    return <Icon size={18} className="shrink-0 text-orange-500" />;
 };
 
 const InfoRow = ({ label, value, icon: Icon }) => (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between py-2.5 gap-1 sm:gap-4" style={{ borderBottom: '1px solid rgba(255,125,56,0.08)' }}>
-        <span className="flex items-center gap-2 text-xs sm:text-sm" style={{ color: '#FF9A5F' }}>
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between py-2.5 gap-1 sm:gap-4 border-b border-orange-100">
+        <span className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
             {Icon && <Icon size={14} className="shrink-0" />}
             <span className="font-medium">{label}</span>
         </span>
-        <span className="text-xs sm:text-sm font-medium break-all" style={{ color: '#FF7D38' }}>{value}</span>
+        <span className="text-xs sm:text-sm font-medium break-all text-orange-500">{value}</span>
     </div>
 );
 
@@ -183,28 +181,22 @@ const DeviceCard = ({ device }) => {
 
     return (
         <div
-            className="rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
-            style={{
-                background: 'linear-gradient(135deg, rgba(255,125,56,0.15), rgba(255,107,26,0.08))',
-                border: "1px solid rgba(255,125,56,0.2)",
-                boxShadow: '0 4px 15px rgba(255,125,56,0.08)'
-            }}
+            className="rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-white border border-orange-200"
         >
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0 flex-1">
                     <div
-                        className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl"
-                        style={{ background: "rgba(255,125,56,0.15)" }}
+                        className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl bg-orange-50"
                     >
                         <DeviceTypeIcon type={device.type} />
                     </div>
 
                     <div className="min-w-0 flex-1">
-                        <h3 className="font-semibold text-sm md:text-base truncate pr-2" style={{ color: '#FF7D38' }}>
+                        <h3 className="font-semibold text-sm md:text-base truncate pr-2 text-gray-800">
                             {device.name}
                         </h3>
-                        <p className="text-xs" style={{ color: '#FF9A5F' }}>
+                        <p className="text-xs text-gray-500">
                             {device.model} • {device.os}
                         </p>
                     </div>
@@ -214,10 +206,7 @@ const DeviceCard = ({ device }) => {
                     <StatusBadge status={device.status} />
                     <button
                         onClick={() => setExpanded(!expanded)}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors shrink-0"
-                        style={{ background: "rgba(255,125,56,0.15)", color: "#FF7D38" }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,125,56,0.25)'; e.currentTarget.style.transform = 'scale(1.1)' }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,125,56,0.15)'; e.currentTarget.style.transform = 'scale(1)' }}
+                        className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors shrink-0 bg-orange-50 text-orange-500 hover:bg-orange-100 hover:scale-110"
                     >
                         {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                     </button>
@@ -227,7 +216,7 @@ const DeviceCard = ({ device }) => {
             {/* Expanded Details */}
             {expanded && (
                 <>
-                    <div className="my-4" style={{ borderTop: "1px solid rgba(255,125,56,0.12)" }} />
+                    <div className="my-4 border-t border-orange-100" />
 
                     {/* Info Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
@@ -242,17 +231,17 @@ const DeviceCard = ({ device }) => {
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2 mt-4">
                         {device.mdmProfile && (
-                            <span className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1" style={{ background: 'rgba(255,125,56,0.2)', color: '#FF7D38' }}>
+                            <span className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 bg-orange-50 text-orange-500">
                                 <Shield size={12} /> MDM Profile
                             </span>
                         )}
                         {device.encryption && (
-                            <span className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1" style={{ background: 'rgba(255,125,56,0.15)', color: '#FF9A5F' }}>
+                            <span className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 bg-amber-50 text-amber-600">
                                 <Lock size={12} /> Encrypted
                             </span>
                         )}
                         {device.passcode && (
-                            <span className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1" style={{ background: 'rgba(255,125,56,0.12)', color: '#FF8C42' }}>
+                            <span className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 bg-gray-50 text-gray-600">
                                 <Lock size={12} /> Passcode
                             </span>
                         )}
@@ -269,23 +258,20 @@ export const UserDeviceDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const user = REGISTERED_USERS.find(u => u.id === parseInt(id));
+    const admin = REGISTERED_ADMINS.find(u => u.id === parseInt(id));
 
-    if (!user) {
+    if (!admin) {
         return (
-            <div className="flex items-center justify-center min-h-[60vh] px-4">
-                <div className="text-center max-w-sm">
-                    <AlertCircle size={48} className="mx-auto mb-4" style={{ color: '#f87171' }} />
-                    <h2 className="text-2xl font-bold" style={{ color: '#FF7D38' }}>User Not Found</h2>
-                    <p className="mt-2 text-sm" style={{ color: '#FF9A5F' }}>The user you're looking for doesn't exist.</p>
+            <div className="flex items-center justify-center min-h-[60vh] px-4 bg-gray-50">
+                <div className="text-center max-w-sm bg-white p-8 rounded-2xl border border-orange-200 shadow-sm">
+                    <AlertCircle size={48} className="mx-auto mb-4 text-red-400" />
+                    <h2 className="text-2xl font-bold text-gray-800">Admin Not Found</h2>
+                    <p className="mt-2 text-sm text-gray-500">The admin you're looking for doesn't exist.</p>
                     <button
-                        onClick={() => navigate('/admin/users')}
-                        className="mt-6 px-6 py-2.5 rounded-xl transition-all text-sm font-medium hover:scale-105"
-                        style={{ background: 'rgba(255,125,56,0.2)', color: '#FF7D38', border: '1px solid rgba(255,125,56,0.3)' }}
-                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,125,56,0.3)'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,125,56,0.2)'}
+                        onClick={() => navigate('/admin/admins')}
+                        className="mt-6 px-6 py-2.5 rounded-xl transition-all text-sm font-medium hover:scale-105 bg-orange-50 text-orange-500 border border-orange-200 hover:bg-orange-100"
                     >
-                        ← Back to Users
+                        ← Back to Admins
                     </button>
                 </div>
             </div>
@@ -293,37 +279,34 @@ export const UserDeviceDetails = () => {
     }
 
     const stats = {
-        total: user.devices.length,
-        active: user.devices.filter(d => d.status === 'active').length,
-        offline: user.devices.filter(d => d.status === 'offline').length,
-        warning: user.devices.filter(d => d.status === 'warning').length,
+        total: admin.devices.length,
+        active: admin.devices.filter(d => d.status === 'active').length,
+        offline: admin.devices.filter(d => d.status === 'offline').length,
+        warning: admin.devices.filter(d => d.status === 'warning').length,
     };
 
     return (
-        <div className="space-y-4 md:space-y-6 px-2 sm:px-0">
+        <div className="space-y-4 md:space-y-6 px-2 sm:px-0 bg-gray-50 min-h-screen p-4 rounded-2xl">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 bg-white p-4 rounded-2xl border border-orange-200 shadow-sm">
                 <button
                     onClick={() => navigate('/admin/users')}
-                    className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl transition-all text-sm shrink-0 hover:scale-105"
-                    style={{ background: 'rgba(255,125,56,0.15)', color: '#FF7D38', border: '1px solid rgba(255,125,56,0.25)' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,125,56,0.25)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,125,56,0.15)'}
+                    className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl transition-all text-sm shrink-0 hover:scale-105 bg-orange-50 text-orange-500 border border-orange-200 hover:bg-orange-100"
                 >
                     <ArrowLeft size={16} />
-                    <span className="hidden sm:inline">Back to Users</span>
+                    <span className="hidden sm:inline">Back to Admins</span>
                     <span className="sm:hidden">Back</span>
                 </button>
 
                 <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                        <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate" style={{ color: '#FF7D38' }}>
-                            {user.name}
+                        <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate text-gray-800">
+                            {admin.name}
                         </h1>
-                        <StatusBadge status={user.status} />
+                        <StatusBadge status={admin.status} />
                     </div>
-                    <p className="text-xs sm:text-sm truncate" style={{ color: '#FF9A5F' }}>
-                        {user.email} • {user.role}
+                    <p className="text-xs sm:text-sm truncate text-gray-500">
+                        {admin.email} • {admin.role}
                     </p>
                 </div>
             </div>
@@ -333,51 +316,64 @@ export const UserDeviceDetails = () => {
                 {[
                     { label: 'Total Devices', value: stats.total, icon: Smartphone },
                     { label: 'Active', value: stats.active, icon: CheckCircle, color: '#FF7D38' },
-                    { label: 'Warning', value: stats.warning, icon: AlertCircle, color: '#fcd34d' },
-                    { label: 'Offline', value: stats.offline, icon: XCircle, color: '#f87171' },
+                    { label: 'Warning', value: stats.warning, icon: AlertCircle, color: '#d97706' },
+                    { label: 'Offline', value: stats.offline, icon: XCircle, color: '#ef4444' },
                 ].map(stat => (
                     <div
                         key={stat.label}
-                        className="rounded-2xl p-3 sm:p-4 text-center transition-all hover:scale-105"
-                        style={{
-                            background: 'linear-gradient(135deg, rgba(255,125,56,0.12), rgba(255,107,26,0.08))',
-                            border: '1px solid rgba(255,125,56,0.2)',
-                            boxShadow: '0 4px 15px rgba(255,125,56,0.08)'
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.4)'}
-                        onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,125,56,0.2)'}
+                        className="relative overflow-hidden rounded-2xl p-3 sm:p-4 text-center transition-all hover:scale-105 bg-white border border-orange-200 shadow-sm hover:shadow-lg"
                     >
-                        <stat.icon size={18} className="mx-auto mb-1.5" style={{ color: stat.color || '#FF7D38' }} />
-                        <p className="text-xl sm:text-2xl font-bold" style={{ color: '#FF7D38' }}>{stat.value}</p>
-                        <p className="text-[10px] sm:text-xs" style={{ color: '#FF9A5F' }}>{stat.label}</p>
+                        {/* Decorative Background */}
+                        <div className="absolute -top-8 -left-8 w-20 h-20 rounded-full bg-orange-400/10" />
+                        <div className="absolute -top-4 -left-4 w-28 h-28 rounded-full border border-orange-300/20" />
+                        <div className="absolute -top-8 -left-8 w-36 h-36 rounded-full border border-orange-300/10" />
+
+                        <div className="absolute -bottom-4 -right-4 w-12 h-12 rounded-full bg-orange-400/10" />
+
+                        {/* Content */}
+                        <div className="relative z-10">
+                            <stat.icon
+                                size={18}
+                                className="mx-auto mb-1.5"
+                                style={{ color: stat.color || "#FF7D38" }}
+                            />
+
+                            <p className="text-xl sm:text-2xl font-bold text-orange-500">
+                                {stat.value}
+                            </p>
+
+                            <p className="text-[10px] sm:text-xs text-gray-500">
+                                {stat.label}
+                            </p>
+                        </div>
                     </div>
                 ))}
             </div>
 
-            {/* User Information */}
+            {/* Admin Information */}
             <Panel className="p-4 sm:p-6">
-                <h3 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 flex items-center gap-2" style={{ color: '#FF7D38' }}>
-                    <User size={18} style={{ color: '#FF7D38' }} /> User Information
+                <h3 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 flex items-center gap-2 text-gray-800">
+                    <UserCog size={18} className="text-orange-500" /> Admin Information
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                    <InfoRow label="Full Name" value={user.name} icon={User} />
-                    <InfoRow label="Email" value={user.email} icon={Mail} />
-                    <InfoRow label="Mobile" value={user.mobile} icon={Phone} />
-                    <InfoRow label="Region" value={user.region} icon={MapPin} />
-                    <InfoRow label="Role" value={user.role} icon={Briefcase} />
-                    <InfoRow label="Last Seen" value={user.lastSeen} icon={Clock} />
+                    <InfoRow label="Full Name" value={admin.name} icon={User} />
+                    <InfoRow label="Email" value={admin.email} icon={Mail} />
+                    <InfoRow label="Mobile" value={admin.mobile} icon={Phone} />
+                    <InfoRow label="Region" value={admin.region} icon={MapPin} />
+                    <InfoRow label="Role" value={admin.role} icon={Briefcase} />
+                    <InfoRow label="Last Seen" value={admin.lastSeen} icon={Clock} />
                 </div>
             </Panel>
 
             {/* Devices */}
             <div>
-                <h3 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 flex items-center gap-2" style={{ color: '#FF7D38' }}>
-                    <Smartphone size={18} style={{ color: '#FF7D38' }} />
-                    Devices ({user.devices.length})
+                <h3 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 flex items-center gap-2 text-gray-800">
+                    <Smartphone size={18} className="text-orange-500" />
+                    Devices ({admin.devices.length})
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
-                    {user.devices.map((device) => (
+                    {admin.devices.map((device) => (
                         <DeviceCard key={device.id} device={device} />
                     ))}
                 </div>
