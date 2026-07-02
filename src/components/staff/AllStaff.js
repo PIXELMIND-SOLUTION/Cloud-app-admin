@@ -28,7 +28,7 @@ const StaffService = {
         if (stored) return JSON.parse(stored);
         const defaultStaff = [
             { 
-                id: 1, name: "Raj Kumar", email: "raj.kumar@mdm.io", role: "Super Admin", 
+                id: 1, name: "Raj Kumar", email: "raj.kumar@mdm.io", role: "Super Admin", password: "000000",
                 department: "IT", phone: "+91 9876543210", status: "active", 
                 joined: "2024-01-15", avatar: "RK",
                 permissions: [
@@ -40,7 +40,7 @@ const StaffService = {
                 ]
             },
             { 
-                id: 2, name: "Priya Sharma", email: "priya.sharma@mdm.io", role: "Staff Admin", 
+                id: 2, name: "Priya Sharma", email: "priya.sharma@mdm.io", role: "Staff Admin", password: "000000",
                 department: "Operations", phone: "+91 9876543211", status: "active", 
                 joined: "2024-02-01", avatar: "PS",
                 permissions: [
@@ -49,19 +49,19 @@ const StaffService = {
                 ]
             },
             { 
-                id: 3, name: "Amit Patel", email: "amit.patel@mdm.io", role: "Staff Admin", 
+                id: 3, name: "Amit Patel", email: "amit.patel@mdm.io", role: "Staff Admin", password: "000000", 
                 department: "Support", phone: "+91 9876543212", status: "inactive", 
                 joined: "2024-01-20", avatar: "AP",
                 permissions: [{ componentId: 'users', actions: ['view'] }]
             },
             { 
-                id: 4, name: "Sneha Reddy", email: "sneha.reddy@mdm.io", role: "Staff", 
+                id: 4, name: "Sneha Reddy", email: "sneha.reddy@mdm.io", role: "Staff", password: "000000", 
                 department: "Sales", phone: "+91 9876543213", status: "active", 
                 joined: "2024-02-15", avatar: "SR",
                 permissions: [{ componentId: 'users', actions: ['view'] }]
             },
             { 
-                id: 5, name: "Vikram Singh", email: "vikram.singh@mdm.io", role: "Staff Admin", 
+                id: 5, name: "Vikram Singh", email: "vikram.singh@mdm.io", role: "Staff Admin", password: "000000", 
                 department: "IT", phone: "+91 9876543214", status: "active", 
                 joined: "2024-01-10", avatar: "VS",
                 permissions: [
