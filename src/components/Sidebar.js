@@ -6,7 +6,7 @@ import {
   UserCog, UserPlus, Users as UsersIcon, Bell, Shield,
   Home, TrendingUp, FileText, Settings as SettingsIcon
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
@@ -45,6 +45,9 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
   const [userData, setUserData] = useState(null);
   const [userType, setUserType] = useState('admin');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const currentPath = location.pathname;
 
   useEffect(() => {
     // Check if user is Super Admin or Staff
@@ -203,9 +206,21 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5">
           {filteredNavItems.map(item => {
-            const isActive = active === item.path || (item.children && item.children.some(c => c.path === active));
+            const isActive =
+              currentPath === item.path ||
+              currentPath.startsWith(item.path + "/") ||
+              (item.children &&
+                item.children.some(child =>
+                  currentPath === child.path ||
+                  currentPath.startsWith(child.path + "/")
+                ));
             const hasChildren = item.children?.length;
-            const isExpanded = expanded[item.path];
+            const isExpanded =
+              expanded[item.path] ||
+              item.children?.some(child =>
+                currentPath === child.path ||
+                currentPath.startsWith(child.path + "/")
+              );
 
             return (
               <div key={item.path}>
@@ -214,7 +229,6 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                     if (hasChildren) {
                       toggle(item.path);
                     } else {
-                      setActive(item.path);
                       navigate(item.path);
                       setOpen(false);
                     }
@@ -247,14 +261,14 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
                       <button
                         key={child.path}
                         onClick={() => {
-                          setActive(child.path);
                           navigate(child.path);
                           setOpen(false);
                         }}
                         className={`
                           w-full flex items-center gap-2 text-left text-xs px-2 py-2 rounded-lg 
                           transition-colors
-                          ${active === child.path
+                          ${currentPath === child.path ||
+                            currentPath.startsWith(child.path + "/")
                             ? 'text-orange-500 font-semibold bg-orange-50/50'
                             : 'text-gray-500 hover:text-orange-500 hover:bg-orange-50/30'
                           }

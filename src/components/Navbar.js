@@ -1,6 +1,7 @@
 // components/Navbar.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, Bell, ChevronRight, X, Check, Clock, AlertCircle, Info, CheckCircle, AlertTriangle } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const NAV_ITEMS = [
   { label: "Dashboard", path: "/admin/dashboard" },
@@ -185,7 +186,7 @@ const NotificationDropdown = ({ isOpen, onClose, onNotificationCountChange }) =>
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       ref={dropdownRef}
       className="absolute right-0 mt-2 w-96 max-h-[480px] bg-white rounded-2xl shadow-2xl border border-orange-200 overflow-hidden z-50"
     >
@@ -237,9 +238,8 @@ const NotificationDropdown = ({ isOpen, onClose, onNotificationCountChange }) =>
               return (
                 <div
                   key={notification.id}
-                  className={`px-4 py-3 transition-colors hover:bg-orange-50 cursor-pointer ${
-                    isUnread ? 'bg-orange-50/50' : ''
-                  }`}
+                  className={`px-4 py-3 transition-colors hover:bg-orange-50 cursor-pointer ${isUnread ? 'bg-orange-50/50' : ''
+                    }`}
                 >
                   <div className="flex items-start gap-3">
                     <div
@@ -324,7 +324,17 @@ export const Navbar = ({ setOpen, activePage }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showDot, setShowDot] = useState(true);
 
-  const label = NAV_ITEMS.find(n => n.path === activePage)?.label ?? "Dashboard";
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const currentPath = location.pathname;
+
+  const label =
+    NAV_ITEMS.find(
+      item =>
+        currentPath === item.path ||
+        currentPath.startsWith(item.path + "/")
+    )?.label ?? "Dashboard";
 
   const updateUnreadCount = () => {
     const count = NotificationService.getUnreadCount();
@@ -362,7 +372,7 @@ export const Navbar = ({ setOpen, activePage }) => {
 
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm">
-        <span className="text-gray-600 text-xs">Admin</span>
+        <span onClick={() => navigate('/admin/dashboard')} className="text-gray-600 text-xs">Dashboard</span>
         <ChevronRight size={12} className="text-orange-500" />
         <span className="font-semibold text-gray-900 text-xs">{label}</span>
       </div>
