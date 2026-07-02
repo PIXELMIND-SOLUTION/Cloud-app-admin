@@ -243,7 +243,7 @@ const AdminAnalytics = () => {
 
     const tabs = [
         { id: 'overview', label: 'Overview', icon: BarChart3 },
-        { id: 'users', label: 'Users', icon: Users },
+        { id: 'users', label: 'Admins', icon: Users },
         { id: 'devices', label: 'Devices', icon: Smartphone }
     ];
 
@@ -273,7 +273,7 @@ const AdminAnalytics = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-orange-200 shadow-sm">
                 <div>
                     <h1 className="text-xl font-bold text-gray-800">Analytics Dashboard</h1>
-                    <p className="text-sm mt-0.5 text-gray-500">Overview of users, devices, and system metrics</p>
+                    <p className="text-sm mt-0.5 text-gray-500">Overview of Admins, devices, and system metrics</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <button
@@ -313,7 +313,7 @@ const AdminAnalytics = () => {
                 <>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <MetricCard
-                            label="Total Users"
+                            label="Total Admins"
                             value={stats.totalUsers}
                             icon={Users}
                             trend="up"
@@ -329,7 +329,7 @@ const AdminAnalytics = () => {
                             color="from-orange-400 to-amber-500"
                         />
                         <MetricCard
-                            label="Active Users"
+                            label="Active Admins"
                             value={stats.activeUsers}
                             icon={UserCheck}
                             trend="up"
@@ -348,7 +348,7 @@ const AdminAnalytics = () => {
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <Panel>
-                            <h3 className="text-sm font-semibold mb-4 text-gray-800">User Growth</h3>
+                            <h3 className="text-sm font-semibold mb-4 text-gray-800">Admin Growth</h3>
                             <div className="h-[300px]">
                                 <LineChartComponent data={chartData.users} labels={chartData.dates} />
                             </div>
@@ -389,7 +389,7 @@ const AdminAnalytics = () => {
             {activeTab === 'users' && stats && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Panel>
-                        <h3 className="text-sm font-semibold mb-4 text-gray-800">User Roles</h3>
+                        <h3 className="text-sm font-semibold mb-4 text-gray-800">Admin Roles</h3>
                         <div className="h-[280px]">
                             <DoughnutChartComponent
                                 data={[15, 25, 60]}
@@ -399,7 +399,7 @@ const AdminAnalytics = () => {
                         </div>
                     </Panel>
                     <Panel>
-                        <h3 className="text-sm font-semibold mb-4 text-gray-800">User Retention</h3>
+                        <h3 className="text-sm font-semibold mb-4 text-gray-800">Admin Retention</h3>
                         <div className="h-[250px]">
                             <BarChartComponent
                                 data={[92, 87, 81, 73, 65]}
@@ -418,7 +418,7 @@ const AdminAnalytics = () => {
                         </div>
                     </Panel>
                     <Panel>
-                        <h3 className="text-sm font-semibold mb-4 text-gray-800">User Engagement</h3>
+                        <h3 className="text-sm font-semibold mb-4 text-gray-800">Admin Engagement</h3>
                         <div className="h-[280px]">
                             <DoughnutChartComponent
                                 data={[60, 25, 10, 5]}
