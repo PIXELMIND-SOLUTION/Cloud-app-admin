@@ -5,7 +5,8 @@ import {
     ArrowLeft, User, Mail, Phone, Shield,
     Building, UserCog, Calendar,
     Edit, Trash2, LayoutDashboard, Users, BarChart2,
-    LineChart, MailWarning, Settings, Download
+    LineChart, MailWarning, Settings, Download,
+    IdCard
 } from 'lucide-react';
 
 const Panel = ({ children, className = "" }) => (
@@ -160,6 +161,10 @@ export const SingleStaff = () => {
 
                     <div className="mt-4 pt-4 border-t border-orange-200">
                         <div className="space-y-3">
+                            <div className="flex items-center gap-3 text-sm">
+                                <IdCard size={16} className="text-gray-400" />
+                                <span className="text-gray-700">Id: {staff.id}</span>
+                            </div>
                             <div className="flex items-center gap-3 text-sm">
                                 <Mail size={16} className="text-gray-400" />
                                 <span className="text-gray-700">{staff.email}</span>
