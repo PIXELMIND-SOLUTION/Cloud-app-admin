@@ -362,7 +362,7 @@ export const Navbar = ({ setOpen, activePage }) => {
 
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm">
-        <span className="text-gray-600 text-xs">CloudApp</span>
+        <span className="text-gray-600 text-xs">Admin</span>
         <ChevronRight size={12} className="text-orange-500" />
         <span className="font-semibold text-gray-900 text-xs">{label}</span>
       </div>

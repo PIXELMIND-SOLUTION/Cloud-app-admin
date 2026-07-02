@@ -175,7 +175,7 @@ export const Sidebar = ({ active, setActive, open, setOpen }) => {
             <div className="w-8 h-8 flex items-center justify-center rounded-xl text-white font-bold">
               <img src='/logo.png' className='w-8 h-8 object-cover' alt="logo" />
             </div>
-            <span className="font-bold text-lg tracking-tight text-orange-500">RV Admin</span>
+            <span className="font-bold text-lg tracking-tight text-orange-500">RVV Tech Admin</span>
           </div>
           <button
             className="lg:hidden transition-colors text-orange-500 hover:text-orange-600"
